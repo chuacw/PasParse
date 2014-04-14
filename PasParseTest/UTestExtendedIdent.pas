@@ -15,7 +15,7 @@ type
 implementation
 
 uses
-  UTestParser, URuleType, UTokenSets, UTokenType, TypInfo, SysUtils;
+  UTestParser, URuleType, UTokenSets, UTokenType, System.TypInfo, System.SysUtils;
 
 { TTestExtendedIdent }
 

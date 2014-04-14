@@ -3,7 +3,7 @@ unit UTest;
 interface
 
 uses
-  SysUtils;
+  System.SysUtils;
 
 type
   ETestException = class(Exception);
@@ -19,8 +19,8 @@ type
 
   protected
     class function OK(AResult: Boolean): Boolean; overload;
-    class function OK(AResult: Boolean; ADescription: string): Boolean; overload;
-    class function OK(ADescription: string; AResult: Boolean): Boolean; overload;
+    class function OK(AResult: Boolean; const ADescription: string): Boolean; overload;
+    class function OK(const ADescription: string; AResult: Boolean): Boolean; overload;
     class procedure TestAll; virtual; abstract;
     class function GetName: string; virtual; abstract;
     class procedure Plan(ANumber: Integer);
@@ -33,7 +33,7 @@ implementation
 
 { TTest }
 
-class function TTest.OK(AResult: Boolean; ADescription: string): Boolean;
+class function TTest.OK(AResult: Boolean; const ADescription: string): Boolean;
 var
   AResultText: string;
 begin
@@ -63,7 +63,7 @@ begin
   Result := OK(AResult, '');
 end;
 
-class function TTest.OK(ADescription: string; AResult: Boolean): Boolean;
+class function TTest.OK(const ADescription: string; AResult: Boolean): Boolean;
 begin
   Result := OK(AResult, ADescription);
 end;

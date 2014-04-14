@@ -1,5 +1,6 @@
 unit UFileLoader;
-
+{$RTTI EXPLICIT METHODS([]) PROPERTIES([]) FIELDS([])}
+{$WEAKLINKRTTI ON}
 interface
 
 uses
@@ -16,7 +17,7 @@ type
 implementation
 
 uses
-  SysUtils, Classes;
+  System.SysUtils, System.Classes;
 
 { TFileLoader }
 

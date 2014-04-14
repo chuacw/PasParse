@@ -49,7 +49,7 @@ type
 implementation
 
 uses
-  TypInfo, Math, UTokenSets;
+  System.TypInfo, System.Math, UTokenSets;
 
 { THalstead }
 

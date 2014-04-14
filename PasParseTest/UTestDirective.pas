@@ -96,6 +96,23 @@ begin
     '      KeywordNode: NameSemikeyword |name|' + #13#10 +
     '      ValueNode: StringLiteral |''Bar''|', RTDirective));
 
+  OK('external ''Foo.dll'' index 42 name ''Bar'' delayed',
+    TTestParser.ParsesAs('external ''Foo.dll'' index 42 name ''Bar'' delayed',
+    'DirectiveNode' + #13#10 +
+    '  SemicolonNode: (none)' + #13#10 +
+    '  KeywordNode: ExternalSemikeyword |external|' + #13#10 +
+    '  ValueNode: StringLiteral |''Foo.dll''|' + #13#10 +
+    '  DataNode: ListNode' + #13#10 +
+    '    Items[0]: ExportsSpecifierNode' + #13#10 +
+    '      KeywordNode: IndexSemikeyword |index|' + #13#10 +
+    '      ValueNode: Number |42|' + #13#10 +
+    '    Items[1]: ExportsSpecifierNode' + #13#10 +
+    '      KeywordNode: NameSemikeyword |name|' + #13#10 +
+    '      ValueNode: StringLiteral |''Bar''|' + #13#10 +
+    '    Items[2]: ExportsSpecifierNode' + #13#10 +
+    '      KeywordNode: DelayedSemikeyword |delayed|' + #13#10 +
+    '      ValueNode: (none)', RTDirective));
+
   OK('far', TTestParser.ParsesAs('far',
     SimpleDirective('FarSemikeyword |far|'), RTDirective));
   OK('final', TTestParser.ParsesAs('final',

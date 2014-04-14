@@ -785,7 +785,7 @@ const
     const workDir: string = ''; wait: boolean = false;
     startInfo: PStartupInfo = nil): cardinal; overload;
   function  DSiGetProcessAffinity: string;
-  function  DSiGetProcessAffinityMask: DWORD;
+  function  DSiGetProcessAffinityMask: NativeUInt;
   function  DSiGetProcessID(const processName: string; var processID: DWORD): boolean;
   function  DSiGetProcessMemory(var memoryCounters: TProcessMemoryCounters): boolean;
     overload;
@@ -801,7 +801,7 @@ const
   function  DSiGetProcessTimes(process: THandle; var creationTime, exitTime: TDateTime;
     var userTime, kernelTime: int64): boolean; overload;
   function  DSiGetSystemAffinity: string;
-  function  DSiGetSystemAffinityMask: DWORD;
+  function  DSiGetSystemAffinityMask: NativeUInt;
   function  DSiGetThreadAffinity: string;
   function  DSiGetThreadAffinityMask: DWORD;
   function  DSiGetThreadTimes(var creationTime: TDateTime; var userTime,
@@ -3928,9 +3928,9 @@ const
     @author  gabr
     @since   2003-11-14
   }        
-  function DSiGetProcessAffinityMask: DWORD;
+  function DSiGetProcessAffinityMask: NativeUInt;
   var
-    systemAffinityMask: DWORD;
+    systemAffinityMask: NativeUInt;
   begin
     if not DSiIsWinNT then
       Result := 1
@@ -4146,9 +4146,9 @@ const
     @author  gabr
     @since   2003-11-14
   }
-  function DSiGetSystemAffinityMask: DWORD;
+  function DSiGetSystemAffinityMask: NativeUInt;
   var
-    processAffinityMask: DWORD;
+    processAffinityMask: NativeUInt;
   begin
     if not DSiIsWinNT then
       Result := 1
@@ -4175,8 +4175,8 @@ const
   }
   function DSiGetThreadAffinityMask: DWORD;
   var
-    processAffinityMask: DWORD;
-    systemAffinityMask : DWORD;
+    processAffinityMask: NativeUInt;
+    systemAffinityMask : NativeUInt;
   begin
     if not DSiIsWinNT then
       Result := 1
@@ -4251,8 +4251,8 @@ const
   function DSiIncrementWorkingSet(incMinSize, incMaxSize: integer): boolean;
   var
     hProcess         : THandle;
-    maxWorkingSetSize: DWORD;
-    minWorkingSetSize: DWORD;
+    maxWorkingSetSize: NativeUInt;
+    minWorkingSetSize: NativeUInt;
   begin
     Result := false;
     hProcess := OpenProcess(PROCESS_QUERY_INFORMATION OR PROCESS_SET_QUOTA, false,

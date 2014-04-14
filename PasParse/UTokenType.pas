@@ -1,8 +1,10 @@
 unit UTokenType;
-
+{$RTTI EXPLICIT METHODS([]) PROPERTIES([]) FIELDS([])}
+{$WEAKLINKRTTI ON}
 interface
 
 type
+//  reference = reference to procedure;
   /// Enum of all available token types
   TTokenType = (
     // Sentinel
@@ -26,6 +28,7 @@ type
     TTCdeclSemikeyword,
     TTContainsSemikeyword,
     TTDefaultSemikeyword,
+    TTDelayedSemikeyword,
     TTDeprecatedSemikeyword,
     TTDispIdSemikeyword,
     TTDynamicSemikeyword,
@@ -57,6 +60,7 @@ type
     TTPublishedSemikeyword,
     TTReadSemikeyword,
     TTReadOnlySemikeyword,
+    TTReferenceSemikeyword,
     TTRegisterSemikeyword,
     TTReintroduceSemikeyword,
     TTRequiresSemikeyword,

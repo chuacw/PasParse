@@ -1,5 +1,6 @@
 unit UTokenFilter;
-
+{$RTTI EXPLICIT METHODS([]) PROPERTIES([]) FIELDS([])}
+{$WEAKLINKRTTI ON}
 interface
 
 uses
@@ -56,7 +57,7 @@ type
 implementation
 
 uses
-  UTokenType, ULexException, ULexScanner, SysUtils;
+  UTokenType, ULexException, ULexScanner, System.SysUtils;
 
 { TTokenFilter }
 
@@ -84,6 +85,7 @@ begin
   FDirectiveTypes.AddOrSetValue('ASSERTIONS', DTIgnored);
   FDirectiveTypes.AddOrSetValue('AUTOBOX', DTIgnored);
   FDirectiveTypes.AddOrSetValue('BOOLEVAL', DTIgnored);
+  FDirectiveTypes.AddOrSetValue('CODEALIGN', DTIgnored);
   FDirectiveTypes.AddOrSetValue('DEBUGINFO', DTIgnored);
   FDirectiveTypes.AddOrSetValue('DEFINE', DTDefine);
   FDirectiveTypes.AddOrSetValue('DEFINITIONINFO', DTIgnored);
@@ -91,10 +93,14 @@ begin
   FDirectiveTypes.AddOrSetValue('DESCRIPTION', DTIgnored);
   FDirectiveTypes.AddOrSetValue('DESIGNONLY', DTIgnored);
   FDirectiveTypes.AddOrSetValue('ENDREGION', DTIgnored);
+  FDirectiveTypes.AddOrSetValue('EXCESSPRECISION', DTIgnored);
+  FDirectiveTypes.AddOrSetValue('EXTENDEDCOMPATIBILITY', DTIgnored);
   FDirectiveTypes.AddOrSetValue('EXTENDEDSYNTAX', DTIgnored);
   FDirectiveTypes.AddOrSetValue('EXTENSION', DTIgnored);
   FDirectiveTypes.AddOrSetValue('FINITEFLOAT', DTIgnored);
+  FDirectiveTypes.AddOrSetValue('HIGHCHARUNICODE', DTIgnored);
   FDirectiveTypes.AddOrSetValue('HINTS', DTIgnored);
+  FDirectiveTypes.AddOrSetValue('HPPEMIT', DTIgnored);
   FDirectiveTypes.AddOrSetValue('I', DTPossibleInclude);
   FDirectiveTypes.AddOrSetValue('IMAGEBASE', DTIgnored);
   FDirectiveTypes.AddOrSetValue('IMPLICITBUILD', DTIgnored);
@@ -102,6 +108,7 @@ begin
   FDirectiveTypes.AddOrSetValue('INCLUDE', DTInclude);
   FDirectiveTypes.AddOrSetValue('INLINE', DTIgnored); // undocumented
   FDirectiveTypes.AddOrSetValue('IOCHECKS', DTIgnored);
+  FDirectiveTypes.AddOrSetValue('LEGACYIFEND', DTIgnored);
   FDirectiveTypes.AddOrSetValue('LIBPREFIX', DTIgnored);
   FDirectiveTypes.AddOrSetValue('LIBSUFFIX', DTIgnored);
   FDirectiveTypes.AddOrSetValue('LIBVERSION', DTIgnored);
@@ -114,23 +121,30 @@ begin
   FDirectiveTypes.AddOrSetValue('MINENUMSIZE', DTIgnored);
   FDirectiveTypes.AddOrSetValue('MINSTACKSIZE', DTIgnored);
   FDirectiveTypes.AddOrSetValue('OBJEXPORTALL', DTIgnored);
+  FDirectiveTypes.AddOrSetValue('OBJTYPENAME', DTIgnored);
+  FDirectiveTypes.AddOrSetValue('OLDTYPELAYOUT', DTIgnored);
   FDirectiveTypes.AddOrSetValue('OPENSTRINGS', DTIgnored);
   FDirectiveTypes.AddOrSetValue('OPTIMIZATION', DTIgnored);
   FDirectiveTypes.AddOrSetValue('OVERFLOWCHECKS', DTIgnored);
+  FDirectiveTypes.AddOrSetValue('POINTERMATH', DTIgnored);
   FDirectiveTypes.AddOrSetValue('RANGECHECKS', DTIgnored);
   FDirectiveTypes.AddOrSetValue('REALCOMPATIBILITY', DTIgnored);
   FDirectiveTypes.AddOrSetValue('REFERENCEINFO', DTIgnored);
   FDirectiveTypes.AddOrSetValue('REGION', DTIgnored);
   FDirectiveTypes.AddOrSetValue('RESOURCE', DTIgnored);
   FDirectiveTypes.AddOrSetValue('RESOURCERESERVE', DTIgnored);
+  FDirectiveTypes.AddOrSetValue('RTTI', DTIgnored);
   FDirectiveTypes.AddOrSetValue('RUNONLY', DTIgnored);
   FDirectiveTypes.AddOrSetValue('SAFEDIVIDE', DTIgnored);
+  FDirectiveTypes.AddOrSetValue('SCOPEDENUMS', DTIgnored);
   FDirectiveTypes.AddOrSetValue('SETPEFLAGS', DTIgnored);
+  FDirectiveTypes.AddOrSetValue('SetPEOptFlags', DTIgnored);
   FDirectiveTypes.AddOrSetValue('SOPREFIX', DTIgnored); // undocumented
   FDirectiveTypes.AddOrSetValue('SOSUFFIX', DTIgnored); // undocumented
   FDirectiveTypes.AddOrSetValue('SOVERSION', DTIgnored); // undocumented
   FDirectiveTypes.AddOrSetValue('STACKCHECKS', DTIgnored); // undocumented
   FDirectiveTypes.AddOrSetValue('STACKFRAMES', DTIgnored);
+  FDirectiveTypes.AddOrSetValue('STRONGLINKTYPES', DTIgnored);
   FDirectiveTypes.AddOrSetValue('TYPEDADDRESS', DTIgnored);
   FDirectiveTypes.AddOrSetValue('TYPEINFO', DTIgnored);
   FDirectiveTypes.AddOrSetValue('UNDEF', DTUndefine);
@@ -139,8 +153,10 @@ begin
   FDirectiveTypes.AddOrSetValue('VARSTRINGCHECKS', DTIgnored);
   FDirectiveTypes.AddOrSetValue('WARN', DTIgnored);
   FDirectiveTypes.AddOrSetValue('WARNINGS', DTIgnored);
+  FDirectiveTypes.AddOrSetValue('WEAKLINKRTTI', DTIgnored);
   FDirectiveTypes.AddOrSetValue('WEAKPACKAGEUNIT', DTIgnored);
   FDirectiveTypes.AddOrSetValue('WRITEABLECONST', DTIgnored);
+  FDirectiveTypes.AddOrSetValue('ZEROBASEDSTRINGS', DTIgnored);
   // Directives for generation of C++Builder .hpp files
   FDirectiveTypes.AddOrSetValue('EXTERNALSYM', DTIgnored);
   FDirectiveTypes.AddOrSetValue('HPPEMIT', DTIgnored);

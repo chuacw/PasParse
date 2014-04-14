@@ -15,7 +15,7 @@ type
 implementation
 
 uses
-  UMemoryFileLoader, SysUtils;
+  UMemoryFileLoader, System.SysUtils;
 
 { TTestMemoryFileLoader }
 

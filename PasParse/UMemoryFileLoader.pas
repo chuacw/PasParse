@@ -1,9 +1,10 @@
 unit UMemoryFileLoader;
-
+{$RTTI EXPLICIT METHODS([]) PROPERTIES([]) FIELDS([])}
+{$WEAKLINKRTTI ON}
 interface
 
 uses
-  UIFileLoader, Classes;
+  UIFileLoader, System.Classes;
 
 type
   TMemoryFileLoader = class(IFileLoader)
@@ -27,7 +28,7 @@ type
 implementation
 
 uses
-  SysUtils;
+  System.SysUtils;
 
 { TMemoryFileLoader }
 

@@ -78,6 +78,7 @@ begin
     '    Items[1]: ExportsSpecifierNode' + #13#10 +
     '      KeywordNode: IndexSemikeyword |index|' + #13#10 +
     '      ValueNode: Number |42|', RTExportsItem));
+
 end;
 
 end.

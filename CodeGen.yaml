@@ -1,4 +1,8 @@
 NodeTypes:
+  AnonymousMethodTypeNode:
+    - {Name: ReferenceKeywordNode, Type: Token}
+    - {Name: ToKeywordNode, Type: Token}
+    - {Name: MethodNode, Type: AstNode}
   ArrayTypeNode:
     - {Name: ArrayKeywordNode, Type: Token}
     - {Name: OpenBracketNode, Type: Token}
@@ -354,7 +358,7 @@ NodeTypes:
     - {Name: OperandNode, Type: AstNode}
   UnitNode:
     - {Name: UnitKeywordNode, Type: Token}
-    - {Name: UnitNameNode, Type: Token}
+    - {Name: UnitNameNode, Type: AstNode}
     - {Name: PortabilityDirectiveListNode, Type: ListNode<Token>}
     - {Name: SemicolonNode, Type: Token}
     - {Name: InterfaceSectionNode, Type: UnitSectionNode}

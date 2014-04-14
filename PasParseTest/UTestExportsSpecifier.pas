@@ -35,6 +35,7 @@ begin
     'ExportsSpecifierNode' + #13#10 +
     '  KeywordNode: NameSemikeyword |name|' + #13#10 +
     '  ValueNode: StringLiteral |''Foo''|', RTExportsSpecifier));
+
 end;
 
 end.

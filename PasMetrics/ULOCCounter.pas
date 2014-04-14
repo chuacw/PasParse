@@ -33,7 +33,7 @@ type
 implementation
 
 uses
-  SysUtils;
+  System.SysUtils;
 
 { TLOCCounter }
 

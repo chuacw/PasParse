@@ -19,6 +19,7 @@ type
     procedure Visit(ANode: TToken); overload; virtual;
 
     // Generated Nodes
+    procedure Visit(ANode: TAnonymousMethodTypeNode); overload; virtual;
     procedure Visit(ANode: TArrayTypeNode); overload; virtual;
     procedure Visit(ANode: TAssemblerStatementNode); overload; virtual;
     procedure Visit(ANode: TAttributeNode); overload; virtual;
@@ -113,6 +114,8 @@ begin
     Visit(ANode as TToken);
 
   // Generated Nodes
+  if ANode is TAnonymousMethodTypeNode then
+    Visit(ANode as TAnonymousMethodTypeNode);
   if ANode is TArrayTypeNode then
     Visit(ANode as TArrayTypeNode);
   if ANode is TAssemblerStatementNode then
@@ -293,6 +296,17 @@ end;
 procedure TVisitor.Visit(ANode: TToken);
 begin
   // Do nothing
+end;
+
+procedure TVisitor.Visit(ANode: TAnonymousMethodTypeNode);
+begin
+  // Visit child nodes
+  if ANode.ReferenceKeywordNode <> nil then
+    Visit(ANode.ReferenceKeywordNode);
+  if ANode.ToKeywordNode <> nil then
+    Visit(ANode.ToKeywordNode);
+  if ANode.MethodNode <> nil then
+    Visit(ANode.MethodNode);
 end;
 
 procedure TVisitor.Visit(ANode: TArrayTypeNode);

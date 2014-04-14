@@ -1,5 +1,6 @@
 unit UFrame;
-
+{$RTTI EXPLICIT METHODS([]) PROPERTIES([]) FIELDS([])}
+{$WEAKLINKRTTI ON}
 interface
 
 uses
@@ -32,7 +33,7 @@ type
 implementation
 
 uses
-  TypInfo, UEOFFrame, UParseException;
+  System.TypInfo, UEOFFrame, UParseException;
 
 { TFrame }
 

@@ -1,5 +1,6 @@
 unit UAlternator;
-
+{$RTTI EXPLICIT METHODS([]) PROPERTIES([]) FIELDS([])}
+{$WEAKLINKRTTI ON}
 interface
 
 uses
@@ -116,7 +117,7 @@ type
 implementation
 
 uses
-  USingleTokenTokenSet, TypInfo, UInvalidOperationException,
+  USingleTokenTokenSet, System.TypInfo, UInvalidOperationException,
   UParseException, UIFrame;
 
 { TAlternator }

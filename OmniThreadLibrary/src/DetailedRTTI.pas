@@ -121,10 +121,10 @@ begin
     Result := string(ReturnType^.Name);
   Result := Result + ';';
   case CallingConvention of
-    ccCdecl: c := 'cdecl';
-    ccPascal: c := 'pascal';
-    ccStdCall: c := 'stdcall';
-    ccSafeCall: c := 'safecall';
+    System.TypInfo.TCallConv.ccCdecl: c := 'cdecl';
+    System.TypInfo.TCallConv.ccPascal: c := 'pascal';
+    System.TypInfo.TCallConv.ccStdCall: c := 'stdcall';
+    System.TypInfo.TCallConv.ccSafeCall: c := 'safecall';
     else c := '';
   end;
   if c <> '' then Result := Result + ' ' + c + ';';

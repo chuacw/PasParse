@@ -1,5 +1,6 @@
 unit ULexScanner;
-
+{$RTTI EXPLICIT METHODS([]) PROPERTIES([]) FIELDS([])}
+{$WEAKLINKRTTI ON}
 interface
 
 uses
@@ -136,7 +137,7 @@ type
 implementation
 
 uses
-  ULexException, TypInfo, SysUtils, UTokenSets;
+  ULexException, System.TypInfo, System.SysUtils, UTokenSets;
 
 { TLexScanner }
 

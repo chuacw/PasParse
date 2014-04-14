@@ -1,9 +1,10 @@
 unit UBaseException;
-
+{$RTTI EXPLICIT METHODS([]) PROPERTIES([]) FIELDS([])}
+{$WEAKLINKRTTI ON}
 interface
 
 uses
-  SysUtils, ULocation;
+  System.SysUtils, ULocation;
 
 type
   /// <Description>Base class for exceptions including a TLocation instance.</Description>

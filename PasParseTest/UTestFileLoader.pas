@@ -15,7 +15,7 @@ type
 implementation
 
 uses
-  UFileLoader, SysUtils;
+  UFileLoader, System.SysUtils;
 
 { TTestFileLoader }
 

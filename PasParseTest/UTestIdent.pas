@@ -16,7 +16,7 @@ implementation
 
 uses
   UTestParser, URuleType, UTokenType, UTokenSets, UParseException,
-  TypInfo, SysUtils;
+  System.TypInfo, System.SysUtils;
 
 { TTestIdent }
 

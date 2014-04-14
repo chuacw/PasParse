@@ -1,5 +1,6 @@
 unit ULocation;
-
+{$RTTI EXPLICIT METHODS([]) PROPERTIES([]) FIELDS([])}
+{$WEAKLINKRTTI ON}
 interface
 
 type
@@ -36,7 +37,7 @@ type
 implementation
 
 uses
-  SysUtils;
+  System.SysUtils;
 
 { TLocation }
 

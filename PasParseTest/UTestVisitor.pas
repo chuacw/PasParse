@@ -26,7 +26,7 @@ type
 implementation
 
 uses
-  UFileLoader, UCompilerDefines, UParser, UASTNode, URuleType, SysUtils;
+  UFileLoader, UCompilerDefines, UParser, UASTNode, URuleType, System.SysUtils;
 
 { TTestBlock }
 

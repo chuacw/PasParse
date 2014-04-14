@@ -1,116 +1,132 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <ProjectGuid>{b120ecf8-fd09-4ac5-8b49-b66b7f9c94a7}</ProjectGuid>
-  </PropertyGroup>
-  <ItemGroup />
-  <ItemGroup>
-    <Projects Include="PasLexConsole\PasLexConsole.dproj">
-      <Dependencies>PasParse\PasParse.dproj</Dependencies>
-    </Projects>
-    <Projects Include="PasMetricsConsole\PasMetricsConsole.dproj">
-      <Dependencies>PasParse\PasParse.dproj;PasMetrics\PasMetrics.dproj</Dependencies>
-    </Projects>
-    <Projects Include="PasMetricsTest\PasMetricsTest.dproj">
-      <Dependencies>PasMetrics\PasMetrics.dproj;PasTest\PasTest.dproj</Dependencies>
-    </Projects>
-    <Projects Include="PasMetrics\PasMetrics.dproj">
-      <Dependencies>PasParse\PasParse.dproj</Dependencies>
-    </Projects>
-    <Projects Include="PasParseConsole\PasParseConsole.dproj">
-      <Dependencies>PasParse\PasParse.dproj</Dependencies>
-    </Projects>
-    <Projects Include="PasParseTest\PasParseTest.dproj">
-      <Dependencies>PasMetrics\PasMetrics.dproj;PasTest\PasTest.dproj</Dependencies>
-    </Projects>
-    <Projects Include="PasParse\PasParse.dproj" />
-    <Projects Include="PasTest\PasTest.dproj" />
-  </ItemGroup>
-  <ProjectExtensions>
-    <Borland.Personality>Default.Personality</Borland.Personality>
-    <Borland.ProjectType />
-    <BorlandProject>
-<BorlandProject xmlns=""><Default.Personality></Default.Personality></BorlandProject></BorlandProject>
-  </ProjectExtensions>
-  <Target Name="PasParse">
-    <MSBuild Projects="PasParse\PasParse.dproj" Targets="" />
-  </Target>
-  <Target Name="PasParse:Clean">
-    <MSBuild Projects="PasParse\PasParse.dproj" Targets="Clean" />
-  </Target>
-  <Target Name="PasParse:Make">
-    <MSBuild Projects="PasParse\PasParse.dproj" Targets="Make" />
-  </Target>
-  <Target Name="PasMetrics" DependsOnTargets="PasParse">
-    <MSBuild Projects="PasMetrics\PasMetrics.dproj" Targets="" />
-  </Target>
-  <Target Name="PasMetrics:Clean" DependsOnTargets="PasParse:Clean">
-    <MSBuild Projects="PasMetrics\PasMetrics.dproj" Targets="Clean" />
-  </Target>
-  <Target Name="PasMetrics:Make" DependsOnTargets="PasParse:Make">
-    <MSBuild Projects="PasMetrics\PasMetrics.dproj" Targets="Make" />
-  </Target>
-  <Target Name="PasTest">
-    <MSBuild Projects="PasTest\PasTest.dproj" Targets="" />
-  </Target>
-  <Target Name="PasTest:Clean">
-    <MSBuild Projects="PasTest\PasTest.dproj" Targets="Clean" />
-  </Target>
-  <Target Name="PasTest:Make">
-    <MSBuild Projects="PasTest\PasTest.dproj" Targets="Make" />
-  </Target>
-  <Target Name="PasParseTest" DependsOnTargets="PasMetrics;PasTest">
-    <MSBuild Projects="PasParseTest\PasParseTest.dproj" Targets="" />
-  </Target>
-  <Target Name="PasParseTest:Clean" DependsOnTargets="PasMetrics:Clean;PasTest:Clean">
-    <MSBuild Projects="PasParseTest\PasParseTest.dproj" Targets="Clean" />
-  </Target>
-  <Target Name="PasParseTest:Make" DependsOnTargets="PasMetrics:Make;PasTest:Make">
-    <MSBuild Projects="PasParseTest\PasParseTest.dproj" Targets="Make" />
-  </Target>
-  <Target Name="PasMetricsTest" DependsOnTargets="PasMetrics;PasTest">
-    <MSBuild Projects="PasMetricsTest\PasMetricsTest.dproj" Targets="" />
-  </Target>
-  <Target Name="PasMetricsTest:Clean" DependsOnTargets="PasMetrics:Clean;PasTest:Clean">
-    <MSBuild Projects="PasMetricsTest\PasMetricsTest.dproj" Targets="Clean" />
-  </Target>
-  <Target Name="PasMetricsTest:Make" DependsOnTargets="PasMetrics:Make;PasTest:Make">
-    <MSBuild Projects="PasMetricsTest\PasMetricsTest.dproj" Targets="Make" />
-  </Target>
-  <Target Name="PasLexConsole" DependsOnTargets="PasParse">
-    <MSBuild Projects="PasLexConsole\PasLexConsole.dproj" Targets="" />
-  </Target>
-  <Target Name="PasLexConsole:Clean" DependsOnTargets="PasParse:Clean">
-    <MSBuild Projects="PasLexConsole\PasLexConsole.dproj" Targets="Clean" />
-  </Target>
-  <Target Name="PasLexConsole:Make" DependsOnTargets="PasParse:Make">
-    <MSBuild Projects="PasLexConsole\PasLexConsole.dproj" Targets="Make" />
-  </Target>
-  <Target Name="PasParseConsole" DependsOnTargets="PasParse">
-    <MSBuild Projects="PasParseConsole\PasParseConsole.dproj" Targets="" />
-  </Target>
-  <Target Name="PasParseConsole:Clean" DependsOnTargets="PasParse:Clean">
-    <MSBuild Projects="PasParseConsole\PasParseConsole.dproj" Targets="Clean" />
-  </Target>
-  <Target Name="PasParseConsole:Make" DependsOnTargets="PasParse:Make">
-    <MSBuild Projects="PasParseConsole\PasParseConsole.dproj" Targets="Make" />
-  </Target>
-  <Target Name="PasMetricsConsole" DependsOnTargets="PasParse;PasMetrics">
-    <MSBuild Projects="PasMetricsConsole\PasMetricsConsole.dproj" Targets="" />
-  </Target>
-  <Target Name="PasMetricsConsole:Clean" DependsOnTargets="PasParse:Clean;PasMetrics:Clean">
-    <MSBuild Projects="PasMetricsConsole\PasMetricsConsole.dproj" Targets="Clean" />
-  </Target>
-  <Target Name="PasMetricsConsole:Make" DependsOnTargets="PasParse:Make;PasMetrics:Make">
-    <MSBuild Projects="PasMetricsConsole\PasMetricsConsole.dproj" Targets="Make" />
-  </Target>
-  <Target Name="Build">
-    <CallTarget Targets="PasParse;PasMetrics;PasTest;PasParseTest;PasMetricsTest;PasLexConsole;PasParseConsole;PasMetricsConsole" />
-  </Target>
-  <Target Name="Clean">
-    <CallTarget Targets="PasParse:Clean;PasMetrics:Clean;PasTest:Clean;PasParseTest:Clean;PasMetricsTest:Clean;PasLexConsole:Clean;PasParseConsole:Clean;PasMetricsConsole:Clean" />
-  </Target>
-  <Target Name="Make">
-    <CallTarget Targets="PasParse:Make;PasMetrics:Make;PasTest:Make;PasParseTest:Make;PasMetricsTest:Make;PasLexConsole:Make;PasParseConsole:Make;PasMetricsConsole:Make" />
-  </Target>
-  <Import Condition="Exists('$(MSBuildBinPath)\Borland.Group.Targets')" Project="$(MSBuildBinPath)\Borland.Group.Targets" />
+    <PropertyGroup>
+        <ProjectGuid>{b120ecf8-fd09-4ac5-8b49-b66b7f9c94a7}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="PasParse\PasParse.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="PasMetrics\PasMetrics.dproj">
+            <Dependencies>PasParse\PasParse.dproj</Dependencies>
+        </Projects>
+        <Projects Include="PasTest\PasTest.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="PasParseTest\PasParseTest.dproj">
+            <Dependencies>PasMetrics\PasMetrics.dproj;PasTest\PasTest.dproj</Dependencies>
+        </Projects>
+        <Projects Include="PasMetricsTest\PasMetricsTest.dproj">
+            <Dependencies>PasMetrics\PasMetrics.dproj;PasTest\PasTest.dproj</Dependencies>
+        </Projects>
+        <Projects Include="PasLexConsole\PasLexConsole.dproj">
+            <Dependencies>PasParse\PasParse.dproj</Dependencies>
+        </Projects>
+        <Projects Include="PasParseConsole\PasParseConsole.dproj">
+            <Dependencies>PasParse\PasParse.dproj</Dependencies>
+        </Projects>
+        <Projects Include="PasMetricsConsole\PasMetricsConsole.dproj">
+            <Dependencies>PasParse\PasParse.dproj;PasMetrics\PasMetrics.dproj</Dependencies>
+        </Projects>
+        <Projects Include="ParseRTL\ParseRTL.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="PasParse">
+        <MSBuild Projects="PasParse\PasParse.dproj"/>
+    </Target>
+    <Target Name="PasParse:Clean">
+        <MSBuild Projects="PasParse\PasParse.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="PasParse:Make">
+        <MSBuild Projects="PasParse\PasParse.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="PasMetrics" DependsOnTargets="PasParse">
+        <MSBuild Projects="PasMetrics\PasMetrics.dproj"/>
+    </Target>
+    <Target Name="PasMetrics:Clean" DependsOnTargets="PasParse:Clean">
+        <MSBuild Projects="PasMetrics\PasMetrics.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="PasMetrics:Make" DependsOnTargets="PasParse:Make">
+        <MSBuild Projects="PasMetrics\PasMetrics.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="PasTest">
+        <MSBuild Projects="PasTest\PasTest.dproj"/>
+    </Target>
+    <Target Name="PasTest:Clean">
+        <MSBuild Projects="PasTest\PasTest.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="PasTest:Make">
+        <MSBuild Projects="PasTest\PasTest.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="PasParseTest" DependsOnTargets="PasMetrics;PasTest">
+        <MSBuild Projects="PasParseTest\PasParseTest.dproj"/>
+    </Target>
+    <Target Name="PasParseTest:Clean" DependsOnTargets="PasMetrics:Clean;PasTest:Clean">
+        <MSBuild Projects="PasParseTest\PasParseTest.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="PasParseTest:Make" DependsOnTargets="PasMetrics:Make;PasTest:Make">
+        <MSBuild Projects="PasParseTest\PasParseTest.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="PasMetricsTest" DependsOnTargets="PasMetrics;PasTest">
+        <MSBuild Projects="PasMetricsTest\PasMetricsTest.dproj"/>
+    </Target>
+    <Target Name="PasMetricsTest:Clean" DependsOnTargets="PasMetrics:Clean;PasTest:Clean">
+        <MSBuild Projects="PasMetricsTest\PasMetricsTest.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="PasMetricsTest:Make" DependsOnTargets="PasMetrics:Make;PasTest:Make">
+        <MSBuild Projects="PasMetricsTest\PasMetricsTest.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="PasLexConsole" DependsOnTargets="PasParse">
+        <MSBuild Projects="PasLexConsole\PasLexConsole.dproj"/>
+    </Target>
+    <Target Name="PasLexConsole:Clean" DependsOnTargets="PasParse:Clean">
+        <MSBuild Projects="PasLexConsole\PasLexConsole.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="PasLexConsole:Make" DependsOnTargets="PasParse:Make">
+        <MSBuild Projects="PasLexConsole\PasLexConsole.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="PasParseConsole" DependsOnTargets="PasParse">
+        <MSBuild Projects="PasParseConsole\PasParseConsole.dproj"/>
+    </Target>
+    <Target Name="PasParseConsole:Clean" DependsOnTargets="PasParse:Clean">
+        <MSBuild Projects="PasParseConsole\PasParseConsole.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="PasParseConsole:Make" DependsOnTargets="PasParse:Make">
+        <MSBuild Projects="PasParseConsole\PasParseConsole.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="PasMetricsConsole" DependsOnTargets="PasParse;PasMetrics">
+        <MSBuild Projects="PasMetricsConsole\PasMetricsConsole.dproj"/>
+    </Target>
+    <Target Name="PasMetricsConsole:Clean" DependsOnTargets="PasParse:Clean;PasMetrics:Clean">
+        <MSBuild Projects="PasMetricsConsole\PasMetricsConsole.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="PasMetricsConsole:Make" DependsOnTargets="PasParse:Make;PasMetrics:Make">
+        <MSBuild Projects="PasMetricsConsole\PasMetricsConsole.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ParseRTL">
+        <MSBuild Projects="ParseRTL\ParseRTL.dproj"/>
+    </Target>
+    <Target Name="ParseRTL:Clean">
+        <MSBuild Projects="ParseRTL\ParseRTL.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ParseRTL:Make">
+        <MSBuild Projects="ParseRTL\ParseRTL.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="PasParse;PasMetrics;PasTest;PasParseTest;PasMetricsTest;PasLexConsole;PasParseConsole;PasMetricsConsole;ParseRTL"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="PasParse:Clean;PasMetrics:Clean;PasTest:Clean;PasParseTest:Clean;PasMetricsTest:Clean;PasLexConsole:Clean;PasParseConsole:Clean;PasMetricsConsole:Clean;ParseRTL:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="PasParse:Make;PasMetrics:Make;PasTest:Make;PasParseTest:Make;PasMetricsTest:Make;PasLexConsole:Make;PasParseConsole:Make;PasMetricsConsole:Make;ParseRTL:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

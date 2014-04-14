@@ -1,9 +1,10 @@
 unit UInvalidOperationException;
-
+{$RTTI EXPLICIT METHODS([]) PROPERTIES([]) FIELDS([])}
+{$WEAKLINKRTTI ON}
 interface
 
 uses
-  SysUtils;
+  System.SysUtils;
 
 type
   /// A special type of exception

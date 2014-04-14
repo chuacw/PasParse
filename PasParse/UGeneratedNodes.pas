@@ -11,6 +11,7 @@ uses
 
 type
   // Forward declarations
+  TAnonymousMethodTypeNode = class;
   TArrayTypeNode = class;
   TAssemblerStatementNode = class;
   TAttributeNode = class;
@@ -90,6 +91,22 @@ type
   TWithStatementNode = class;
 
   // Real declarations
+  TAnonymousMethodTypeNode = class(TNonTerminalNode)
+  private
+    FReferenceKeywordNode: TToken;
+    FToKeywordNode: TToken;
+    FMethodNode: TASTNode;
+
+  public
+    constructor Create(AReferenceKeywordNode: TToken; AToKeywordNode: TToken; AMethodNode: TASTNode);
+
+    function Clone: TASTNode; override;
+
+    property ReferenceKeywordNode: TToken read FReferenceKeywordNode;
+    property ToKeywordNode: TToken read FToKeywordNode;
+    property MethodNode: TASTNode read FMethodNode;
+  end;
+
   TArrayTypeNode = class(TNonTerminalNode)
   private
     FArrayKeywordNode: TToken;
@@ -1325,7 +1342,7 @@ type
   TUnitNode = class(TNonTerminalNode)
   private
     FUnitKeywordNode: TToken;
-    FUnitNameNode: TToken;
+    FUnitNameNode: TASTNode;
     FPortabilityDirectiveListNode: TListNode;
     FSemicolonNode: TToken;
     FInterfaceSectionNode: TUnitSectionNode;
@@ -1334,12 +1351,12 @@ type
     FDotNode: TToken;
 
   public
-    constructor Create(AUnitKeywordNode: TToken; AUnitNameNode: TToken; APortabilityDirectiveListNode: TListNode; ASemicolonNode: TToken; AInterfaceSectionNode: TUnitSectionNode; AImplementationSectionNode: TUnitSectionNode; AInitSectionNode: TInitSectionNode; ADotNode: TToken);
+    constructor Create(AUnitKeywordNode: TToken; AUnitNameNode: TASTNode; APortabilityDirectiveListNode: TListNode; ASemicolonNode: TToken; AInterfaceSectionNode: TUnitSectionNode; AImplementationSectionNode: TUnitSectionNode; AInitSectionNode: TInitSectionNode; ADotNode: TToken);
 
     function Clone: TASTNode; override;
 
     property UnitKeywordNode: TToken read FUnitKeywordNode;
-    property UnitNameNode: TToken read FUnitNameNode;
+    property UnitNameNode: TASTNode read FUnitNameNode;
     property PortabilityDirectiveListNode: TListNode read FPortabilityDirectiveListNode;
     property SemicolonNode: TToken read FSemicolonNode;
     property InterfaceSectionNode: TUnitSectionNode read FInterfaceSectionNode;
@@ -1554,6 +1571,55 @@ implementation
 
 uses
   UTokenType;
+
+{ TAnonymousMethodTypeNode }
+
+function TAnonymousMethodTypeNode.Clone: TASTNode;
+var
+  AReferenceKeywordNode: TToken;
+  AToKeywordNode: TToken;
+  AMethodNode: TASTNode;
+begin
+  if FReferenceKeywordNode <> nil then
+    AReferenceKeywordNode := (FReferenceKeywordNode.Clone as TToken)
+  else
+    AReferenceKeywordNode := nil;
+
+  if FToKeywordNode <> nil then
+    AToKeywordNode := (FToKeywordNode.Clone as TToken)
+  else
+    AToKeywordNode := nil;
+
+  if FMethodNode <> nil then
+    AMethodNode := (FMethodNode.Clone as TASTNode)
+  else
+    AMethodNode := nil;
+
+  Result := TAnonymousMethodTypeNode.Create(
+    AReferenceKeywordNode,
+    AToKeywordNode,
+    AMethodNode);
+end;
+
+constructor TAnonymousMethodTypeNode.Create(AReferenceKeywordNode: TToken; AToKeywordNode: TToken; AMethodNode: TASTNode);
+begin
+  inherited Create;
+
+  // Assigning private members
+  FReferenceKeywordNode := AReferenceKeywordNode;
+  FToKeywordNode := AToKeywordNode;
+  FMethodNode := AMethodNode;
+
+  // Adding child nodes
+  FChildNodes.Add(AReferenceKeywordNode);
+  FChildNodes.Add(AToKeywordNode);
+  FChildNodes.Add(AMethodNode);
+
+  // Adding properties
+  FProperties.Add(TASTNodeProperty.Create('ReferenceKeywordNode', AReferenceKeywordNode));
+  FProperties.Add(TASTNodeProperty.Create('ToKeywordNode', AToKeywordNode));
+  FProperties.Add(TASTNodeProperty.Create('MethodNode', AMethodNode));
+end;
 
 { TArrayTypeNode }
 
@@ -5698,7 +5764,7 @@ end;
 function TUnitNode.Clone: TASTNode;
 var
   AUnitKeywordNode: TToken;
-  AUnitNameNode: TToken;
+  AUnitNameNode: TASTNode;
   APortabilityDirectiveListNode: TListNode;
   ASemicolonNode: TToken;
   AInterfaceSectionNode: TUnitSectionNode;
@@ -5712,7 +5778,7 @@ begin
     AUnitKeywordNode := nil;
 
   if FUnitNameNode <> nil then
-    AUnitNameNode := (FUnitNameNode.Clone as TToken)
+    AUnitNameNode := (FUnitNameNode.Clone as TASTNode)
   else
     AUnitNameNode := nil;
 
@@ -5757,7 +5823,7 @@ begin
     ADotNode);
 end;
 
-constructor TUnitNode.Create(AUnitKeywordNode: TToken; AUnitNameNode: TToken; APortabilityDirectiveListNode: TListNode; ASemicolonNode: TToken; AInterfaceSectionNode: TUnitSectionNode; AImplementationSectionNode: TUnitSectionNode; AInitSectionNode: TInitSectionNode; ADotNode: TToken);
+constructor TUnitNode.Create(AUnitKeywordNode: TToken; AUnitNameNode: TASTNode; APortabilityDirectiveListNode: TListNode; ASemicolonNode: TToken; AInterfaceSectionNode: TUnitSectionNode; AImplementationSectionNode: TUnitSectionNode; AInitSectionNode: TInitSectionNode; ADotNode: TToken);
 begin
   inherited Create;
 

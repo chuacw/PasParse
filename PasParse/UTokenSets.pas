@@ -1,5 +1,6 @@
 unit UTokenSets;
-
+{$RTTI EXPLICIT METHODS([]) PROPERTIES([]) FIELDS([])}
+{$WEAKLINKRTTI ON}
 interface
 
 uses
@@ -87,6 +88,8 @@ begin
 end;
 
 class procedure TTokenSets.Prepare;
+var
+  AKeyword, ASemikeyword: TTokenType;
 begin
   TSAddOp := TTokenSet.Create('addition operator');
   TSAddOp.Add(TTPlusSign);
@@ -107,35 +110,64 @@ begin
   TSConstHeader.Add(TTResourceStringKeyword);
 
   TSDirective := TTokenSet.Create('directive');
-  TSDirective.Add(TTAbstractSemikeyword);
-  TSDirective.Add(TTAssemblerSemikeyword);
-  TSDirective.Add(TTCdeclSemikeyword);
-  TSDirective.Add(TTDispIdSemikeyword);
-  TSDirective.Add(TTDynamicSemikeyword);
-  TSDirective.Add(TTExportSemikeyword);
-  TSDirective.Add(TTExternalSemikeyword);
-  TSDirective.Add(TTFarSemikeyword);
-  TSDirective.Add(TTFinalSemikeyword);
-  TSDirective.Add(TTForwardSemikeyword);
-  TSDirective.Add(TTInlineKeyword);
-  TSDirective.Add(TTLocalSemikeyword);
-  TSDirective.Add(TTMessageSemikeyword);
-  TSDirective.Add(TTNearSemikeyword);
-  TSDirective.Add(TTOverloadSemikeyword);
-  TSDirective.Add(TTOverrideSemikeyword);
-  TSDirective.Add(TTPascalSemikeyword);
-  TSDirective.Add(TTRegisterSemikeyword);
-  TSDirective.Add(TTReintroduceSemikeyword);
-  TSDirective.Add(TTSafecallSemikeyword);
-  TSDirective.Add(TTStaticSemikeyword);
-  TSDirective.Add(TTStdcallSemikeyword);
-  TSDirective.Add(TTVarArgsSemikeyword);
-  TSDirective.Add(TTVirtualSemikeyword);
+  for AKeyword in [TTAbstractSemikeyword,
+                   TTAssemblerSemikeyword,
+                   TTCdeclSemikeyword,
+                   TTDispIdSemikeyword,
+                   TTDelayedSemikeyword,
+                   TTDynamicSemikeyword,
+                   TTExportSemikeyword,
+                   TTExternalSemikeyword,
+                   TTFarSemikeyword,
+                   TTFinalSemikeyword,
+                   TTForwardSemikeyword,
+                   TTInlineKeyword,
+                   TTLocalSemikeyword,
+                   TTMessageSemikeyword,
+                   TTNearSemikeyword,
+                   TTOverloadSemikeyword,
+                   TTOverrideSemikeyword,
+                   TTPascalSemikeyword,
+                   TTRegisterSemikeyword,
+                   TTReintroduceSemikeyword,
+                   TTSafecallSemikeyword,
+                   TTStaticSemikeyword,
+                   TTStdcallSemikeyword,
+                   TTVarArgsSemikeyword,
+                   TTVirtualSemikeyword] do
+    TSDirective.Add(AKeyword);
+
+//  TSDirective.Add(TTAbstractSemikeyword);
+//  TSDirective.Add(TTAssemblerSemikeyword);
+//  TSDirective.Add(TTCdeclSemikeyword);
+//  TSDirective.Add(TTDispIdSemikeyword);
+//  TSDirective.Add(TTDelayedSemikeyword);
+//  TSDirective.Add(TTDynamicSemikeyword);
+//  TSDirective.Add(TTExportSemikeyword);
+//  TSDirective.Add(TTExternalSemikeyword);
+//  TSDirective.Add(TTFarSemikeyword);
+//  TSDirective.Add(TTFinalSemikeyword);
+//  TSDirective.Add(TTForwardSemikeyword);
+//  TSDirective.Add(TTInlineKeyword);
+//  TSDirective.Add(TTLocalSemikeyword);
+//  TSDirective.Add(TTMessageSemikeyword);
+//  TSDirective.Add(TTNearSemikeyword);
+//  TSDirective.Add(TTOverloadSemikeyword);
+//  TSDirective.Add(TTOverrideSemikeyword);
+//  TSDirective.Add(TTPascalSemikeyword);
+//  TSDirective.Add(TTRegisterSemikeyword);
+//  TSDirective.Add(TTReintroduceSemikeyword);
+//  TSDirective.Add(TTSafecallSemikeyword);
+//  TSDirective.Add(TTStaticSemikeyword);
+//  TSDirective.Add(TTStdcallSemikeyword);
+//  TSDirective.Add(TTVarArgsSemikeyword);
+//  TSDirective.Add(TTVirtualSemikeyword);
   // also includes PortabilityDirective, see below
 
-  TSExportsSpecifier := TTokenSet.Create('''index'' or ''name''');
+  TSExportsSpecifier := TTokenSet.Create('''index'' or ''name'' or ''delayed''');
   TSExportsSpecifier.Add(TTIndexSemikeyword);
   TSExportsSpecifier.Add(TTNameSemikeyword);
+  TSExportsSpecifier.Add(TTDelayedSemikeyword);
 
   TSForDirection := TTokenSet.Create('''to'' or ''downto''');
   TSForDirection.Add(TTToKeyword);
@@ -157,77 +189,83 @@ begin
   TSInterfaceType.Add(TTDispInterfaceKeyword);
 
   TSKeyword := TTokenSet.Create('keyword');
-  TSKeyword.Add(TTAndKeyword);
-  TSKeyword.Add(TTArrayKeyword);
-  TSKeyword.Add(TTAsKeyword);
-  TSKeyword.Add(TTAsmKeyword);
-  TSKeyword.Add(TTBeginKeyword);
-  TSKeyword.Add(TTCaseKeyword);
-  TSKeyword.Add(TTClassKeyword);
-  TSKeyword.Add(TTConstKeyword);
-  TSKeyword.Add(TTConstructorKeyword);
-  TSKeyword.Add(TTDestructorKeyword);
-  TSKeyword.Add(TTDispInterfaceKeyword);
-  TSKeyword.Add(TTDivKeyword);
-  TSKeyword.Add(TTDoKeyword);
-  TSKeyword.Add(TTDownToKeyword);
-  TSKeyword.Add(TTElseKeyword);
-  TSKeyword.Add(TTEndKeyword);
-  TSKeyword.Add(TTExceptKeyword);
-  TSKeyword.Add(TTExportsKeyword);
-  TSKeyword.Add(TTFileKeyword);
-  TSKeyword.Add(TTFinalizationKeyword);
-  TSKeyword.Add(TTFinallyKeyword);
-  TSKeyword.Add(TTForKeyword);
-  TSKeyword.Add(TTFunctionKeyword);
-  TSKeyword.Add(TTGotoKeyword);
-  TSKeyword.Add(TTIfKeyword);
-  TSKeyword.Add(TTImplementationKeyword);
-  TSKeyword.Add(TTInKeyword);
-  TSKeyword.Add(TTInheritedKeyword);
-  TSKeyword.Add(TTInitializationKeyword);
-  TSKeyword.Add(TTInlineKeyword);
-  TSKeyword.Add(TTInterfaceKeyword);
-  TSKeyword.Add(TTIsKeyword);
-  TSKeyword.Add(TTLabelKeyword);
-  TSKeyword.Add(TTLibraryKeyword);
-  TSKeyword.Add(TTModKeyword);
-  TSKeyword.Add(TTNilKeyword);
-  TSKeyword.Add(TTNotKeyword);
-  TSKeyword.Add(TTObjectKeyword);
-  TSKeyword.Add(TTOfKeyword);
-  TSKeyword.Add(TTOrKeyword);
-  TSKeyword.Add(TTPackedKeyword);
-  TSKeyword.Add(TTProcedureKeyword);
-  TSKeyword.Add(TTProgramKeyword);
-  TSKeyword.Add(TTPropertyKeyword);
-  TSKeyword.Add(TTRaiseKeyword);
-  TSKeyword.Add(TTRecordKeyword);
-  TSKeyword.Add(TTRepeatKeyword);
-  TSKeyword.Add(TTResourceStringKeyword);
-  TSKeyword.Add(TTSetKeyword);
-  TSKeyword.Add(TTShlKeyword);
-  TSKeyword.Add(TTShrKeyword);
-  TSKeyword.Add(TTStringKeyword);
-  TSKeyword.Add(TTThenKeyword);
-  TSKeyword.Add(TTThreadVarKeyword);
-  TSKeyword.Add(TTToKeyword);
-  TSKeyword.Add(TTTryKeyword);
-  TSKeyword.Add(TTTypeKeyword);
-  TSKeyword.Add(TTUnitKeyword);
-  TSKeyword.Add(TTUntilKeyword);
-  TSKeyword.Add(TTUsesKeyword);
-  TSKeyword.Add(TTVarKeyword);
-  TSKeyword.Add(TTWhileKeyword);
-  TSKeyword.Add(TTWithKeyword);
-  TSKeyword.Add(TTXorKeyword);
+  for AKeyword in [TTAndKeyword..TTXorKeyword] do
+    TSKeyword.Add(AKeyword);
+//  TSKeyword.Add(TTAndKeyword);
+//  TSKeyword.Add(TTArrayKeyword);
+//  TSKeyword.Add(TTAsKeyword);
+//  TSKeyword.Add(TTAsmKeyword);
+//  TSKeyword.Add(TTBeginKeyword);
+//  TSKeyword.Add(TTCaseKeyword);
+//  TSKeyword.Add(TTClassKeyword);
+//  TSKeyword.Add(TTConstKeyword);
+//  TSKeyword.Add(TTConstructorKeyword);
+//  TSKeyword.Add(TTDestructorKeyword);
+//  TSKeyword.Add(TTDispInterfaceKeyword);
+//  TSKeyword.Add(TTDivKeyword);
+//  TSKeyword.Add(TTDoKeyword);
+//  TSKeyword.Add(TTDownToKeyword);
+//  TSKeyword.Add(TTElseKeyword);
+//  TSKeyword.Add(TTEndKeyword);
+//  TSKeyword.Add(TTExceptKeyword);
+//  TSKeyword.Add(TTExportsKeyword);
+//  TSKeyword.Add(TTFileKeyword);
+//  TSKeyword.Add(TTFinalizationKeyword);
+//  TSKeyword.Add(TTFinallyKeyword);
+//  TSKeyword.Add(TTForKeyword);
+//  TSKeyword.Add(TTFunctionKeyword);
+//  TSKeyword.Add(TTGotoKeyword);
+//  TSKeyword.Add(TTIfKeyword);
+//  TSKeyword.Add(TTImplementationKeyword);
+//  TSKeyword.Add(TTInKeyword);
+//  TSKeyword.Add(TTInheritedKeyword);
+//  TSKeyword.Add(TTInitializationKeyword);
+//  TSKeyword.Add(TTInlineKeyword);
+//  TSKeyword.Add(TTInterfaceKeyword);
+//  TSKeyword.Add(TTIsKeyword);
+//  TSKeyword.Add(TTLabelKeyword);
+//  TSKeyword.Add(TTLibraryKeyword);
+//  TSKeyword.Add(TTModKeyword);
+//  TSKeyword.Add(TTNilKeyword);
+//  TSKeyword.Add(TTNotKeyword);
+//  TSKeyword.Add(TTObjectKeyword);
+//  TSKeyword.Add(TTOfKeyword);
+//  TSKeyword.Add(TTOrKeyword);
+//  TSKeyword.Add(TTPackedKeyword);
+//  TSKeyword.Add(TTProcedureKeyword);
+//  TSKeyword.Add(TTProgramKeyword);
+//  TSKeyword.Add(TTPropertyKeyword);
+//  TSKeyword.Add(TTRaiseKeyword);
+//  TSKeyword.Add(TTRecordKeyword);
+//  TSKeyword.Add(TTRepeatKeyword);
+//  TSKeyword.Add(TTResourceStringKeyword);
+//  TSKeyword.Add(TTSetKeyword);
+//  TSKeyword.Add(TTShlKeyword);
+//  TSKeyword.Add(TTShrKeyword);
+//  TSKeyword.Add(TTStringKeyword);
+//  TSKeyword.Add(TTThenKeyword);
+//  TSKeyword.Add(TTThreadVarKeyword);
+//  TSKeyword.Add(TTToKeyword);
+//  TSKeyword.Add(TTTryKeyword);
+//  TSKeyword.Add(TTTypeKeyword);
+//  TSKeyword.Add(TTUnitKeyword);
+//  TSKeyword.Add(TTUntilKeyword);
+//  TSKeyword.Add(TTUsesKeyword);
+//  TSKeyword.Add(TTVarKeyword);
+//  TSKeyword.Add(TTWhileKeyword);
+//  TSKeyword.Add(TTWithKeyword);
+//  TSKeyword.Add(TTXorKeyword);
 
   TSMethodType := TTokenSet.Create('method heading');
-  TSMethodType.Add(TTConstructorKeyword);
-  TSMethodType.Add(TTDestructorKeyword);
-  TSMethodType.Add(TTFunctionKeyword);
-  TSMethodType.Add(TTProcedureKeyword);
-  TSMethodType.Add(TTOperatorSemikeyword);
+  for AKeyword in [TTConstructorKeyword, TTDestructorKeyword, TTFunctionKeyword,
+   TTProcedureKeyword,TTOperatorSemikeyword] do
+    TSMethodType.Add(AKeyword);
+
+//  TSMethodType.Add(TTConstructorKeyword);
+//  TSMethodType.Add(TTDestructorKeyword);
+//  TSMethodType.Add(TTFunctionKeyword);
+//  TSMethodType.Add(TTProcedureKeyword);
+//  TSMethodType.Add(TTOperatorSemikeyword);
 
   TSMulOp := TTokenSet.Create('multiplication operator');
   TSMulOp.Add(TTTimesSign);
@@ -279,61 +317,64 @@ begin
   TSRelOp.Add(TTAsKeyword);
 
   TSSemikeyword := TTokenSet.Create('semikeyword');
-  TSSemikeyword.Add(TTAbsoluteSemikeyword);
-  TSSemikeyword.Add(TTAbstractSemikeyword);
-  TSSemikeyword.Add(TTAssemblerSemikeyword);
-  TSSemikeyword.Add(TTAssemblySemikeyword);
-  TSSemikeyword.Add(TTAtSemikeyword);
-  TSSemikeyword.Add(TTAutomatedSemikeyword);
-  TSSemikeyword.Add(TTCdeclSemikeyword);
-  TSSemikeyword.Add(TTContainsSemikeyword);
-  TSSemikeyword.Add(TTDefaultSemikeyword);
-  TSSemikeyword.Add(TTDeprecatedSemikeyword);
-  TSSemikeyword.Add(TTDispIdSemikeyword);
-  TSSemikeyword.Add(TTDynamicSemikeyword);
-  TSSemikeyword.Add(TTExperimentalSemikeyword);
-  TSSemikeyword.Add(TTExportSemikeyword);
-  TSSemikeyword.Add(TTExternalSemikeyword);
-  TSSemikeyword.Add(TTFarSemikeyword);
-  TSSemikeyword.Add(TTFinalSemikeyword);
-  TSSemikeyword.Add(TTForwardSemikeyword);
-  TSSemikeyword.Add(TTHelperSemikeyword);
-  TSSemikeyword.Add(TTImplementsSemikeyword);
-  TSSemikeyword.Add(TTIndexSemikeyword);
-  TSSemikeyword.Add(TTLocalSemikeyword);
-  TSSemikeyword.Add(TTMessageSemikeyword);
-  TSSemikeyword.Add(TTNameSemikeyword);
-  TSSemikeyword.Add(TTNearSemikeyword);
-  TSSemikeyword.Add(TTNoDefaultSemikeyword);
-  TSSemikeyword.Add(TTOnSemikeyword);
-  TSSemikeyword.Add(TTOperatorSemikeyword);
-  TSSemikeyword.Add(TTOutSemikeyword);
-  TSSemikeyword.Add(TTOverloadSemikeyword);
-  TSSemikeyword.Add(TTOverrideSemikeyword);
-  TSSemikeyword.Add(TTPackageSemikeyword);
-  TSSemikeyword.Add(TTPascalSemikeyword);
-  TSSemikeyword.Add(TTPlatformSemikeyword);
-  TSSemikeyword.Add(TTPrivateSemikeyword);
-  TSSemikeyword.Add(TTProtectedSemikeyword);
-  TSSemikeyword.Add(TTPublicSemikeyword);
-  TSSemikeyword.Add(TTPublishedSemikeyword);
-  TSSemikeyword.Add(TTReadSemikeyword);
-  TSSemikeyword.Add(TTReadOnlySemikeyword);
-  TSSemikeyword.Add(TTRegisterSemikeyword);
-  TSSemikeyword.Add(TTReintroduceSemikeyword);
-  TSSemikeyword.Add(TTRequiresSemikeyword);
-  TSSemikeyword.Add(TTResidentSemikeyword);
-  TSSemikeyword.Add(TTSafecallSemikeyword);
-  TSSemikeyword.Add(TTSealedSemikeyword);
-  TSSemikeyword.Add(TTStaticSemikeyword);
-  TSSemikeyword.Add(TTStdcallSemikeyword);
-  TSSemikeyword.Add(TTStoredSemikeyword);
-  TSSemikeyword.Add(TTStrictSemikeyword);
-  TSSemikeyword.Add(TTUnsafeSemikeyword);
-  TSSemikeyword.Add(TTVarArgsSemikeyword);
-  TSSemikeyword.Add(TTVirtualSemikeyword);
-  TSSemikeyword.Add(TTWriteSemikeyword);
-  TSSemikeyword.Add(TTWriteOnlySemikeyword);
+  for ASemikeyword in [TTAbsoluteSemikeyword..TTWriteOnlySemikeyword] do
+    TSSemikeyword.Add(ASemikeyword);
+//  TSSemikeyword.Add(TTReferenceSemikeyword);
+//  TSSemikeyword.Add(TTAbsoluteSemikeyword);
+//  TSSemikeyword.Add(TTAbstractSemikeyword);
+//  TSSemikeyword.Add(TTAssemblerSemikeyword);
+//  TSSemikeyword.Add(TTAssemblySemikeyword);
+//  TSSemikeyword.Add(TTAtSemikeyword);
+//  TSSemikeyword.Add(TTAutomatedSemikeyword);
+//  TSSemikeyword.Add(TTCdeclSemikeyword);
+//  TSSemikeyword.Add(TTContainsSemikeyword);
+//  TSSemikeyword.Add(TTDefaultSemikeyword);
+//  TSSemikeyword.Add(TTDeprecatedSemikeyword);
+//  TSSemikeyword.Add(TTDispIdSemikeyword);
+//  TSSemikeyword.Add(TTDynamicSemikeyword);
+//  TSSemikeyword.Add(TTExperimentalSemikeyword);
+//  TSSemikeyword.Add(TTExportSemikeyword);
+//  TSSemikeyword.Add(TTExternalSemikeyword);
+//  TSSemikeyword.Add(TTFarSemikeyword);
+//  TSSemikeyword.Add(TTFinalSemikeyword);
+//  TSSemikeyword.Add(TTForwardSemikeyword);
+//  TSSemikeyword.Add(TTHelperSemikeyword);
+//  TSSemikeyword.Add(TTImplementsSemikeyword);
+//  TSSemikeyword.Add(TTIndexSemikeyword);
+//  TSSemikeyword.Add(TTLocalSemikeyword);
+//  TSSemikeyword.Add(TTMessageSemikeyword);
+//  TSSemikeyword.Add(TTNameSemikeyword);
+//  TSSemikeyword.Add(TTNearSemikeyword);
+//  TSSemikeyword.Add(TTNoDefaultSemikeyword);
+//  TSSemikeyword.Add(TTOnSemikeyword);
+//  TSSemikeyword.Add(TTOperatorSemikeyword);
+//  TSSemikeyword.Add(TTOutSemikeyword);
+//  TSSemikeyword.Add(TTOverloadSemikeyword);
+//  TSSemikeyword.Add(TTOverrideSemikeyword);
+//  TSSemikeyword.Add(TTPackageSemikeyword);
+//  TSSemikeyword.Add(TTPascalSemikeyword);
+//  TSSemikeyword.Add(TTPlatformSemikeyword);
+//  TSSemikeyword.Add(TTPrivateSemikeyword);
+//  TSSemikeyword.Add(TTProtectedSemikeyword);
+//  TSSemikeyword.Add(TTPublicSemikeyword);
+//  TSSemikeyword.Add(TTPublishedSemikeyword);
+//  TSSemikeyword.Add(TTReadSemikeyword);
+//  TSSemikeyword.Add(TTReadOnlySemikeyword);
+//  TSSemikeyword.Add(TTRegisterSemikeyword);
+//  TSSemikeyword.Add(TTReintroduceSemikeyword);
+//  TSSemikeyword.Add(TTRequiresSemikeyword);
+//  TSSemikeyword.Add(TTResidentSemikeyword);
+//  TSSemikeyword.Add(TTSafecallSemikeyword);
+//  TSSemikeyword.Add(TTSealedSemikeyword);
+//  TSSemikeyword.Add(TTStaticSemikeyword);
+//  TSSemikeyword.Add(TTStdcallSemikeyword);
+//  TSSemikeyword.Add(TTStoredSemikeyword);
+//  TSSemikeyword.Add(TTStrictSemikeyword);
+//  TSSemikeyword.Add(TTUnsafeSemikeyword);
+//  TSSemikeyword.Add(TTVarArgsSemikeyword);
+//  TSSemikeyword.Add(TTVirtualSemikeyword);
+//  TSSemikeyword.Add(TTWriteSemikeyword);
+//  TSSemikeyword.Add(TTWriteOnlySemikeyword);
 
   TSUnaryOperator := TTokenSet.Create('unary operator');
   TSUnaryOperator.Add(TTAtSign);

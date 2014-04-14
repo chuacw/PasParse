@@ -1,5 +1,6 @@
 unit UToken;
-
+{$RTTI EXPLICIT METHODS([]) PROPERTIES([]) FIELDS([])}
+{$WEAKLINKRTTI ON}
 interface
 
 uses
@@ -55,7 +56,7 @@ type
 implementation
 
 uses
-  TypInfo;
+  System.TypInfo;
 
 { TToken }
 

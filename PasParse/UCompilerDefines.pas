@@ -1,5 +1,6 @@
 unit UCompilerDefines;
-
+{$RTTI EXPLICIT METHODS([]) PROPERTIES([]) FIELDS([])}
+{$WEAKLINKRTTI ON}
 interface
 
 uses
@@ -28,7 +29,7 @@ type
 implementation
 
 uses
-  SysUtils, UPreprocessorException;
+  System.SysUtils, UPreprocessorException;
 
 { TCompilerDefines }
 

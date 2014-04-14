@@ -1,11 +1,13 @@
 unit URuleType;
-
+{$RTTI EXPLICIT METHODS([]) PROPERTIES([]) FIELDS([])}
+{$WEAKLINKRTTI ON}
 interface
 
 type
   /// Enum of all available rule types
   TRuleType = (
     RTAddOp,
+    RTAnonymousMethodType,
     RTArrayType,
     RTAssemblerStatement,
     RTAssemblyAttribute,

@@ -467,8 +467,8 @@ end;
 
 procedure TSpinLock.InitNoSleepCount(const NoSleepCount: Cardinal);
 var
-  LPAM: Cardinal;
-  LSAM: Cardinal;
+  LPAM: NativeUInt;
+  LSAM: NativeUInt;
   LCPUCount: Cardinal;
   I: Integer;
 begin
@@ -570,8 +570,8 @@ end;
 
 procedure TSharedSpinLock.InitNoSleepCount(const NoSleepCount: Cardinal);
 var
-  LPAM: Cardinal;
-  LSAM: Cardinal;
+  LPAM: NativeUInt;
+  LSAM: NativeUInt;
   LCPUCount: Cardinal;
   I: Integer;
 begin

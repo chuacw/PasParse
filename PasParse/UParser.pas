@@ -1,5 +1,6 @@
 unit UParser;
-
+{$RTTI EXPLICIT METHODS([]) PROPERTIES([]) FIELDS([])}
+{$WEAKLINKRTTI ON}
 interface
 
 uses
@@ -107,6 +108,7 @@ begin
   FNextFrame := AFrame;
   SetLength(FRules, Integer(High(TRuleType)) + 1);
 
+  AddRule(RTAnonymousMethodType, TAnonymousTypeRule);
   AddRule(RTArrayType, TArrayTypeRule);
   AddRule(RTAssemblerStatement, TAssemblerStatementRule);
   AddRule(RTAssemblyAttribute, TAssemblyAttributeRule);

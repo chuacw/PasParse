@@ -3,9 +3,7 @@ program PasParseTest;
 {$APPTYPE CONSOLE}
 
 uses
-  FastMM4 in '..\FastMM\FastMM4.pas',
-  FastMM4Messages in '..\FastMM\FastMM4Messages.pas',
-  SysUtils,
+  System.SysUtils,
   UTestLexScanner in 'UTestLexScanner.pas',
   UTestCompilerDefines in 'UTestCompilerDefines.pas',
   UTestASTNode in 'UTestASTNode.pas',
@@ -120,6 +118,7 @@ uses
   UTestTypeParams in 'UTestTypeParams.pas';
 
 begin
+  ReportMemoryLeaksOnShutdown := True;
   try
     TTestASTNode.Test;
     TTestLexScanner.Test;
