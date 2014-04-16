@@ -1,4 +1,4 @@
-import yaml
+import yaml, os, stat
 
 def replace_types(type):
   type = type.replace("DelimitedItemNode<AstNode>", "DelimitedItemNode")
@@ -245,10 +245,20 @@ file = open("CodeGen.yaml");
 yaml_content = yaml.load(file)
 file.close()
 
-file = open("PasParse/UGeneratedNodes.pas", "w")
+myFile = r'PasParse/UGeneratedNodes.pas'
+if os.path.exists(myFile):
+  os.chmod(myFile, stat.S_IWRITE)
+#file = open("PasParse/UGeneratedNodes.pas", "w")
+file = open(myFile, "w")
 file.write(generate_nodes(yaml_content))
 file.close()
+os.chmod(myFile, stat.S_IREAD)
 
-file = open("PasParse/UVisitor.pas", "w")
+myFile = r'PasParse/UVisitor.pas'
+if os.path.exists(myFile):
+  os.chmod(myFile, stat.S_IWRITE)
+#file = open("PasParse/UVisitor.pas", "w")
+file = open(myFile, "w")
 file.write(generate_visitor(yaml_content))
 file.close()
+os.chmod(myFile, stat.S_IREAD)
