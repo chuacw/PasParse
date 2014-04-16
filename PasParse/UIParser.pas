@@ -35,7 +35,7 @@ type
 
     property NextFrame: IFrame read GetNextFrame write SetNextFrame;
 
-    function Failure(AExpected: string): EParseException; virtual; abstract;
+    function Failure(const AExpected: string): EParseException; virtual; abstract;
   end;
 
 implementation

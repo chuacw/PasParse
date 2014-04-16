@@ -18,7 +18,7 @@ type
 
   public
     /// <Description>Default constructor.</Description>
-    constructor Create(AFileName, AFileSource: string; AOffset: Integer);
+    constructor Create(const AFileName, AFileSource: string; AOffset: Integer);
 
     /// <Description>The name of the file where the Location can be found.</Description>
     property FileName: string read FFileName;
@@ -47,7 +47,7 @@ begin
   Result := TLocation.Create(FFileName, FFileSource, FOffset);
 end;
 
-constructor TLocation.Create(AFileName, AFileSource: string; AOffset: Integer);
+constructor TLocation.Create(const AFileName, AFileSource: string; AOffset: Integer);
 begin
   // Assign private fields
   FFileName := AFileName;

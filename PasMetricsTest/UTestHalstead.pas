@@ -8,7 +8,7 @@ uses
 type
   TTestHalstead = class(TTest)
   private
-    class function TestFile(AFileName: string): THalstead;
+    class function TestFile(const AFileName: string): THalstead;
 
   public
     class procedure TestAll; override;
@@ -39,7 +39,7 @@ begin
   AHalstead.Free;
 end;
 
-class function TTestHalstead.TestFile(AFileName: string): THalstead;
+class function TTestHalstead.TestFile(const AFileName: string): THalstead;
 var
   AFileLoader: TFileLoader;
   AContent: string;

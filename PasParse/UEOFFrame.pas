@@ -80,7 +80,7 @@ end;
 
 function TEOFFrame.ParseToken(ATokenSet: ITokenSet): TToken;
 begin
-  raise EParseException.Create('Expected ' + ATokenSet.Name +
+  raise EParseException.Create('Expected ' + ATokenSet.ToString +
     ' but found end of file', Location.Clone);
   Result := nil;
 end;

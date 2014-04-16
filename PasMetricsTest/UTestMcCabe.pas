@@ -8,7 +8,7 @@ uses
 type
   TTestMcCabe = class(TTest)
   private
-    class function TestFile(AFileName: string; AExpected: Integer): Boolean;
+    class function TestFile(const AFileName: string; AExpected: Integer): Boolean;
 
   public
     class procedure TestAll; override;
@@ -33,7 +33,7 @@ begin
   ok(TestFile('data/UParser.pas.txt', 43));
 end;
 
-class function TTestMcCabe.TestFile(AFileName: string;
+class function TTestMcCabe.TestFile(const AFileName: string;
   AExpected: Integer): Boolean;
 var
   AFileLoader: TFileLoader;

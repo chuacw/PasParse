@@ -10,7 +10,7 @@ type
   private
     /// Creates a testing token.
     ///  Callers are responsible for destroying the resulting TToken instance!
-    class function MakeToken(ATokenType: TTokenType; AText: string): TToken;
+    class function MakeToken(ATokenType: TTokenType; const AText: string): TToken;
     /// Tests if TToken.Inspect() works as expected
     class function TestInspectToken: Boolean;
     /// Tests if TBinaryOperationNode.Inspect() works as expected
@@ -36,7 +36,7 @@ begin
 end;
 
 class function TTestASTNode.MakeToken(ATokenType: TTokenType;
-  AText: string): TToken;
+  const AText: string): TToken;
 begin
   Result := TToken.Create(ATokenType, TLocation.Create('', '', 0), AText, '');
 end;

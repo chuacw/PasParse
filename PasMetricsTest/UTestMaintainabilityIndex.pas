@@ -8,7 +8,7 @@ uses
 type
   TTestMaintainabilityIndex = class(TTest)
   private
-    class function TestFile(AFileName: string): TMaintainabilityIndex;
+    class function TestFile(const AFileName: string): TMaintainabilityIndex;
 
   public
     class procedure TestAll; override;
@@ -40,7 +40,7 @@ begin
   AMaintainabilityIndex.Free;
 end;
 
-class function TTestMaintainabilityIndex.TestFile(AFileName: string): TMaintainabilityIndex;
+class function TTestMaintainabilityIndex.TestFile(const AFileName: string): TMaintainabilityIndex;
 var
   AFileLoader: TFileLoader;
   AContent: string;

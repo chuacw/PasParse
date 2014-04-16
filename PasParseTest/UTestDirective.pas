@@ -8,7 +8,7 @@ uses
 type
   TTestDirective = class(TTest)
   private
-    class function SimpleDirective(AKeyword: string): string;
+    class function SimpleDirective(const AKeyword: string): string;
     
   public
     class procedure TestAll; override;
@@ -27,7 +27,7 @@ begin
   Result := 'Directive';
 end;
 
-class function TTestDirective.SimpleDirective(AKeyword: string): string;
+class function TTestDirective.SimpleDirective(const AKeyword: string): string;
 begin
   Result := 'DirectiveNode' + #13#10 +
     '  SemicolonNode: (none)' + #13#10 +

@@ -22,7 +22,7 @@ type
 
     procedure Reset;
     procedure Visit(ANode: TASTNode); override;
-    procedure Count(AString: string);
+    procedure Count(const AString: string);
 
     property LOCPhysical: Integer read FPhysical;
     property LOCProgram: Integer read FProgram;
@@ -37,7 +37,7 @@ uses
 
 { TLOCCounter }
 
-procedure TLOCCounter.Count(AString: string);
+procedure TLOCCounter.Count(const AString: string);
 var
   ALine: string;
   AInSingleLineComment, AInParenStarComment, AInCurlyBracesComment: Boolean;

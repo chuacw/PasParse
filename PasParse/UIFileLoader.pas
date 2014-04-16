@@ -6,10 +6,10 @@ interface
 type
   IFileLoader = class
   public
-    function ExpandFileName(ACurrentDirectory, AFileName: string): string; virtual; abstract;
-    function Load(AFileName: string): string; virtual; abstract;
+    function ExpandFileName(const ACurrentDirectory, AFileName: string): string; virtual; abstract;
+    function Load(const AFileName: string): string; virtual; abstract;
     function LoadFromParentDirs(AFilePath: string): string;
-    function Exists(AFileName: string): Boolean; virtual; abstract;
+    function Exists(const AFileName: string): Boolean; virtual; abstract;
   end;
 
 implementation

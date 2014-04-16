@@ -17,13 +17,13 @@ type
 
     function Clone: TCompilerDefines;
 
-    procedure DefineDirective(ACompilerDirective: string; AIsTrue: Boolean);
-    procedure DefineDirectiveAsFalse(ACompilerDirective: string);
-    procedure DefineDirectiveAsTrue(ACompilerDirective: string);
-    procedure DefineSymbol(ASymbol: string);
-    procedure UndefineSymbol(ASymbol: string);
+    procedure DefineDirective(const ACompilerDirective: string; AIsTrue: Boolean);
+    procedure DefineDirectiveAsFalse(const ACompilerDirective: string);
+    procedure DefineDirectiveAsTrue(const ACompilerDirective: string);
+    procedure DefineSymbol(const ASymbol: string);
+    procedure UndefineSymbol(const ASymbol: string);
 
-    function IsTrue(ACompilerDirective: string; ALocation: TLocation): Boolean;
+    function IsTrue(const ACompilerDirective: string; ALocation: TLocation): Boolean;
   end;
 
 implementation
@@ -106,23 +106,23 @@ begin
   end;
 end;
 
-procedure TCompilerDefines.DefineDirective(ACompilerDirective: string;
+procedure TCompilerDefines.DefineDirective(const ACompilerDirective: string;
   AIsTrue: Boolean);
 begin
   FDictionary.AddOrSetValue(AnsiLowerCase(ACompilerDirective), AIsTrue);
 end;
 
-procedure TCompilerDefines.DefineDirectiveAsFalse(ACompilerDirective: string);
+procedure TCompilerDefines.DefineDirectiveAsFalse(const ACompilerDirective: string);
 begin
   DefineDirective(ACompilerDirective, False);
 end;
 
-procedure TCompilerDefines.DefineDirectiveAsTrue(ACompilerDirective: string);
+procedure TCompilerDefines.DefineDirectiveAsTrue(const ACompilerDirective: string);
 begin
   DefineDirective(ACompilerDirective, True);
 end;
 
-procedure TCompilerDefines.DefineSymbol(ASymbol: string);
+procedure TCompilerDefines.DefineSymbol(const ASymbol: string);
 begin
   if ASymbol <> '' then
   begin
@@ -139,7 +139,7 @@ begin
   inherited;
 end;
 
-function TCompilerDefines.IsTrue(ACompilerDirective: string;
+function TCompilerDefines.IsTrue(const ACompilerDirective: string;
   ALocation: TLocation): Boolean;
 var
   AValue: Boolean;
@@ -156,7 +156,7 @@ begin
       ALocation.Clone);
 end;
 
-procedure TCompilerDefines.UndefineSymbol(ASymbol: string);
+procedure TCompilerDefines.UndefineSymbol(const ASymbol: string);
 begin
   if ASymbol <> '' then
   begin

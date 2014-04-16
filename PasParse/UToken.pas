@@ -27,7 +27,7 @@ type
   public
     /// Standard constructor
     constructor Create(ATokenType: TTokenType; ALocation: TLocation;
-                       AText, AParsedText: string);
+                       const AText, AParsedText: string);
     destructor Destroy; override;
 
     function InspectTo(AIndentCount: Integer): string; override;
@@ -65,7 +65,7 @@ begin
   Result := WithTokenType(TokenType);
 end;
 
-constructor TToken.Create(ATokenType: TTokenType; ALocation: TLocation; AText,
+constructor TToken.Create(ATokenType: TTokenType; ALocation: TLocation; const AText,
   AParsedText: string);
 begin
   inherited Create;

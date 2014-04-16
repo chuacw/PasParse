@@ -11,18 +11,18 @@ type
   private
     FFileNames: TStringList;
     FFileContents: TStringList;
-    function GetFile(AFileName: string): string;
-    procedure SetFile(AFileName: string; const Value: string);
+    function GetFile(const AFileName: string): string;
+    procedure SetFile(const AFileName: string; const Value: string);
 
   public
     constructor Create;
     destructor Destroy; override;
 
-    function ExpandFileName(ACurrentDirectory, AFileName: string): string; override;
-    function Load(AFileName: string): string; override;
-    function Exists(AFileName: string): Boolean; override;
+    function ExpandFileName(const ACurrentDirectory, AFileName: string): string; override;
+    function Load(const AFileName: string): string; override;
+    function Exists(const AFileName: string): Boolean; override;
 
-    property Files[AFileName: string]: string read GetFile write SetFile; default;
+    property Files[const AFileName: string]: string read GetFile write SetFile; default;
   end;
 
 implementation
@@ -46,7 +46,7 @@ begin
   inherited;
 end;
 
-function TMemoryFileLoader.Exists(AFileName: string): Boolean;
+function TMemoryFileLoader.Exists(const AFileName: string): Boolean;
 var
   AIndex: Integer;
 begin
@@ -54,13 +54,12 @@ begin
   Result := (AIndex >= 0) and (AIndex < FFileContents.Count);
 end;
 
-function TMemoryFileLoader.ExpandFileName(ACurrentDirectory,
-  AFileName: string): string;
+function TMemoryFileLoader.ExpandFileName(const ACurrentDirectory, AFileName: string): string;
 begin
   Result := AFileName;
 end;
 
-function TMemoryFileLoader.GetFile(AFileName: string): string;
+function TMemoryFileLoader.GetFile(const AFileName: string): string;
 var
   AIndex: Integer;
 begin
@@ -71,12 +70,12 @@ begin
     raise EInOutError.Create('File not found: ' + AFileName);
 end;
 
-function TMemoryFileLoader.Load(AFileName: string): string;
+function TMemoryFileLoader.Load(const AFileName: string): string;
 begin
   Result := Files[AFileName];
 end;
 
-procedure TMemoryFileLoader.SetFile(AFileName: string; const Value: string);
+procedure TMemoryFileLoader.SetFile(const AFileName: string; const Value: string);
 var
   AIndex: Integer;
 begin

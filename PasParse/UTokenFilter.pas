@@ -38,13 +38,14 @@ type
     function Filter(AIfDefStack: TIfDefStack; ATokens: TObjectList<TToken>): TObjectList<TToken>;
     function GetTokens: TObjectList<TToken>;
 
-    function FirstWordOf(AString: string): string;
+    function FirstWordOf(const AString: string): string;
     function GetDirectiveType(AFirstWord: string): TDirectiveType;
     procedure HandleCompilerDirective(AIfDefStack: TIfDefStack; AToken: TToken; ATokens: TObjectList<TToken>);
-    procedure HandleIf(AIfDefStack: TIfDefStack; ADirective: string; ALocation: TLocation);
-    procedure HandleElseIf(AIfDefStack: TIfDefStack; ADirective: string; ALocation: TLocation);
+    procedure HandleIf(AIfDefStack: TIfDefStack; const ADirective: string; ALocation: TLocation);
+    procedure HandleElseIf(AIfDefStack: TIfDefStack; const ADirective: string; ALocation: TLocation);
     procedure HandleElse(AIfDefStack: TIfDefStack);
-    procedure HandleInclude(AIfDefStack: TIfDefStack; ATokens: TObjectList<TToken>; ADirectory, AFileName: string);
+    procedure HandleInclude(AIfDefStack: TIfDefStack;
+      ATokens: TObjectList<TToken>; const ADirectory: string; AFileName: string);
 
   public
     constructor Create(ATokens: TObjectList<TToken>; ACompilerDefines: TCompilerDefines;
@@ -203,7 +204,7 @@ begin
   end;
 end;
 
-function TTokenFilter.FirstWordOf(AString: string): string;
+function TTokenFilter.FirstWordOf(const AString: string): string;
 var
   AChar: Char;
 begin
@@ -300,7 +301,7 @@ begin
     AIfDefStack.Push(IDTForeverFalse);
 end;
 
-procedure TTokenFilter.HandleElseIf(AIfDefStack: TIfDefStack; ADirective: string;
+procedure TTokenFilter.HandleElseIf(AIfDefStack: TIfDefStack; const ADirective: string;
   ALocation: TLocation);
 var
   ATruth: TIfDefTruth;
@@ -319,7 +320,7 @@ begin
   end;
 end;
 
-procedure TTokenFilter.HandleIf(AIfDefStack: TIfDefStack; ADirective: string;
+procedure TTokenFilter.HandleIf(AIfDefStack: TIfDefStack; const ADirective: string;
   ALocation: TLocation);
 begin
   if AIfDefStack.Peek() = IDTTrue then
@@ -334,7 +335,7 @@ begin
 end;
 
 procedure TTokenFilter.HandleInclude(AIfDefStack: TIfDefStack; ATokens: TObjectList<TToken>;
-  ADirectory, AFileName: string);
+  const ADirectory: string; AFileName: string);
 var
   ASource: string;
   ALexer: TLexScanner;

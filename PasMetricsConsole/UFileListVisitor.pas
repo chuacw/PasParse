@@ -3,7 +3,7 @@ unit UFileListVisitor;
 interface
 
 uses
-  Classes, UFileVisitor;
+  System.Classes, UFileVisitor;
 
 type
   TFileListVisitor = class(TFileVisitor)
@@ -11,7 +11,7 @@ type
     FFileList: TStringList;
 
   protected
-    procedure Visit(AFilePath: string); override;
+    procedure Visit(const AFilePath: string); override;
 
   public
     property Files: TStringList read FFileList;
@@ -37,7 +37,7 @@ begin
   inherited;
 end;
 
-procedure TFileListVisitor.Visit(AFilePath: string);
+procedure TFileListVisitor.Visit(const AFilePath: string);
 begin
   FFileList.Add(AFilePath);
 end;

@@ -3,8 +3,8 @@ program PasMetricsConsole;
 {$APPTYPE CONSOLE}
 
 uses
-  SysUtils,
-  Classes,
+  System.SysUtils,
+  System.Classes,
   Forms,
   UFileLoader,
   UCompilerDefines,
@@ -14,8 +14,8 @@ uses
   URuleType,
   ULexException,
   UParseException,
-  Generics.Collections,
-  Generics.Defaults,
+  System.Generics.Collections,
+  System.Generics.Defaults,
   UFileVisitor in 'UFileVisitor.pas',
   UFileListVisitor in 'UFileListVisitor.pas',
   OtlParallel in '..\OmniThreadLibrary\OtlParallel.pas',
@@ -178,19 +178,19 @@ begin
   end;
 end;
 
-procedure OutputResult(AFilePath, ABaseDir: string; AMI: TMaintainabilityIndex);
+procedure OutputResult(const AFilePath, ABaseDir: string; AMI: TMaintainabilityIndex);
 begin
   WriteLn(FFile, Format(GetResultFormat(AMI.Value),
     [ExtractRelativePath(ABaseDir, AFilePath), AMI.Value, AMI.McCabe.Count, AMI.LOCCounter.LOCProgram]));
 end;
 
-procedure OutputWarning(AFilePath, ABaseDir, AWarning: string);
+procedure OutputWarning(const AFilePath, ABaseDir, AWarning: string);
 begin
   WriteLn(FFile, Format(GetWarningFormat,
     [ExtractRelativePath(ABaseDir, AFilePath), AWarning]));
 end;
 
-function CalculateMI(AFilePath: string): TMaintainabilityIndex;
+function CalculateMI(const AFilePath: string): TMaintainabilityIndex;
 var
   AFileLoader: TFileLoader;
   AContent: string;
@@ -228,7 +228,7 @@ begin
   end;
 end;
 
-function AnalyzeFile(AFilePath: string): TResult;
+function AnalyzeFile(const AFilePath: string): TResult;
 begin
   Result := TResult.Create;
   Result.FPath := AFilePath;

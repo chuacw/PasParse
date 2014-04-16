@@ -56,14 +56,14 @@ type
     function Peek(AOffset: Integer): TTokenType; override;
     procedure MoveNext; override;
 
-    function Failure(AExpected: string): EParseException; override;
+    function Failure(const AExpected: string): EParseException; override;
   end;
 
 implementation
 
 uses
   ULexScanner, UEOFFrame, ULocation, UFrame, USingleTokenTokenSet, UTokenRule,
-  UTokenSets, URules, UDelimitedItemNode, UTokenFilter;
+  UTokenSets, URules, UDelimitedItemNode, UTokenFilter, System.SysUtils;
 
 { TParser }
 
@@ -276,7 +276,7 @@ begin
   inherited;
 end;
 
-function TParser.Failure(AExpected: string): EParseException;
+function TParser.Failure(const AExpected: string): EParseException;
 begin
   Result := EParseException.Create('Expected ' + AExpected + ' but was ' +
     FNextFrame.DisplayName, FNextFrame.Location.Clone);
@@ -366,15 +366,21 @@ var
   AItem: TASTNode;
 begin
   AItems := TObjectList<TASTNode>.Create(False);
-
-  while CanParseRule(ARuleType) do
-  begin
-    AItem := ParseRuleInternal(ARuleType);
-    AItems.Add(AItem);
+  try
+    try
+      while CanParseRule(ARuleType) do
+        begin
+          AItem := ParseRuleInternal(ARuleType);
+          AItems.Add(AItem);
+        end;
+      Result := TListNode.Create(AItems);
+    except
+      AItems.OwnsObjects := True;
+      raise;
+    end;
+  finally
+    AItems.Free;
   end;
-
-  Result := TListNode.Create(AItems);
-  AItems.Free;
 end;
 
 function TParser.ParseOptionalStatementList: TListNode;
@@ -391,22 +397,23 @@ var
   AItem: TASTNode;
 begin
   AItems := TObjectList<TASTNode>.Create(False);
-
   try
-    repeat
-      AItem := ParseRuleInternal(ARuleType);
-      AItems.Add(AItem);
-    until (not CanParseRule(ARuleType));
-  except
-    // Free all objects that are listed already
-    AItems.OwnsObjects := true;
+    try
+      repeat
+        AItem := ParseRuleInternal(ARuleType);
+        AItems.Add(AItem);
+      until (not CanParseRule(ARuleType));
+      Result := TListNode.Create(AItems);
+    except
+      // Free all objects that are listed already
+      AItems.OwnsObjects := true;
+//      AItems.Free;
+      // And raise exception again
+      raise;
+    end;
+  finally
     AItems.Free;
-    // And raise exception again
-    raise;
   end;
-
-  Result := TListNode.Create(AItems);
-  AItems.Free;
 end;
 
 function TParser.ParseRule(ARuleType: TRuleType): TASTNode;

@@ -828,8 +828,8 @@ type
 implementation
 
 uses
-  Windows,
-  Classes,
+  Winapi.Windows,
+  System.Classes,
   DSiWin32,
   GpStuff,
   OtlComm;

@@ -19,6 +19,7 @@ type
 
     /// Checks whether the set contains the given token type
     function Contains(ATokenType: TTokenType): Boolean; override;
+    function ToString: string; override;
   end;
 
 implementation
@@ -45,6 +46,11 @@ var
 begin
   AType := GetEnumName(TypeInfo(TTokenType), Integer(FTokenType));
   Result := Copy(AType, 3, Length(AType) - 2);
+end;
+
+function TSingleTokenTokenSet.ToString: string;
+begin
+  Result := FTokenType.ToString;
 end;
 
 end.

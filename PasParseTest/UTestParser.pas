@@ -8,7 +8,7 @@ uses
 type
   TTestParser = class
   public
-    class function ParsesAs(ASource, AGoal: string; ARuleType: TRuleType): Boolean;
+    class function ParsesAs(const ASource, AGoal: string; ARuleType: TRuleType): Boolean;
   end;
 
 implementation
@@ -18,7 +18,7 @@ uses
 
 { TTestParser }
 
-class function TTestParser.ParsesAs(ASource, AGoal: string;
+class function TTestParser.ParsesAs(const ASource, AGoal: string;
   ARuleType: TRuleType): Boolean;
 var
   ACompilerDefines: TCompilerDefines;

@@ -9,7 +9,7 @@ type
   TTestCompilerDefines = class(TTest)
   private
     class function DefineIsTrue(ACompilerDefines: TCompilerDefines;
-      ACompilerDirective: string): Boolean;
+      const ACompilerDirective: string): Boolean;
 
   public
     class procedure TestAll; override;
@@ -24,7 +24,7 @@ uses
 { TTestCompilerDefines }
 
 class function TTestCompilerDefines.DefineIsTrue(
-  ACompilerDefines: TCompilerDefines; ACompilerDirective: string): Boolean;
+  ACompilerDefines: TCompilerDefines; const ACompilerDirective: string): Boolean;
 var
   ALocation: TLocation;
 begin

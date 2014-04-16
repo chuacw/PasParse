@@ -8,7 +8,7 @@ uses
 type
   TTestLexScanner = class(TTest)
   private
-    class function LexesAs(ASource: string; AExpectedTokens: array of string): Boolean;
+    class function LexesAs(const ASource: string; const AExpectedTokens: array of string): Boolean;
 
   protected
     class procedure TestAll; override;
@@ -27,8 +27,8 @@ begin
   Result := 'LexScanner';
 end;
 
-class function TTestLexScanner.LexesAs(ASource: string;
-  AExpectedTokens: array of string): Boolean;
+class function TTestLexScanner.LexesAs(const ASource: string;
+  const AExpectedTokens: array of string): Boolean;
 var
   ALexScanner: TLexScanner;
   ATokens: TObjectList<TToken>;

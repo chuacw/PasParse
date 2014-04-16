@@ -55,11 +55,12 @@ begin
 end;
 
 function TFrame.GetDisplayName: string;
-var
-  AType: string;
+//var
+//  AType: string;
 begin
-  AType := GetEnumName(TypeInfo(TTokenType), Integer(FToken.TokenType));
-  Result := Copy(AType, 3, Length(AType) - 2);
+//  AType := GetEnumName(TypeInfo(TTokenType), Integer(FToken.TokenType));
+//  Result := Copy(AType, 3, Length(AType) - 2);
+  Result := FToken.TokenType.ToString;
 end;
 
 function TFrame.GetIsEOF: Boolean;
@@ -90,7 +91,7 @@ begin
   if CanParseToken(ATokenSet) then
     Result := FToken.Clone as TToken
   else
-    raise EParseException.Create('Expected ' + ATokenSet.Name + ' but found ' +
+    raise EParseException.Create('Expected ' + ATokenSet.ToString + ' but found ' +
       DisplayName, Location.Clone);
 end;
 

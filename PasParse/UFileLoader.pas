@@ -9,9 +9,9 @@ uses
 type
   TFileLoader = class(IFileLoader)
   public
-    function ExpandFileName(ACurrentDirectory, AFileName: string): string; override;
-    function Load(AFileName: string): string; override;
-    function Exists(AFileName: string): Boolean; override;
+    function ExpandFileName(const ACurrentDirectory, AFileName: string): string; override;
+    function Load(const AFileName: string): string; override;
+    function Exists(const AFileName: string): Boolean; override;
   end;
 
 implementation
@@ -21,18 +21,18 @@ uses
 
 { TFileLoader }
 
-function TFileLoader.Exists(AFileName: string): Boolean;
+function TFileLoader.Exists(const AFileName: string): Boolean;
 begin
   Result := FileExists(AFileName);
 end;
 
-function TFileLoader.ExpandFileName(ACurrentDirectory,
+function TFileLoader.ExpandFileName(const ACurrentDirectory,
   AFileName: string): string;
 begin
   Result := ACurrentDirectory + '\' + AFileName;
 end;
 
-function TFileLoader.Load(AFileName: string): string;
+function TFileLoader.Load(const AFileName: string): string;
 var
   AReader: TStreamReader;
 begin

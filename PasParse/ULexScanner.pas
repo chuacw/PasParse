@@ -24,7 +24,7 @@ type
     constructor Create(ATokenType: TTokenType; ALength: Integer); overload;
     /// <Description>Additional constructor with parsed text.</Description>
     constructor Create(ATokenType: TTokenType; ALength: Integer;
-      AParsedText: string); overload;
+      const AParsedText: string); overload;
 
     /// <Description>Length of the token.</Description>
     property Length: Integer read FLength;
@@ -117,7 +117,7 @@ type
 
   public
     /// <Description>Default constructor.</Description>
-    constructor Create(ASource, AFileName: string);
+    constructor Create(const ASource, AFileName: string);
     /// <Description>Default destructor.</Description>
     destructor Destroy; override;
 
@@ -266,7 +266,7 @@ begin
   end;
 end;
 
-constructor TLexScanner.Create(ASource, AFileName: string);
+constructor TLexScanner.Create(const ASource, AFileName: string);
 begin
   // Save source string and filename
   FSource := ASource;
@@ -688,7 +688,7 @@ begin
 end;
 
 constructor TMatch.Create(ATokenType: TTokenType; ALength: Integer;
-  AParsedText: string);
+  const AParsedText: string);
 begin
   FTokenType := ATokenType;
   FLength := ALength;

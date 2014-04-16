@@ -18,7 +18,7 @@ type
 
   public
     /// Standard constructor. Creates an empty set.
-    constructor Create(AName: string);
+    constructor Create(const AName: string);
 
     /// Add one token type to the set
     procedure Add(ATokenType: TTokenType);
@@ -26,10 +26,11 @@ type
     procedure AddRange(ATokenSet: TTokenSet);
     /// Checks whether the set contains the given token type
     function Contains(ATokenType: TTokenType): Boolean; override;
-
+    function ToString: string; override;
   end;
 
 implementation
+uses System.SysUtils;
 
 { TTokenSet }
 
@@ -58,7 +59,7 @@ begin
   Result := (ATokenType in FTokenSet);
 end;
 
-constructor TTokenSet.Create(AName: string);
+constructor TTokenSet.Create(const AName: string);
 begin
   FName := AName;
   FTokenSet := [];
@@ -67,6 +68,29 @@ end;
 function TTokenSet.GetName: string;
 begin
   Result := FName;
+end;
+
+function TTokenSet.ToString: string;
+var
+  SB: TStringBuilder;
+  LToken: TTokenType;
+  LTokenCount: Integer;
+begin
+  SB := TStringBuilder.Create('one of "');
+  LTokenCount := 0;
+  try
+    for LToken in FTokenSet do
+      begin
+        if LTokenCount>0 then
+          SB.Append(',');
+        SB.AppendFormat('''%s''', [LToken.ToString]);
+        Inc(LTokenCount);
+      end;
+    SB.Append('"');
+    Result := SB.ToString;
+  finally
+    SB.Free;
+  end;
 end;
 
 end.

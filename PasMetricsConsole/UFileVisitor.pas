@@ -8,7 +8,7 @@ type
     procedure Visit(AFilePath: string); virtual; abstract;
 
   public
-    procedure VisitFiles(ADirectory: string; ARecursive: Boolean = False);
+    procedure VisitFiles(const ADirectory: string; ARecursive: Boolean = False);
     procedure VisitFilesFiltered(ADirectory, AFilter: string;
                                  ARecursive: Boolean = False);
   end;
@@ -20,7 +20,7 @@ uses
 
 { TFileVisitor }
 
-procedure TFileVisitor.VisitFiles(ADirectory: string; ARecursive: Boolean);
+procedure TFileVisitor.VisitFiles(const ADirectory: string; ARecursive: Boolean);
 begin
   VisitFilesFiltered(ADirectory, '*', ARecursive);
 end;

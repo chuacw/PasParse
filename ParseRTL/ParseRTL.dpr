@@ -1,11 +1,10 @@
 program ParseRTL;
 
 {$APPTYPE CONSOLE}
-
 {$R *.res}
 
 uses
-  System.SysUtils,
+  Winapi.Windows, System.SysUtils,
   System.IOUtils,
   System.Types,
   UVisitor in '..\PasParse\UVisitor.pas',
@@ -55,7 +54,7 @@ var
   ACompilerDefines: TCompilerDefines;
   AParser: UParser.TParser;
   ANode: TASTNode;
-  I, AOffset: Integer;
+  I, AOffset, ErrorStartOffset, ErrorEndOffset, HighlightIndex: Integer;
   AFileSource, ErrorSource: string;
 begin
   GFileName := AFileName;
@@ -71,21 +70,30 @@ begin
       // Create the parser
       AParser := UParser.TParser.CreateFromText(AContent, AFileName, ACompilerDefines, AFileLoader);
       try
-        ANode := nil;
         try
           // Try to parse a unit from the file content
           ANode := AParser.ParseRule(RTGoal);
           ANode.Free;
         except
-          AOffset := AParser.NextFrame.Location.Offset;
-          AFileSource := AParser.NextFrame.Location.FileSource;
-          I := AOffset;
-          while AFileSource[I] <> #13 do Inc(I);
-          ErrorSource := Copy(AFileSource, AOffset, I+1-AOffset);
-          WriteLn('Error at ', AOffset);
-          WriteLn(ErrorSource);
-          GFilenames.Add(AFileName);
-          raise;
+          on E: EParseException do
+            begin
+              AOffset := E.Location.Offset;
+              AFileSource := E.Location.FileSource;
+              I := AOffset;
+              while not CharInSet(AFileSource[I], [#13, #10]) do Dec(I);
+              ErrorStartOffset := I;
+              I := AOffset;
+              while (AFileSource[I] <> #13) do Inc(I);
+              ErrorEndOffset := I-1;
+              I := 1+ErrorEndOffset - ErrorStartOffset;
+              ErrorSource := Copy(AFileSource, ErrorStartOffset+1, I);
+              WriteLn(Format('Error at position %d of %s', [AOffset, E.Location.FileName]));
+              WriteLn(ErrorSource);
+              HighlightIndex := AOffset-1 - ErrorStartOffset;
+              Writeln('':HighlightIndex, '^ Error above');
+              GFilenames.Add(AFileName);
+              raise;
+            end;
         end;
       finally
         AParser.Free;
@@ -125,7 +133,6 @@ begin
     LFiles := TDirectory.GetFiles(LSourceDir+'rtl', '*.pas', TSearchOption.soAllDirectories) else
   begin
     LFiles := TStringDynArray(GFilenames.ToStringArray);
-    Index := 0;
     AssignFile(F, 'c:\temp\parseindex.txt');
     if FileExists('c:\temp\parseindex.txt') then
       begin
@@ -141,7 +148,10 @@ begin
           WriteLn(F, Index);
         except
           on E: Exception do
-            Writeln(Format('Error parsing %s ', [GFileName]), E.Classname, ': ', E.Message);
+            begin
+              Writeln(Format('Error parsing %s ', [GFileName]), E.Classname, ': ', E.Message);
+              ReadLn;
+            end;
         end;
       end else
       begin

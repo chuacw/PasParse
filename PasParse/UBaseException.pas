@@ -15,7 +15,7 @@ type
 
   public
     /// <Description>Default constructor with message and Location.</Description>
-    constructor Create(AMessage: string; ALocation: TLocation);
+    constructor Create(const AMessage: string; ALocation: TLocation);
     /// <Description>Default destructor.</Description>
     destructor Destroy; override;
 
@@ -27,7 +27,7 @@ implementation
 
 { TBaseException }
 
-constructor EBaseException.Create(AMessage: string; ALocation: TLocation);
+constructor EBaseException.Create(const AMessage: string; ALocation: TLocation);
 begin
   // Pass message to inherited constructor
   inherited Create(AMessage);
