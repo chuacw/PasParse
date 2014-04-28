@@ -4,7 +4,7 @@ unit UToken;
 interface
 
 uses
-  UTokenType, ULocation, UASTNode, Generics.Collections;
+  UTokenType, ULocation, UASTNode, System.Generics.Collections;
 
 type
   /// Represents a token including it's text, positions and token type
@@ -80,7 +80,7 @@ begin
 
   // Create a new TLocation instance at the end position of the token
   FEndLocation := TLocation.Create(FLocation.FileName, FLocation.FileSource,
-    FLocation.Offset + Length(FText));
+    FLocation.Offset + Length(FText), FLocation.LineNo);
 end;
 
 destructor TToken.Destroy;

@@ -268,7 +268,7 @@ type
     function CanParse: Boolean; override;
     function Evaluate: TASTNode; override;
   end;
-  
+
   TInitSectionRule = class(TRule)
   public
     function CanParse: Boolean; override;
@@ -431,6 +431,12 @@ type
     function Evaluate: TASTNode; override;
   end;
   
+  TPortabilityDirectiveRule = class(TRule)
+  public
+    function CanParse: Boolean; override;
+    function Evaluate: TASTNode; override;
+  end;
+
   TProcedureTypeRule = class(TRule)
   public
     function CanParse: Boolean; override;
@@ -599,6 +605,12 @@ type
     function Evaluate: TASTNode; override;
   end;
 
+  TTypeRecordDirectivesRule = class(TRule)
+  public
+    function CanParse: Boolean; override;
+    function Evaluate: TASTNode; override;
+  end;
+
   TTypeSectionRule = class(TRule)
   public
     function CanParse: Boolean; override;
@@ -688,7 +700,7 @@ implementation
 
 uses
   UTokenType, UToken, UListNode, UGeneratedNodes, UTokenSets, UParseException,
-  UDelimitedItemNode, UTokenSet, Generics.Collections, UIFrame, System.SysUtils;
+  UDelimitedItemNode, UTokenSet, System.Generics.Collections, UIFrame, System.SysUtils;
 
 
 function TAnonymousTypeRule.CanParse: Boolean;
@@ -1111,10 +1123,11 @@ function TClassTypeRule.Evaluate: TASTNode;
 var
   AClass, ADisposition, AOpen, AClose, AEnd: TToken;
   AInheritanceList, AContents: TListNode;
+  ADirectivesNode: TListNode;
 begin
   AClass := FParser.ParseToken(TTClassKeyword);
   ADisposition := nil; AOpen := nil; AClose := nil; AEnd := nil;
-  AInheritanceList := nil; AContents := nil;
+  AInheritanceList := nil; AContents := nil; ADirectivesNode := nil;
   try
     if FParser.CanParseToken(TTokenSets.TSClassDisposition) then
       ADisposition := FParser.ParseToken(TTokenSets.TSClassDisposition);
@@ -1122,21 +1135,23 @@ begin
     AInheritanceList := FParser.CreateEmptyListNode;
 
     if FParser.CanParseToken(TTOpenParenthesis) then
-    begin
-      AOpen := FParser.ParseToken(TTOpenParenthesis);
-      AInheritanceList.Free;
-      AInheritanceList := FParser.ParseDelimitedList(RTQualifiedIdent, TTComma);
-      AClose := FParser.ParseToken(TTCloseParenthesis);
-    end;
+      begin
+        AOpen := FParser.ParseToken(TTOpenParenthesis);
+        FreeAndNil(AInheritanceList);
+        AInheritanceList := FParser.ParseDelimitedList(RTQualifiedIdent, TTComma);
+        AClose := FParser.ParseToken(TTCloseParenthesis);
+      end;
 
     AContents := FParser.CreateEmptyListNode;
-    AEnd := nil;
     if not FParser.CanParseToken(TTSemicolon) then
-    begin
-      FreeAndNil(AContents);
-      AContents := FParser.ParseOptionalRuleList(RTVisibilitySection);
-      AEnd := FParser.ParseToken(TTEndKeyword);
-    end;
+      begin
+        FreeAndNil(AContents);
+        AContents := FParser.ParseOptionalRuleList(RTVisibilitySection);
+        AEnd := FParser.ParseToken(TTEndKeyword);
+      end;
+
+    if FParser.CanParseRule(RTPortabilityDirective) then
+      ; // TODO -ochuacw: Portability/hint directives
 
     Result := TClassTypeNode.Create(AClass, ADisposition, AOpen, AInheritanceList,
       AClose, AContents, AEnd);
@@ -1190,7 +1205,8 @@ begin
     FreeAndNil(AValue);
     FreeAndNil(AEqual);
     FreeAndNil(AType);
-    FreeAndNil(AEqual);
+    FreeAndNil(AColon);
+    FreeAndNil(AName);
     raise;
   end;
 end;
@@ -1290,11 +1306,11 @@ begin
     begin
       ADirective := FParser.ParseToken(TTExternalSemikeyword);
       if FParser.CanParseRule(RTExpression) then
-      begin
-        AValue := FParser.ParseRuleInternal(RTExpression);
-        AData.Free;
-        AData := FParser.ParseOptionalRuleList(RTExportsSpecifier);
-      end;
+        begin
+          AValue := FParser.ParseRuleInternal(RTExpression);
+          FreeAndNil(AData);
+          AData := FParser.ParseOptionalRuleList(RTExportsSpecifier);
+        end;
     end
     else
       ADirective := FParser.ParseToken(TTokenSets.TSDirective);
@@ -1468,12 +1484,21 @@ var
   ARight: TASTNode;
 begin
   // a < b
-  Result := FParser.ParseRuleInternal(RTSimpleExpression);
-  while FParser.CanParseRule(RTRelOp) do
-  begin
-    AOperator := FParser.ParseRuleInternal(RTRelOp) as TToken;
-    ARight := FParser.ParseRuleInternal(RTSimpleExpression);
-    Result := TBinaryOperationNode.Create(Result, AOperator, ARight);
+  AOperator := nil; ARight := nil; Result := nil;
+  try
+    Result := FParser.ParseRuleInternal(RTSimpleExpression);
+    while FParser.CanParseRule(RTRelOp) do
+    begin
+      AOperator := FParser.ParseRuleInternal(RTRelOp) as TToken;
+      ARight := FParser.ParseRuleInternal(RTSimpleExpression);
+      Result := TBinaryOperationNode.Create(Result, AOperator, ARight);
+      ARight := nil; AOperator := nil;
+    end;
+  except
+    FreeAndNil(Result);
+    FreeAndNil(ARight);
+    FreeAndNil(AOperator);
+    raise;
   end;
 end;
 
@@ -1574,6 +1599,8 @@ var
   AOperator: TToken;
   AOperand: TASTNode;
 begin
+  AOperator := nil; AOperand := nil;
+
   if FParser.CanParseRule(RTUnaryOperator) then
   begin
     AOperator := FParser.ParseRuleInternal(RTUnaryOperator) as TToken;
@@ -1606,16 +1633,23 @@ var
   ABlock: TASTNode;
 begin
   // var AVar: Integer begin ... end
-  ADeclList := FParser.ParseOptionalRuleList(RTImplementationDecl);
-  ABlock := FParser.ParseRuleInternal(RTBlock);
-  Result := TFancyBlockNode.Create(ADeclList, ABlock);
+  ADeclList := nil; ABlock := nil;
+  try
+    ADeclList := FParser.ParseOptionalRuleList(RTImplementationDecl);
+    ABlock := FParser.ParseRuleInternal(RTBlock);
+    Result := TFancyBlockNode.Create(ADeclList, ABlock);
+  except
+    FreeAndNil(ABlock);
+    FreeAndNil(ADeclList);
+    raise;
+  end;
 end;
 
 { TFieldDeclRule }
 
 function TFieldDeclRule.CanParse: Boolean;
 begin
-  Result := FParser.CanParseRule(RTIdentList) and 
+  Result := FParser.CanParseRule(RTIdentList) and
     not FParser.CanParseRule(RTVisibility);
 end;
 
@@ -1625,15 +1659,24 @@ var
   AColon, ASemicolon: TToken;
   AType: TASTNode;
 begin
-  ANames := FParser.ParseRuleInternal(RTIdentList) as TListNode;
-  AColon := FParser.ParseToken(TTColon);
-  AType := FParser.ParseRuleInternal(RTType);
-  ADirectives := FParser.ParseTokenList(TTokenSets.TSPortabilityDirective);
-  ASemicolon := nil;
-  if FParser.CanParseToken(TTSemicolon) then
-    ASemicolon := FParser.ParseToken(TTSemicolon);
-  
-  Result := TFieldDeclNode.Create(ANames, AColon, AType, ADirectives, ASemicolon);
+  ANames := nil; ADirectives := nil; AColon := nil; ASemicolon := nil; AType := nil;
+  try
+    ANames := FParser.ParseRuleInternal(RTIdentList) as TListNode;
+    AColon := FParser.ParseToken(TTColon);
+    AType := FParser.ParseRuleInternal(RTType);
+    ADirectives := FParser.ParseTokenList(TTokenSets.TSPortabilityDirective);
+    if FParser.CanParseToken(TTSemicolon) then
+      ASemicolon := FParser.ParseToken(TTSemicolon);
+
+    Result := TFieldDeclNode.Create(ANames, AColon, AType, ADirectives, ASemicolon);
+  except
+    FreeAndNil(ASemicolon);
+    FreeAndNil(ADirectives);
+    FreeAndNil(AType);
+    FreeAndNil(AColon);
+    FreeAndNil(ANames);
+    raise;
+  end;
 end;
 
 { TFieldSectionRule }
@@ -1651,18 +1694,24 @@ var
   AClass, AVar: TToken;
   AFields: TListNode;
 begin
-  AClass := nil;
-  AVar := nil;
-  if FParser.CanParseToken(TTClassKeyword) then
-  begin
-    AClass := FParser.ParseToken(TTClassKeyword);
-    AVar := FParser.ParseToken(TTVarKeyword);
-  end
-  else if FParser.CanParseToken(TTVarKeyword) then
-    AVar := FParser.ParseToken(TTVarKeyword);
+  AClass := nil; AVar := nil; AFields := nil;
+  try
+    if FParser.CanParseToken(TTClassKeyword) then
+    begin
+      AClass := FParser.ParseToken(TTClassKeyword);
+      AVar := FParser.ParseToken(TTVarKeyword);
+    end
+    else if FParser.CanParseToken(TTVarKeyword) then
+      AVar := FParser.ParseToken(TTVarKeyword);
 
-  AFields := FParser.ParseOptionalRuleList(RTFieldDecl);
-  Result := TFieldSectionNode.Create(AClass, AVar, AFields);
+    AFields := FParser.ParseOptionalRuleList(RTFieldDecl);
+    Result := TFieldSectionNode.Create(AClass, AVar, AFields);
+  except
+    FreeAndNil(AFields);
+    FreeAndNil(AVar);
+    FreeAndNil(AClass);
+    raise;
+  end;
 end;
 
 { TFileTypeRule }
@@ -1825,24 +1874,32 @@ begin
   // if a < b then ... else ...
 
   AIf := FParser.ParseToken(TTIfKeyword);
-  ACondition := FParser.ParseRuleInternal(RTExpression);
-  AThen := FParser.ParseToken(TTThenKeyword);
-  AThenStatement := nil;
-  if FParser.CanParseRule(RTStatement) then
-    AThenStatement := FParser.ParseRuleInternal(RTStatement);
-
-  AElse := nil;
+  AThen := nil; AElse := nil; ACondition := nil; AThenStatement := nil;
   AElseStatement := nil;
-
-  if FParser.CanParseToken(TTElseKeyword) then
-  begin
-    AElse := FParser.ParseToken(TTElseKeyword);
+  try
+    ACondition := FParser.ParseRuleInternal(RTExpression);
+    AThen := FParser.ParseToken(TTThenKeyword);
     if FParser.CanParseRule(RTStatement) then
-      AElseStatement := FParser.ParseRuleInternal(RTStatement);
-  end;
+      AThenStatement := FParser.ParseRuleInternal(RTStatement);
 
-  Result := TIfStatementNode.Create(AIf, ACondition, AThen, AThenStatement,
-    AElse, AElseStatement);
+    if FParser.CanParseToken(TTElseKeyword) then
+    begin
+      AElse := FParser.ParseToken(TTElseKeyword);
+      if FParser.CanParseRule(RTStatement) then
+        AElseStatement := FParser.ParseRuleInternal(RTStatement);
+    end;
+
+    Result := TIfStatementNode.Create(AIf, ACondition, AThen, AThenStatement,
+      AElse, AElseStatement);
+  except
+    FreeAndNil(AElseStatement);
+    FreeAndNil(AElse);
+    FreeAndNil(AThenStatement);
+    FreeAndNil(AThen);
+    FreeAndNil(ACondition);
+    FreeAndNil(AIf);
+    raise;
+  end;
 end;
 
 { TImplementationDeclRule }
@@ -1891,11 +1948,18 @@ var
   AContents: TListNode;
 begin
   AImplementation := FParser.ParseToken(TTImplementationKeyword);
-  AUsesClause := nil;
-  if FParser.CanParseRule(RTUsesClause) then
-    AUsesClause := FParser.ParseRuleInternal(RTUsesClause) as TUsesClauseNode;
-  AContents := FParser.ParseOptionalRuleList(RTImplementationDecl);
-  Result := TUnitSectionNode.Create(AImplementation, AUsesClause, AContents);
+  AUsesClause := nil; AContents := nil;
+  try
+    if FParser.CanParseRule(RTUsesClause) then
+      AUsesClause := FParser.ParseRuleInternal(RTUsesClause) as TUsesClauseNode;
+    AContents := FParser.ParseOptionalRuleList(RTImplementationDecl);
+    Result := TUnitSectionNode.Create(AImplementation, AUsesClause, AContents);
+  except
+    FreeAndNil(AContents);
+    FreeANdNil(AUsesClause);
+    FreeAndNil(AImplementation);
+    raise;
+  end;
 end;
 
 { TInitSectionRule }
@@ -1914,53 +1978,62 @@ var
   AItem: TDelimitedItemNode;
   AItemList: TObjectList<TASTNode>;
 begin
-  AInitHeader := nil;
+  AInitHeader := nil; AFinalHeader := nil; AEnd := nil;
   AInitStatements := FParser.CreateEmptyListNode;
-  AFinalHeader := nil;
   AFinalStatements := FParser.CreateEmptyListNode;
-  AEnd := nil;
-
-  if FParser.CanParseToken(TTBeginKeyword) then
-  begin
-    ABlock := FParser.ParseRuleInternal(RTBlock) as TBlockNode;
-    AInitHeader := ABlock.BeginKeywordNode.Clone as TToken;
-    AInitStatements.Free;
-    AInitStatements := ABlock.StatementListNode.Clone as TListNode;
-    AEnd := ABlock.EndKeywordNode.Clone as TToken;
-    ABlock.Free; 
-  end
-  else if FParser.CanParseToken(TTAsmKeyword) then
-  begin
-    AASM := FParser.ParseRuleInternal(RTAssemblerStatement)
-      as TAssemblerStatementNode;
-    AItem := TDelimitedItemNode.Create(AASM, nil);
-    AItemList := TObjectList<TASTNode>.Create(False);
-    AItemList.Add(AItem);
-    AInitStatements.Free;
-    AInitStatements := TListNode.Create(AItemList);
-    AItemList.Free;
-  end
-  else
-  begin
-    if FParser.CanParseToken(TTInitializationKeyword) then
+  ABlock := nil; AASM := nil; AItem := nil; AItemList := nil;
+  try
+    if FParser.CanParseToken(TTBeginKeyword) then
     begin
-      AInitHeader := FParser.ParseToken(TTInitializationKeyword);
-      AInitStatements.Free;
-      AInitStatements := FParser.ParseOptionalStatementList;
-
-      if FParser.CanParseToken(TTFinalizationKeyword) then
+      ABlock := FParser.ParseRuleInternal(RTBlock) as TBlockNode;
+      AInitHeader := ABlock.BeginKeywordNode.Clone as TToken;
+      FreeAndNil(AInitStatements);
+      AInitStatements := ABlock.StatementListNode.Clone as TListNode;
+      AEnd := ABlock.EndKeywordNode.Clone as TToken;
+      FreeAndNil(ABlock);
+    end
+    else if FParser.CanParseToken(TTAsmKeyword) then
+    begin
+      AASM := FParser.ParseRuleInternal(RTAssemblerStatement)
+        as TAssemblerStatementNode;
+      AItem := TDelimitedItemNode.Create(AASM, nil);
+      AItemList := TObjectList<TASTNode>.Create(False);
+      AItemList.Add(AItem);
+      FreeAndNil(AInitStatements);
+      AInitStatements := TListNode.Create(AItemList);
+      FreeAndNil(AItemList);
+    end
+    else
+    begin
+      if FParser.CanParseToken(TTInitializationKeyword) then
       begin
-        AFinalHeader := FParser.ParseToken(TTFinalizationKeyword);
-        AFinalStatements.Free;
-        AFinalStatements := FParser.ParseOptionalStatementList;
+        AInitHeader := FParser.ParseToken(TTInitializationKeyword);
+        FreeAndNil(AInitStatements);
+        AInitStatements := FParser.ParseOptionalStatementList;
+
+        if FParser.CanParseToken(TTFinalizationKeyword) then
+        begin
+          AFinalHeader := FParser.ParseToken(TTFinalizationKeyword);
+          FreeAndNil(AFinalStatements);
+          AFinalStatements := FParser.ParseOptionalStatementList;
+        end;
       end;
+
+      AEnd := FParser.ParseToken(TTEndKeyword);
     end;
 
-    AEnd := FParser.ParseToken(TTEndKeyword);
+    Result := TInitSectionNode.Create(AInitHeader, AInitStatements, AFinalHeader,
+      AFinalStatements, AEnd);
+  except
+    FreeAndNil(AEnd);
+    FreeANdNil(AFinalStatements);
+    FreeAndNil(AFinalHeader);
+    FreeAndNil(AInitStatements);
+    FreeAndNil(AInitHeader);
+    FreeAndNil(AItemList);
+    FreeAndNil(ABlock);
+    raise;
   end;
-
-  Result := TInitSectionNode.Create(AInitHeader, AInitStatements, AFinalHeader,
-    AFinalStatements, AEnd);
 end;
 
 { TInterfaceDeclRule }
@@ -2134,54 +2207,69 @@ var
   AName, AInterfaceMethod, AReturnType: TASTNode;
   AParameterList, ADirectiveList: TListNode;
 begin
-  AClass := nil;
-  if FParser.CanParseToken(TTClassKeyword) then
-    AClass := FParser.ParseToken(TTClassKeyword);
+  AClass := nil; AMethodType := nil; AEquals := nil; AImplementationMethod := nil;
+  ASemicolon := nil; AOpen := nil; AClose := nil; AColon := nil; AName := nil;
+  AInterfaceMethod := nil; AReturnType := nil; AParameterList := nil;
+  ADirectiveList := nil;
+  try
+    if FParser.CanParseToken(TTClassKeyword) then
+      AClass := FParser.ParseToken(TTClassKeyword);
 
-  AMethodType := FParser.ParseToken(TTokenSets.TSMethodType);
-  AName := FParser.ParseRuleInternal(RTQualifiedIdent);
+    AMethodType := FParser.ParseToken(TTokenSets.TSMethodType);
+    AName := FParser.ParseRuleInternal(RTQualifiedIdent);
 
-  if FParser.CanParseToken(TTEqualSign) then
-  begin
-    AInterfaceMethod := AName;
-    AEquals := FParser.ParseToken(TTEqualSign);
-    AImplementationMethod := FParser.ParseRuleInternal(RTIdent) as TToken;
-    ASemicolon := FParser.ParseToken(TTSemicolon);
-    Result := TMethodResolutionNode.Create(AMethodType, AInterfaceMethod,
-      AEquals, AImplementationMethod, ASemicolon);
-  end
-  else
-  begin
-    AOpen := nil;
-    AParameterList := FParser.CreateEmptyListNode;
-    AClose := nil;
-    if FParser.CanParseToken(TTOpenParenthesis) then
+    if FParser.CanParseToken(TTEqualSign) then
     begin
-      AOpen := FParser.ParseToken(TTOpenParenthesis);
-      if FParser.CanParseRule(RTParameter) then
-      begin
-        AParameterList.Free;
-        AParameterList := FParser.ParseDelimitedList(RTParameter, TTSemicolon);
-      end;
-      AClose := FParser.ParseToken(TTCloseParenthesis);
-    end;
-
-    AColon := nil;
-    AReturnType := nil;
-    if FParser.CanParseToken(TTColon) then
-    begin
-      AColon := FParser.ParseToken(TTColon);
-      AReturnType := FParser.ParseRuleInternal(RTMethodReturnType);
-    end;
-
-    ADirectiveList := FParser.ParseOptionalRuleList(RTDirective);
-
-    ASemicolon := nil;
-    if FParser.CanParseToken(TTSemicolon) then
+      AInterfaceMethod := AName;
+      AEquals := FParser.ParseToken(TTEqualSign);
+      AImplementationMethod := FParser.ParseRuleInternal(RTIdent) as TToken;
       ASemicolon := FParser.ParseToken(TTSemicolon);
+      Result := TMethodResolutionNode.Create(AMethodType, AInterfaceMethod,
+        AEquals, AImplementationMethod, ASemicolon);
+    end
+    else
+    begin
+      AParameterList := FParser.CreateEmptyListNode;
+      if FParser.CanParseToken(TTOpenParenthesis) then
+      begin
+        AOpen := FParser.ParseToken(TTOpenParenthesis);
+        if FParser.CanParseRule(RTParameter) then
+        begin
+          FreeAndNil(AParameterList);
+          AParameterList := FParser.ParseDelimitedList(RTParameter, TTSemicolon);
+        end;
+        AClose := FParser.ParseToken(TTCloseParenthesis);
+      end;
 
-    Result := TMethodHeadingNode.Create(AClass, AMethodType, AName, AOpen,
-      AParameterList, AClose, AColon, AReturnType, ADirectiveList, ASemicolon);
+      if FParser.CanParseToken(TTColon) then
+      begin
+        AColon := FParser.ParseToken(TTColon);
+        AReturnType := FParser.ParseRuleInternal(RTMethodReturnType);
+      end;
+
+      ADirectiveList := FParser.ParseOptionalRuleList(RTDirective);
+
+      if FParser.CanParseToken(TTSemicolon) then
+        ASemicolon := FParser.ParseToken(TTSemicolon);
+
+      Result := TMethodHeadingNode.Create(AClass, AMethodType, AName, AOpen,
+        AParameterList, AClose, AColon, AReturnType, ADirectiveList, ASemicolon);
+    end;
+  except
+    FreeAndNil(ASemicolon);
+    FreeAndNil(ADirectiveList);
+    FreeAndNil(AReturnType);
+    FreeAndNil(AColon);
+    FreeAndNil(AClose);
+    FreeAndNil(AParameterList);
+    FreeAndNil(AOpen);
+    FreeAndNil(AImplementationMethod);
+    FreeAndNil(AEquals);
+    FreeAndNil(AInterfaceMethod);
+    FreeAndNil(AName);
+    FreeAndNil(AMethodType);
+    FreeAndNil(AClass);
+    raise;
   end;
 end;
 
@@ -2198,16 +2286,24 @@ var
   AFancyBlock: TFancyBlockNode;
   ASemicolon: TToken;
 begin
-  AMethodHeading := FParser.ParseRuleInternal(RTMethodHeading)
-    as TMethodHeadingNode;
-  if not AMethodHeading.RequiresBody then
-    Result := AMethodHeading
-  else
-  begin
-    AFancyBlock := FParser.ParseRuleInternal(RTFancyBlock) as TFancyBlockNode;
-    ASemicolon := FParser.ParseToken(TTSemicolon);
-    Result := TMethodImplementationNode.Create(AMethodHeading, AFancyBlock,
-      ASemicolon);
+  AMethodHeading := nil; AFancyBlock := nil; ASemicolon := nil;
+  try
+    AMethodHeading := FParser.ParseRuleInternal(RTMethodHeading)
+      as TMethodHeadingNode;
+    if not AMethodHeading.RequiresBody then
+      Result := AMethodHeading
+    else
+    begin
+      AFancyBlock := FParser.ParseRuleInternal(RTFancyBlock) as TFancyBlockNode;
+      ASemicolon := FParser.ParseToken(TTSemicolon);
+      Result := TMethodImplementationNode.Create(AMethodHeading, AFancyBlock,
+        ASemicolon);
+    end;
+  except
+    FreeAndNil(ASemicolon);
+    FreeAndNil(AFancyBlock);
+    FreeAndNil(AMethodHeading);
+    raise;
   end;
 end;
 
@@ -2338,25 +2434,37 @@ var
   AContainsClause: TUsesClauseNode;
   AAttributeList: TListNode;
 begin
-  APackage := FParser.ParseToken(TTPackageSemikeyword);
-  AName := FParser.ParseRuleInternal(RTQualifiedIdent);
-  ASemicolon := FParser.ParseToken(TTSemicolon);
+  APackage := nil; AName := nil; ASemicolon := nil; ARequiresClause := nil;
+  AContainsClause := nil; AAttributeList := nil; AEnd := nil; ADot := nil;
+  try
+    APackage := FParser.ParseToken(TTPackageSemikeyword);
+    AName := FParser.ParseRuleInternal(RTQualifiedIdent);
+    ASemicolon := FParser.ParseToken(TTSemicolon);
 
-  ARequiresClause := nil;
-  if FParser.CanParseRule(RTRequiresClause) then
-    ARequiresClause := FParser.ParseRuleInternal(RTRequiresClause)
-      as TRequiresClauseNode;
+    if FParser.CanParseRule(RTRequiresClause) then
+      ARequiresClause := FParser.ParseRuleInternal(RTRequiresClause)
+        as TRequiresClauseNode;
 
-  AContainsClause := nil;
-  if FParser.CanParseRule(RTUsesClause) then
-    AContainsClause := FParser.ParseRuleInternal(RTUsesClause)
-      as TUsesClauseNode;
+    if FParser.CanParseRule(RTUsesClause) then
+      AContainsClause := FParser.ParseRuleInternal(RTUsesClause)
+        as TUsesClauseNode;
 
-  AAttributeList := FParser.ParseOptionalRuleList(RTAssemblyAttribute);
-  AEnd := FParser.ParseToken(TTEndKeyword);
-  ADot := FParser.ParseToken(TTDot);
-  Result := TPackageNode.Create(APackage, AName, ASemicolon, ARequiresClause,
-    AContainsClause, AAttributeList, AEnd, ADot);
+    AAttributeList := FParser.ParseOptionalRuleList(RTAssemblyAttribute);
+    AEnd := FParser.ParseToken(TTEndKeyword);
+    ADot := FParser.ParseToken(TTDot);
+    Result := TPackageNode.Create(APackage, AName, ASemicolon, ARequiresClause,
+      AContainsClause, AAttributeList, AEnd, ADot);
+
+  except
+    FreeAndNil(ADot);
+    FreeAndNil(AEnd);
+    FreeAndNil(AAttributeList);
+    FreeAndNil(AContainsClause);
+    FreeAndNil(ASemicolon);
+    FreeAndNil(AName);
+    FreeAndNil(APackage);
+    raise;
+  end;
 end;
 
 { TPackedTypeRule }
@@ -2488,23 +2596,18 @@ var
   AExpression: TASTNode;
 begin
   AOpen := FParser.ParseToken(TTOpenParenthesis);
-  
+  AClose := nil; AExpression := nil;
   try
     AExpression := FParser.ParseRuleInternal(RTExpression);
-  except
-    AOpen.Free;
-    raise;
-  end;
-  
-  try
     AClose := FParser.ParseToken(TTCloseParenthesis);
+    Result := TParenthesizedExpressionNode.Create(AOpen, AExpression, AClose);
   except
-    AOpen.Free;
-    AExpression.Free;
+    FreeAndNil(AClose);
+    FreeAndNil(AExpression);
+    FreeAndNil(AOpen);
     raise;
   end;
-  
-  Result := TParenthesizedExpressionNode.Create(AOpen, AExpression, AClose);
+
 end;
 
 { TParticleRule }
@@ -2553,11 +2656,49 @@ var
   AType: TASTNode;
 begin
   // ^Integer
-  
+
   ACaret := FParser.ParseToken(TTCaret);
   AType := FParser.ParseRuleInternal(RTType);
   Result := TPointerTypeNode.Create(ACaret, AType);
 end;
+
+function TPortabilityDirectiveRule.CanParse: Boolean;
+begin
+  Result := TTokenSets.TSPortabilityDirective.Contains(FParser.Peek(0));
+end;
+
+function TPortabilityDirectiveRule.Evaluate: TASTNode;
+var
+  ASemicolon: TToken;
+  ADirective: TToken;
+  AValue, AData: TASTNode;
+begin
+// procedure X; external 'HelloWorld.dll'; OK!
+// procedure Y; external 'HelloWorld.dll' delayed; deprecated 'Y'#13#10'X'; OK!
+
+// procedure Z; external 'HelloWorld.dll' delayed; deprecated 'X'+'Y';
+// [dcc32 Error] ParseRTL.dpr(179): E2029 Declaration expected but '+' found
+
+// procedure Z2; external 'HelloWorld.dll' delayed; deprecated ('X'+'Y');
+// [dcc32 Error] ParseRTL.dpr(180): E2029 Declaration expected but '(' found
+
+  ASemicolon := nil; AValue := nil; AData := nil;
+  try
+    if FParser.CanParseToken(TTSemicolon) then
+      ASemicolon := FParser.ParseToken(TTSemicolon);
+    ADirective := FParser.ParseToken(TTokenSets.TSPortabilityDirective);
+    if (ADirective.TokenType = TTDeprecatedSemikeyword) and
+      FParser.CanParseToken(TTStringLiteral) then
+        AValue := FParser.ParseToken(TTStringLiteral);
+    Result := TDirectiveNode.Create(ASemicolon, ADirective, AValue, AData);
+  except
+    FreeAndNil(AValue);
+    FreeAndNil(ADirective);
+    FreeAndNil(ASemicolon);
+    raise;
+  end;
+end;
+
 
 { TProcedureTypeRule }
 
@@ -2581,7 +2722,7 @@ begin
     AOpen := FParser.ParseToken(TTOpenParenthesis);
     if FParser.CanParseRule(RTParameter) then
     begin
-      AParameters.Free;
+      FreeAndNil(AParameters);
       AParameters := FParser.ParseDelimitedList(RTParameter, TTSemicolon);
     end;
     AClose := FParser.ParseToken(TTCloseParenthesis);
@@ -2590,20 +2731,20 @@ begin
   AColon := nil;
   AReturnType := nil;
   if FParser.CanParseToken(TTColon) then
-  begin
-    AColon := FParser.ParseToken(TTColon);
-    AReturnType := FParser.ParseRuleInternal(RTMethodReturnType);
-  end;
+    begin
+      AColon := FParser.ParseToken(TTColon);
+      AReturnType := FParser.ParseRuleInternal(RTMethodReturnType);
+    end;
 
   AFirstDirectives := FParser.ParseOptionalRuleList(RTDirective);
 
   AOf := nil;
   AObject := nil;
   if FParser.CanParseToken(TTOfKeyword) then
-  begin
-    AOf := FParser.ParseToken(TTOfKeyword);
-    AObject := FParser.ParseToken(TTObjectKeyword);
-  end;
+    begin
+      AOf := FParser.ParseToken(TTOfKeyword);
+      AObject := FParser.ParseToken(TTObjectKeyword);
+    end;
 
   ASecondDirectives := FParser.ParseOptionalRuleList(RTDirective);
 
@@ -2632,12 +2773,12 @@ begin
   ANoise := FParser.CreateEmptyListNode;
   AClose := nil;
   if FParser.CanParseToken(TTOpenParenthesis) then
-  begin
-    AOpen := FParser.ParseToken(TTOpenParenthesis);
-    ANoise.Free;
-    ANoise := FParser.ParseDelimitedList(RTIdent, TTComma);
-    AClose := FParser.ParseToken(TTCloseParenthesis);
-  end;
+    begin
+      AOpen := FParser.ParseToken(TTOpenParenthesis);
+      FreeAndNil(ANoise);
+      ANoise := FParser.ParseDelimitedList(RTIdent, TTComma);
+      AClose := FParser.ParseToken(TTCloseParenthesis);
+    end;
 
   ASemicolon := FParser.ParseToken(TTSemicolon);
 
@@ -2679,20 +2820,20 @@ begin
   AParameterList := FParser.CreateEmptyListNode;
   AClose := nil;
   if FParser.CanParseToken(TTOpenBracket) then
-  begin
-    AOpen := FParser.ParseToken(TTOpenBracket);
-    AParameterList.Free;
-    AParameterList := FParser.ParseDelimitedList(RTParameter, TTSemicolon);
-    AClose := FParser.ParseToken(TTCloseBracket);
-  end;
+    begin
+      AOpen := FParser.ParseToken(TTOpenBracket);
+      FreeAndNil(AParameterList);
+      AParameterList := FParser.ParseDelimitedList(RTParameter, TTSemicolon);
+      AClose := FParser.ParseToken(TTCloseBracket);
+    end;
 
   AColon := nil;
   AType := nil;
   if FParser.CanParseToken(TTColon) then
-  begin
-    AColon := FParser.ParseToken(TTColon);
-    AType := FParser.ParseRuleInternal(RTMethodReturnType);
-  end;
+    begin
+      AColon := FParser.ParseToken(TTColon);
+      AType := FParser.ParseRuleInternal(RTMethodReturnType);
+    end;
 
   ADirectiveList := FParser.ParseOptionalRuleList(RTPropertyDirective);
   ASemicolon := FParser.ParseToken(TTSemicolon);
@@ -2824,13 +2965,24 @@ var
 begin
   ATypeKeyword := FParser.ParseToken(TTRecordKeyword);
   AHelper := FParser.ParseToken(TTHelperSemikeyword);
-  AFor := FParser.ParseToken(TTForKeyword);
-  AType := FParser.ParseRuleInternal(RTQualifiedIdent);
-  AContents := FParser.ParseOptionalRuleList(RTVisibilitySection);
-  AEnd := FParser.ParseToken(TTEndKeyword);
-  
-  Result := TTypeHelperNode.Create(ATypeKeyword, AHelper, nil, nil, nil, AFor,
-    AType, AContents, AEnd);
+  AFor := nil; AEnd := nil; AType := nil; AContents := nil;
+  try
+    AFor := FParser.ParseToken(TTForKeyword);
+    AType := FParser.ParseRuleInternal(RTQualifiedIdent);
+    AContents := FParser.ParseOptionalRuleList(RTVisibilitySection);
+    AEnd := FParser.ParseToken(TTEndKeyword);
+
+    Result := TTypeHelperNode.Create(ATypeKeyword, AHelper, nil, nil, nil, AFor,
+      AType, AContents, AEnd);
+  except
+    FreeAndNil(AEnd);
+    FreeAndNil(AContents);
+    FreeAndNil(AType);
+    FreeAndNil(AFor);
+    FreeAndNil(AHelper);
+    FreeAndNil(ATypeKeyword);
+    raise;
+  end;
 end;
 
 { TRecordTypeRule }
@@ -2845,17 +2997,29 @@ var
   ARecord, AEnd: TToken;
   AContents: TListNode;
   AVariantSection: TVariantSectionNode;
+  ARecordDirectives: TASTNode;
 begin
   ARecord := FParser.ParseToken(TTRecordKeyword);
-  AContents := FParser.ParseOptionalRuleList(RTVisibilitySection);
+  AEnd := nil; AContents := nil; AVariantSection := nil; ARecordDirectives := nil;
+  try
+    AContents := FParser.ParseOptionalRuleList(RTVisibilitySection);
 
-  AVariantSection := nil;
-  if FParser.CanParseRule(RTVariantSection) then
-    AVariantSection := FParser.ParseRuleInternal(RTVariantSection)
-      as TVariantSectionNode;
+    if FParser.CanParseRule(RTVariantSection) then
+      AVariantSection := FParser.ParseRuleInternal(RTVariantSection)
+        as TVariantSectionNode;
 
-  AEnd := FParser.ParseToken(TTEndKeyword);
-  Result := TRecordTypeNode.Create(ARecord, AContents, AVariantSection, AEnd);
+    AEnd := FParser.ParseToken(TTEndKeyword);
+    if FParser.CanParseRule(RTTypeRecordDirectives) then
+      ARecordDirectives := FParser.ParseRuleInternal(RTTypeRecordDirectives);
+    Result := TRecordTypeNode.Create(ARecord, AContents, AVariantSection, AEnd);
+  except
+    FreeAndNil(ARecordDirectives);
+    FreeAndNil(AEnd);
+    FreeAndNil(AVariantSection);
+    FreeAndNil(AContents);
+    FreeAndNil(ARecord);
+    raise;
+  end;
 end;
 
 { TRepeatStatementRule }
@@ -2953,12 +3117,21 @@ var
   AOperator: TToken;
   ARight: TASTNode;
 begin
-  Result := FParser.ParseRuleInternal(RTTerm);
-  while FParser.CanParseRule(RTAddOp) do
-  begin
-    AOperator := FParser.ParseRuleInternal(RTAddOp) as TToken;
-    ARight := FParser.ParseRuleInternal(RTTerm);
-    Result := TBinaryOperationNode.Create(Result, AOperator, ARight);
+  AOperator := nil; ARight := nil; Result := nil;
+  try
+    Result := FParser.ParseRuleInternal(RTTerm);
+    while FParser.CanParseRule(RTAddOp) do
+    begin
+      AOperator := FParser.ParseRuleInternal(RTAddOp) as TToken;
+      ARight := FParser.ParseRuleInternal(RTTerm);
+      Result := TBinaryOperationNode.Create(Result, AOperator, ARight);
+      ARight := nil; AOperator := nil;
+    end;
+  except
+    FreeAndNil(Result);
+    FreeAndNil(ARight);
+    FreeAndNil(AOperator);
+    raise;
   end;
 end;
 
@@ -3039,22 +3212,31 @@ var
   AItem: TASTNode;
   ADelimiter: TToken;
 begin
+  Result := nil;
   AItems := TObjectList<TASTNode>.Create(False);
-  while (FParser.CanParseRule(RTStatement)) or
-    (FParser.CanParseToken(TTSemicolon)) do
-  begin
-    AItem := nil;
-    if FParser.CanParseRule(RTStatement) then
-      AItem := FParser.ParseRuleInternal(RTStatement);
+  try
+    try
+      while (FParser.CanParseRule(RTStatement)) or
+        (FParser.CanParseToken(TTSemicolon)) do
+      begin
+        AItem := nil;
+        if FParser.CanParseRule(RTStatement) then
+          AItem := FParser.ParseRuleInternal(RTStatement);
 
-    ADelimiter := nil;
-    if FParser.CanParseToken(TTSemicolon) then
-      ADelimiter := FParser.ParseToken(TTSemicolon);
+        ADelimiter := nil;
+        if FParser.CanParseToken(TTSemicolon) then
+          ADelimiter := FParser.ParseToken(TTSemicolon);
 
-    AItems.Add(TDelimitedItemNode.Create(AItem, ADelimiter));
+        AItems.Add(TDelimitedItemNode.Create(AItem, ADelimiter));
+      end;
+      Result := TListNode.Create(AItems);
+    except
+      AItems.OwnsObjects := True;
+      raise;
+    end;
+  finally
+    AItems.Free;
   end;
-  Result := TListNode.Create(AItems);
-  AItems.Free;
 end;
 
 { TStringTypeRule }
@@ -3092,12 +3274,21 @@ var
   AOperator: TToken;
   ARight: TASTNode;
 begin
-  Result := FParser.ParseRuleInternal(RTFactor);
-  while FParser.CanParseRule(RTMulOp) do
-  begin
-    AOperator := FParser.ParseRuleInternal(RTMulOp) as TToken;
-    ARight := FParser.ParseRuleInternal(RTFactor);
-    Result := TBinaryOperationNode.Create(Result, AOperator, ARight);
+  AOperator := nil; ARight := nil; Result := nil;
+  try
+    Result := FParser.ParseRuleInternal(RTFactor);
+    while FParser.CanParseRule(RTMulOp) do
+    begin
+      AOperator := FParser.ParseRuleInternal(RTMulOp) as TToken;
+      ARight := FParser.ParseRuleInternal(RTFactor);
+      Result := TBinaryOperationNode.Create(Result, AOperator, ARight);
+      ARight := nil; AOperator := nil;
+    end;
+  except
+    FreeAndNil(Result);
+    FreeAndNil(ARight);
+    FreeAndNil(AOperator);
+    raise;
   end;
 end;
 
@@ -3133,20 +3324,20 @@ begin
     begin
       if FParser.CanParseRule(RTExceptionItem) then
       begin
-        AExceptionItemList.Free;
+        FreeAndNil(AExceptionItemList);
         AExceptionItemList := FParser.ParseRequiredRuleList(RTExceptionItem);
       end;
 
       if FParser.CanParseToken(TTElseKeyword) then
       begin
         AElse := FParser.ParseToken(TTElseKeyword);
-        AElseStatements.Free;
+        FreeAndNil(AElseStatements);
         AElseStatements := FParser.ParseOptionalStatementList;
       end;
     end
     else
     begin
-      AElseStatements.Free;
+      FreeAndNil(AElseStatements);
       AElseStatements := FParser.ParseOptionalStatementList;
     end;
 
@@ -3175,6 +3366,7 @@ constructor TTypeRule.Create(AParser: IParser; ARuleType: TRuleType);
 begin
   inherited Create(AParser, ARuleType);
   FAlternator := TAlternator.Create;
+// extend each type to handle generics as well
   FAlternator.AddRule(RTFileType);
   FAlternator.AddRule(RTStringType);
   FAlternator.AddRule(RTAnonymousMethodType);
@@ -3217,7 +3409,7 @@ var
   AItems: TListNode;
   AOriginalFrame: IFrame;
 begin
-  Result := nil;
+  Result := nil; AOpen := nil; AClose := nil; AItems := nil;
   AOriginalFrame := FParser.NextFrame;
 
   try
@@ -3262,37 +3454,41 @@ end;
 function TTypeDeclRule.Evaluate: TASTNode;
 var
   AName, AEqual, AForwardableType, ASemicolon, ATypeKeyword: TToken;
-  AType: TASTNode;
+  AType, ATypeParams: TASTNode;
   ADirectives: TListNode;
 begin
   AName := FParser.ParseRuleInternal(RTIdent) as TToken;
-  AEqual := FParser.ParseToken(TTEqualSign);
-  AForwardableType := nil; ASemicolon := nil; ATypeKeyword := nil; AType := nil;
-  ADirectives := nil;
+  ATypeParams := nil; AEqual := nil; AForwardableType := nil; ASemicolon := nil;
+  ATypeKeyword := nil; AType := nil; ADirectives := nil;
   try
+// parse generic types here
+    if FParser.CanParseRule(RTTypeParams) then
+      ATypeParams := FParser.ParseRuleInternal(RTTypeParams);
+    AEqual := FParser.ParseToken(TTEqualSign);
     if TTokenSets.TSForwardableType.Contains(FParser.Peek(0)) and
       (FParser.Peek(1) = TTSemicolon) then
-    begin
-      AForwardableType := FParser.ParseToken(TTokenSets.TSForwardableType);
-      ASemicolon := FParser.ParseToken(TTSemicolon);
-      Result := TTypeForwardDeclarationNode.Create(AName, AEqual,
-        AForwardableType, ASemicolon);
-    end
-    else
-    begin
-      ATypeKeyword := FParser.TryParseToken(TTTypeKeyword);
-      AType := FParser.ParseRuleInternal(RTType);
-      ADirectives := FParser.ParseOptionalRuleList(RTPortabilityDirective);
-      ASemicolon := FParser.ParseToken(TTSemicolon);
-      Result := TTypeDeclNode.Create(AName, AEqual, ATypeKeyword, AType,
-        ADirectives, ASemicolon);
-    end;
+      begin
+        AForwardableType := FParser.ParseToken(TTokenSets.TSForwardableType);
+        ASemicolon := FParser.ParseToken(TTSemicolon);
+        Result := TTypeForwardDeclarationNode.Create(AName, AEqual,
+          AForwardableType, ASemicolon);
+      end else
+      begin
+        ATypeKeyword := FParser.TryParseToken(TTTypeKeyword);
+  // can be a generic type, so RTType needs to accept generics
+        AType := FParser.ParseRuleInternal(RTType);
+        ADirectives := FParser.ParseOptionalRuleList(RTPortabilityDirective);
+        ASemicolon := FParser.ParseToken(TTSemicolon);
+        Result := TTypeDeclNode.Create(AName, ATypeParams, AEqual, ATypeKeyword, AType,
+          ADirectives, ASemicolon);
+      end;
   except
     FreeAndNil(ASemicolon);
     FreeAndNil(ADirectives);
     FreeAndNil(AType);
     FreeAndNil(ATypeKeyword);
     FreeAndNil(AForwardableType);
+    FreeAndNil(ATypeParams);
     FreeAndNil(AEqual);
     FreeAndNil(AName);
     raise;
@@ -3365,6 +3561,51 @@ begin
   Result := TTypeParamsNode.Create(AOpen, AParamDecl, AClose);
 end;
 
+{ TTypeRecordDirectivesRule }
+
+function TTypeRecordDirectivesRule.CanParse: Boolean;
+begin
+  Result := FParser.CanParseToken(TTDeprecatedSemikeyword) or
+    FParser.CanParseToken(TTAlignSemikeyword);
+end;
+
+// deprecated 'msg' // no concatenations, no expressions, just string
+// align X // where X is a constant, or an expression, eg 1 shl 2, or a const var
+function TTypeRecordDirectivesRule.Evaluate: TASTNode;
+var
+  ADeprecatedDirective, AAlignDirective: TToken;
+  ADeprecatedMsg, AAlignExpression: TASTNode;
+begin
+  ADeprecatedDirective := nil; AAlignDirective := nil;
+  ADeprecatedMsg := nil; AAlignExpression := nil;
+  // TODO -ochuacw: Add the usual directives accepted, such as library, platform, etc...
+  try
+    if FParser.CanParseToken(TTDeprecatedSemikeyword) then
+      begin
+        ADeprecatedDirective := FParser.ParseToken(TTDeprecatedSemikeyword);
+        if FParser.CanParseRule(RTStringType) then
+          ADeprecatedMsg := FParser.ParseRuleInternal(RTStringType);
+      end; // only 1 deprecated accepted
+    while FParser.CanParseToken(TTAlignSemikeyword) do // multiple align accepted
+      begin
+        ADeprecatedDirective := FParser.ParseToken(TTDeprecatedSemikeyword);
+        if FParser.CanParseRule(RTExpression) then
+          begin
+            FreeAndNil(AAlignExpression);
+            AAlignExpression := FParser.ParseRuleInternal(RTExpression);
+          end;
+      end;
+    // TODO -ochuacw : do something to the result
+    Result := nil;
+  except
+    FreeAndNil(AAlignExpression);
+    FreeAndNil(AAlignDirective);
+    FreeAndNil(ADeprecatedMsg);
+    FreeAndNil(ADeprecatedDirective);
+    raise;
+  end;
+end;
+
 { TTypeSectionRule }
 
 function TTypeSectionRule.CanParse: Boolean;
@@ -3378,7 +3619,7 @@ var
   ATypeList: TListNode;
 begin
   AType := FParser.ParseToken(TTTypeKeyword);
-
+  ATypeList := nil; Result := nil;
   try
     ATypeList := FParser.ParseRequiredRuleList(RTTypeDecl);
   except
@@ -3446,12 +3687,19 @@ begin
   AName := FParser.ParseRuleInternal(RTQualifiedIdent);
   AIn := nil;
   AFileName := nil;
-  if FParser.CanParseToken(TTInKeyword) then
-  begin
-    AIn := FParser.ParseToken(TTInKeyword);
-    AFileName := FParser.ParseToken(TTStringLiteral);
+  try
+    if FParser.CanParseToken(TTInKeyword) then
+    begin
+      AIn := FParser.ParseToken(TTInKeyword);
+      AFileName := FParser.ParseToken(TTStringLiteral);
+    end;
+    Result := TUsedUnitNode.Create(AName, AIn, AFileName);
+  except
+    FreeAndNil(AFileName);
+    FreeANdNil(AIn);
+    FreeAndNil(AName);
+    raise;
   end;
-  Result := TUsedUnitNode.Create(AName, AIn, AFileName);
 end;
 
 { TUsesClauseRule }
@@ -3468,9 +3716,17 @@ var
   ASemicolon: TToken;
 begin
   AUses := FParser.ParseToken(TTokenSets.TSUses);
-  AUnitList := FParser.ParseDelimitedList(RTUsedUnit, TTComma);
-  ASemicolon := FParser.ParseToken(TTSemicolon);
-  Result := TUsesClauseNode.Create(AUses, AUnitList, ASemicolon);
+  AUnitList := nil; ASemicolon := nil;
+  try
+    AUnitList := FParser.ParseDelimitedList(RTUsedUnit, TTComma);
+    ASemicolon := FParser.ParseToken(TTSemicolon);
+    Result := TUsesClauseNode.Create(AUses, AUnitList, ASemicolon);
+  except
+    FreeAndNil(ASemicolon);
+    FreeAndNil(AUnitList);
+    FreeAndNil(AUses);
+    raise;
+  end;
 end;
 
 { TVarDeclRule }
@@ -3486,31 +3742,41 @@ var
   AColon, AAbsolute, AEqual, ASemicolon: TToken;
   AType, AAbsoluteAddress, AValue: TASTNode;
 begin
-  ANames := FParser.ParseDelimitedList(RTIdent, TTComma);
-  AColon := FParser.ParseToken(TTColon);
-  AType := FParser.ParseRuleInternal(RTType);
-  AFirstDirectives := FParser.ParseOptionalRuleList(RTPortabilityDirective);
+  ANames := nil; AFirstDirectives := nil; ASecondDirectives := nil;
+  AColon := nil; AAbsolute := nil; AEqual := nil; ASemicolon := nil;
+  AType := nil; AAbsoluteAddress := nil; AValue := nil;
+  try
 
-  AAbsolute := nil;
-  AAbsoluteAddress := nil;
-  AEqual := nil;
-  AValue := nil;
-  if FParser.CanParseToken(TTAbsoluteSemikeyword) then
-  begin
-    AAbsolute := FParser.ParseToken(TTAbsoluteSemikeyword);
-    AAbsoluteAddress := FParser.ParseRuleInternal(RTExpression);
-  end
-  else if FParser.CanParseToken(TTEqualSign) then
-  begin
-    AEqual := FParser.ParseToken(TTEqualSign);
-    AValue := FParser.ParseRuleInternal(RTTypedConstant);
+    ANames := FParser.ParseDelimitedList(RTIdent, TTComma);
+    AColon := FParser.ParseToken(TTColon);
+    AType := FParser.ParseRuleInternal(RTType);
+    AFirstDirectives := FParser.ParseOptionalRuleList(RTPortabilityDirective);
+
+    if FParser.CanParseToken(TTAbsoluteSemikeyword) then
+    begin
+      AAbsolute := FParser.ParseToken(TTAbsoluteSemikeyword);
+      AAbsoluteAddress := FParser.ParseRuleInternal(RTExpression);
+    end
+    else if FParser.CanParseToken(TTEqualSign) then
+    begin
+      AEqual := FParser.ParseToken(TTEqualSign);
+      AValue := FParser.ParseRuleInternal(RTTypedConstant);
+    end;
+
+    ASecondDirectives := FParser.ParseOptionalRuleList(RTPortabilityDirective);
+    ASemicolon := FParser.ParseToken(TTSemicolon);
+
+    Result := TVarDeclNode.Create(ANames, AColon, AType, AFirstDirectives,
+      AAbsolute, AAbsoluteAddress, AEqual, AValue, ASecondDirectives, ASemicolon);
+  except
+    FreeAndNil(ASemicolon);
+    FreeAndNil(ASecondDirectives);
+    FreeAndNil(AValue);
+    FreeAndNil(AEqual); FreeAndNil(AAbsoluteAddress); FreeAndNil(AAbsolute);
+    FreeAndNil(AFirstDirectives); FreeAndNil(AType); FreeAndNil(AColon);
+    FreeAndNil(ANames);
+    raise;
   end;
-
-  ASecondDirectives := FParser.ParseOptionalRuleList(RTPortabilityDirective);
-  ASemicolon := FParser.ParseToken(TTSemicolon);
-  
-  Result := TVarDeclNode.Create(ANames, AColon, AType, AFirstDirectives,
-    AAbsolute, AAbsoluteAddress, AEqual, AValue, ASecondDirectives, ASemicolon);
 end;
 
 { TVariantGroupRule }
@@ -3601,15 +3867,14 @@ var
   AVarList: TListNode;
 begin
   AVar := FParser.ParseToken(TTokenSets.TSVarHeader);
-  
+  AVarList := nil;
   try
     AVarList := FParser.ParseRequiredRuleList(RTVarDecl);
+    Result := TVarSectionNode.Create(AVar, AVarList);
   except
-    AVar.Free;
-    raise
+    FreeAndNil(AVar);
+    raise;
   end;
-  
-  Result := TVarSectionNode.Create(AVar, AVarList);
 end;
 
 { TVisibilityRule }
@@ -3650,8 +3915,7 @@ var
   AVisibility: TVisibilityNode;
   AContents: TListNode;
 begin
-  AVisibility := nil;
-  AContents := nil;
+  AVisibility := nil; AContents := nil;
   try
     if FParser.CanParseRule(RTVisibility) then
       AVisibility := FParser.ParseRuleInternal(RTVisibility) as TVisibilityNode;

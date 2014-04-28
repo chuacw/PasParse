@@ -22,7 +22,7 @@ type
 implementation
 
 uses
-  ULexScanner, UToken, UTokenFilter, ULexException, Generics.Collections;
+  ULexScanner, UToken, UTokenFilter, ULexException, System.Generics.Collections;
 
 { TTestTokenFilter }
 

@@ -13,12 +13,14 @@ type
     FFileSource: string;
     /// <Description>The offset from the start of FileSource where the Location can be found.</Description>
     FOffset: Integer;
+    FLineNo: NativeUInt;
     /// <Description>The directory that the file is in.</Description>
     function GetDirectory: string;
 
   public
     /// <Description>Default constructor.</Description>
-    constructor Create(const AFileName, AFileSource: string; AOffset: Integer);
+    constructor Create(const AFileName, AFileSource: string; AOffset: Integer;
+      const ALineNo: NativeUInt);
 
     /// <Description>The name of the file where the Location can be found.</Description>
     property FileName: string read FFileName;
@@ -26,7 +28,7 @@ type
     property FileSource: string read FFileSource;
     /// <Description>The offset from the start of FileSource where the Location can be found.</Description>
     property Offset: Integer read FOffset;
-
+    property LineNo: NativeUInt read FLineNo;
     /// <Description>Creates a clone of the current Location.</Description>
     function Clone: TLocation;
 
@@ -44,15 +46,17 @@ uses
 function TLocation.Clone: TLocation;
 begin
   // Create a new Location instance with the same parameters and return it
-  Result := TLocation.Create(FFileName, FFileSource, FOffset);
+  Result := TLocation.Create(FFileName, FFileSource, FOffset, FLineNo);
 end;
 
-constructor TLocation.Create(const AFileName, AFileSource: string; AOffset: Integer);
+constructor TLocation.Create(const AFileName, AFileSource: string;
+  AOffset: Integer; const ALineNo: NativeUInt);
 begin
   // Assign private fields
   FFileName := AFileName;
   FFileSource := AFileSource;
   FOffset := AOffset;
+  FLineNo := ALineNo;
 end;
 
 function TLocation.GetDirectory: string;

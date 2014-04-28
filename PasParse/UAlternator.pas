@@ -4,7 +4,7 @@ unit UAlternator;
 interface
 
 uses
-  URuleType, UITokenSet, UTokenType, UASTNode, UIParser, Generics.Collections;
+  URuleType, UITokenSet, UTokenType, UASTNode, UIParser, System.Generics.Collections;
 
 type
   /// <Description>Prototype/Interface for an Alternate.</Description>

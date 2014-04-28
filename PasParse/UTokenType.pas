@@ -21,6 +21,7 @@ type
     // Semikeywords (context keywords, can be used as identifiers)
     TTAbsoluteSemikeyword,
     TTAbstractSemikeyword,
+    TTAlignSemikeyword,
     TTAssemblerSemikeyword,
     TTAssemblySemikeyword,
     TTAtSemikeyword,
@@ -194,6 +195,7 @@ const
     // Semikeywords (context keywords, can be used as identifiers)
     'absolute', // TTAbsoluteSemikeyword,
     'abstract', // TTAbstractSemikeyword,
+    'align',    // TTAlignSemikeyword,
     'assembler', // TTAssemblerSemikeyword,
     'assembly', // TTAssemblySemikeyword,
     'at', // TTAtSemikeyword,

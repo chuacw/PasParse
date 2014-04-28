@@ -1113,6 +1113,8 @@ begin
   // Visit child nodes
   if ANode.NameNode <> nil then
     Visit(ANode.NameNode);
+  if ANode.TypeParams <> nil then
+    Visit(ANode.TypeParams);
   if ANode.EqualSignNode <> nil then
     Visit(ANode.EqualSignNode);
   if ANode.TypeKeywordNode <> nil then

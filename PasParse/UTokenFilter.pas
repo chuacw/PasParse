@@ -4,7 +4,7 @@ unit UTokenFilter;
 interface
 
 uses
-  Generics.Collections, UCompilerDefines, UIFileLoader, UToken, ULocation;
+  System.Generics.Collections, UCompilerDefines, UIFileLoader, UToken, ULocation;
 
 type
   TDirectiveType = (
@@ -93,6 +93,7 @@ begin
   FDirectiveTypes.AddOrSetValue('DENYPACKAGEUNIT', DTIgnored);
   FDirectiveTypes.AddOrSetValue('DESCRIPTION', DTIgnored);
   FDirectiveTypes.AddOrSetValue('DESIGNONLY', DTIgnored);
+  FDirectiveTypes.AddOrSetValue('DYNAMICBASE', DTIgnored);
   FDirectiveTypes.AddOrSetValue('ENDREGION', DTIgnored);
   FDirectiveTypes.AddOrSetValue('EXCESSPRECISION', DTIgnored);
   FDirectiveTypes.AddOrSetValue('EXTENDEDCOMPATIBILITY', DTIgnored);

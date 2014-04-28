@@ -28,7 +28,7 @@ class function TTestCompilerDefines.DefineIsTrue(
 var
   ALocation: TLocation;
 begin
-  ALocation := TLocation.Create('', '', 0);
+  ALocation := TLocation.Create('', '', 0, 0);
   try
     Result := ACompilerDefines.IsTrue(ACompilerDirective, ALocation);
   finally

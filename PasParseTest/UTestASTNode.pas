@@ -38,7 +38,7 @@ end;
 class function TTestASTNode.MakeToken(ATokenType: TTokenType;
   const AText: string): TToken;
 begin
-  Result := TToken.Create(ATokenType, TLocation.Create('', '', 0), AText, '');
+  Result := TToken.Create(ATokenType, TLocation.Create('', '', 0, 0), AText, '');
 end;
 
 class procedure TTestASTNode.TestAll;

@@ -115,11 +115,14 @@ uses
   UTestConstraint in 'UTestConstraint.pas',
   UTestTypeParam in 'UTestTypeParam.pas',
   UTestTypeParamDecl in 'UTestTypeParamDecl.pas',
-  UTestTypeParams in 'UTestTypeParams.pas';
+  UTestTypeParams in 'UTestTypeParams.pas',
+  UTestGenerics in 'UTestGenerics.pas';
 
 begin
   ReportMemoryLeaksOnShutdown := True;
   try
+    TTestGenerics.Test;
+
     TTestASTNode.Test;
     TTestLexScanner.Test;
     TTestCompilerDefines.Test;

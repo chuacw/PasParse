@@ -3,7 +3,7 @@ unit UHalstead;
 interface
 
 uses
-  Generics.Collections, UVisitor, UASTNode, UToken, UTokenType;
+  System.Generics.Collections, UVisitor, UASTNode, UToken, UTokenType;
 
 type
   THalstead = class(TVisitor)

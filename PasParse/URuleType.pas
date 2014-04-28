@@ -97,6 +97,7 @@ type
     RTTypeParam,
     RTTypeParamDecl,
     RTTypeParams,
+    RTTypeRecordDirectives,
     RTTypeSection,
     RTUnaryOperator,
     RTUnit,

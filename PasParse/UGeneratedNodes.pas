@@ -1200,6 +1200,7 @@ type
   TTypeDeclNode = class(TNonTerminalNode)
   private
     FNameNode: TToken;
+    FTypeParams: TASTNode;
     FEqualSignNode: TToken;
     FTypeKeywordNode: TToken;
     FTypeNode: TASTNode;
@@ -1207,11 +1208,12 @@ type
     FSemicolonNode: TToken;
 
   public
-    constructor Create(ANameNode: TToken; AEqualSignNode: TToken; ATypeKeywordNode: TToken; ATypeNode: TASTNode; APortabilityDirectiveListNode: TListNode; ASemicolonNode: TToken);
+    constructor Create(ANameNode: TToken; ATypeParams: TASTNode; AEqualSignNode: TToken; ATypeKeywordNode: TToken; ATypeNode: TASTNode; APortabilityDirectiveListNode: TListNode; ASemicolonNode: TToken);
 
     function Clone: TASTNode; override;
 
     property NameNode: TToken read FNameNode;
+    property TypeParams: TASTNode read FTypeParams;
     property EqualSignNode: TToken read FEqualSignNode;
     property TypeKeywordNode: TToken read FTypeKeywordNode;
     property TypeNode: TASTNode read FTypeNode;
@@ -5302,6 +5304,7 @@ end;
 function TTypeDeclNode.Clone: TASTNode;
 var
   ANameNode: TToken;
+  ATypeParams: TASTNode;
   AEqualSignNode: TToken;
   ATypeKeywordNode: TToken;
   ATypeNode: TASTNode;
@@ -5312,6 +5315,11 @@ begin
     ANameNode := (FNameNode.Clone as TToken)
   else
     ANameNode := nil;
+
+  if FTypeParams <> nil then
+    ATypeParams := (FTypeParams.Clone as TASTNode)
+  else
+    ATypeParams := nil;
 
   if FEqualSignNode <> nil then
     AEqualSignNode := (FEqualSignNode.Clone as TToken)
@@ -5340,6 +5348,7 @@ begin
 
   Result := TTypeDeclNode.Create(
     ANameNode,
+    ATypeParams,
     AEqualSignNode,
     ATypeKeywordNode,
     ATypeNode,
@@ -5347,12 +5356,13 @@ begin
     ASemicolonNode);
 end;
 
-constructor TTypeDeclNode.Create(ANameNode: TToken; AEqualSignNode: TToken; ATypeKeywordNode: TToken; ATypeNode: TASTNode; APortabilityDirectiveListNode: TListNode; ASemicolonNode: TToken);
+constructor TTypeDeclNode.Create(ANameNode: TToken; ATypeParams: TASTNode; AEqualSignNode: TToken; ATypeKeywordNode: TToken; ATypeNode: TASTNode; APortabilityDirectiveListNode: TListNode; ASemicolonNode: TToken);
 begin
   inherited Create;
 
   // Assigning private members
   FNameNode := ANameNode;
+  FTypeParams := ATypeParams;
   FEqualSignNode := AEqualSignNode;
   FTypeKeywordNode := ATypeKeywordNode;
   FTypeNode := ATypeNode;
@@ -5361,6 +5371,7 @@ begin
 
   // Adding child nodes
   FChildNodes.Add(ANameNode);
+  FChildNodes.Add(ATypeParams);
   FChildNodes.Add(AEqualSignNode);
   FChildNodes.Add(ATypeKeywordNode);
   FChildNodes.Add(ATypeNode);
@@ -5369,6 +5380,7 @@ begin
 
   // Adding properties
   FProperties.Add(TASTNodeProperty.Create('NameNode', ANameNode));
+  FProperties.Add(TASTNodeProperty.Create('TypeParams', ATypeParams));
   FProperties.Add(TASTNodeProperty.Create('EqualSignNode', AEqualSignNode));
   FProperties.Add(TASTNodeProperty.Create('TypeKeywordNode', ATypeKeywordNode));
   FProperties.Add(TASTNodeProperty.Create('TypeNode', ATypeNode));

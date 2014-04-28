@@ -33,6 +33,8 @@ begin
   inherited Create(AMessage);
   // Save Location in private field
   FLocation := ALocation;
+  if (ALocation.LineNo = 910)  then
+    asm nop end;
 end;
 
 destructor EBaseException.Destroy;

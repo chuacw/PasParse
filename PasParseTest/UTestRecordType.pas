@@ -79,6 +79,33 @@ begin
     '        SemicolonNode: Semicolon |;|' + #13#10 +
     '  EndKeywordNode: EndKeyword |end|', RTRecordType));
 
+//const X = 16; type
+//  TMyRec = record
+//
+//  end align X deprecated 'x' align 2 align 4; // permitted
+//
+//  TMyRec7 = record
+//
+//  end deprecated 'Blah' deprecated 'x' align 2 align 4; // only 1 deprecated accepted
+//                        ^ E1030 Invalid compiler directive
+//
+//  TMyRec6 = record
+//
+//  end deprecated 'Blah' align X deprecated 'x' align 2 align 4; // only 1 deprecated accepted
+//
+//  TMyRec3 = record
+//
+//  end align 1 shl 2; // permitted
+//
+//  TMyRec2 = record
+//
+//  end align; // E2029 Expression expected but ';' found
+//
+//  TMyRec4 = record
+//
+//  end; align; // E2029 '=' expected but ';' found
+
+
 end;
 
 end.

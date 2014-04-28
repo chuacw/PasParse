@@ -4,7 +4,7 @@ unit UASTNode;
 interface
 
 uses
-  ULocation, Generics.Collections;
+  ULocation, System.Generics.Collections;
 
 type
   TASTNode = class;

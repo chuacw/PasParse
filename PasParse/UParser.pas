@@ -6,7 +6,7 @@ interface
 uses
   UCompilerDefines, UToken, UIFrame, UITokenSet, UTokenType, UListNode,
   UParseException, UIParser, URule, URuleType, UASTNode, UIFileLoader,
-  Generics.Collections;
+  System.Generics.Collections;
 
 type
   TRuleClass = class of TRule;
@@ -195,6 +195,7 @@ begin
   AddRule(RTTypeParam, TTypeParamRule);
   AddRule(RTTypeParamDecl, TTypeParamDeclRule);
   AddRule(RTTypeParams, TTypeParamsRule);
+  AddRule(RTTypeRecordDirectives, TTypeRecordDirectivesRule);
   AddRule(RTTypeSection, TTypeSectionRule);
   AddRule(RTUnit, TUnitRule);
   AddRule(RTUsedUnit, TUsedUnitRule);
@@ -211,7 +212,8 @@ begin
 
   AddTokenRule(RTAddOp, TTokenSets.TSAddOp);
   AddTokenRule(RTMulOp, TTokenSets.TSMulOp);
-  AddTokenRule(RTPortabilityDirective, TTokenSets.TSPortabilityDirective);
+//  AddTokenRule(RTPortabilityDirective, TTokenSets.TSPortabilityDirective);
+  AddRule(RTPortabilityDirective, TPortabilityDirectiveRule);
   AddTokenRule(RTRelOp, TTokenSets.TSRelOp);
   AddTokenRule(RTUnaryOperator, TTokenSets.TSUnaryOperator);
 end;
@@ -289,7 +291,7 @@ var
   AFrame: IFrame;
   I: Integer;
 begin
-  AFirstFrame := TEOFFrame.Create(TLocation.Create('', '', 0));
+  AFirstFrame := TEOFFrame.Create(TLocation.Create('', '', 0, 0));
   APrevFrame := nil;
   for I := 0 to ATokens.Count - 1 do
   begin
@@ -343,15 +345,15 @@ var
   ADelimiter: TToken;
 begin
   AItems := TObjectList<TASTNode>.Create(False);
-
+  AItem := nil; ADelimiter := nil;
   try
     repeat
       AItem := ParseRuleInternal(AItemRule);
-      ADelimiter := nil;
       if CanParseToken(ADelimiterType) then
         ADelimiter := ParseToken(ADelimiterType);
 
       AItems.Add(TDelimitedItemNode.Create(AItem, ADelimiter));
+      ADelimiter := nil; AItem := nil;
     until (not CanParseRule(AItemRule));
 
     Result := TListNode.Create(AItems);
@@ -365,13 +367,14 @@ var
   AItems: TObjectList<TASTNode>;
   AItem: TASTNode;
 begin
+  Result := nil;
   AItems := TObjectList<TASTNode>.Create(False);
   try
     try
       while CanParseRule(ARuleType) do
         begin
           AItem := ParseRuleInternal(ARuleType);
-          AItems.Add(AItem);
+          AItems.Add(AItem); AItem := nil;
         end;
       Result := TListNode.Create(AItems);
     except
@@ -396,17 +399,19 @@ var
   AItems: TObjectList<TASTNode>;
   AItem: TASTNode;
 begin
+  Result := nil; AItem := nil;
   AItems := TObjectList<TASTNode>.Create(False);
   try
     try
       repeat
         AItem := ParseRuleInternal(ARuleType);
-        AItems.Add(AItem);
+        AItems.Add(AItem); AItem := nil;
       until (not CanParseRule(ARuleType));
       Result := TListNode.Create(AItems);
     except
       // Free all objects that are listed already
-      AItems.OwnsObjects := true;
+      FreeAndNil(AItem);
+      AItems.OwnsObjects := True;
 //      AItems.Free;
       // And raise exception again
       raise;
@@ -436,11 +441,26 @@ end;
 function TParser.ParseTokenList(ATokenSet: ITokenSet): TListNode;
 var
   AList: TObjectList<TASTNode>;
+  AToken: TToken;
+  LMsg: TASTNode;
 begin
   AList := TObjectList<TASTNode>.Create(False);
 
   while CanParseToken(ATokenSet) do
-    AList.Add(ParseToken(ATokenSet));
+    begin
+      AToken := ParseToken(ATokenSet);
+      if AToken.TokenType = TTDeprecatedSemikeyword then
+        begin
+          if CanParseRule(RTExpression) then
+            begin
+              LMsg := ParseRule(RTExpression);
+              // TODO -ochuacw : Tag the string to the deprecated...
+              LMsg := nil;
+              // TODO -ochuacw: ParseRule(RTDirective) instead?
+            end;
+        end;
+      AList.Add(AToken);
+    end;
 
   Result := TListNode.Create(AList);
   AList.Free;

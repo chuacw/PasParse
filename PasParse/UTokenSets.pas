@@ -258,7 +258,7 @@ begin
 
   TSMethodType := TTokenSet.Create('method heading');
   for AKeyword in [TTConstructorKeyword, TTDestructorKeyword, TTFunctionKeyword,
-   TTProcedureKeyword,TTOperatorSemikeyword] do
+   TTProcedureKeyword, TTOperatorSemikeyword] do
     TSMethodType.Add(AKeyword);
 
 //  TSMethodType.Add(TTConstructorKeyword);

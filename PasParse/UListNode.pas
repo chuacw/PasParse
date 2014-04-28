@@ -4,7 +4,7 @@ unit UListNode;
 interface
 
 uses
-  UNonTerminalNode, UASTNode, Generics.Collections;
+  UNonTerminalNode, UASTNode, System.Generics.Collections;
 
 type
   TListNode = class(TNonTerminalNode)

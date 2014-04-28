@@ -18,7 +18,7 @@ type
 implementation
 
 uses
-  ULexScanner, UToken, ULexException, Generics.Collections;
+  ULexScanner, UToken, ULexException, System.Generics.Collections;
 
 { TTestLexScanner }
 

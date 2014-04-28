@@ -4,7 +4,7 @@ unit ULexScanner;
 interface
 
 uses
-  ULocation, UTokenType, UToken, UTokenSet, Generics.Collections;
+  ULocation, UTokenType, UToken, UTokenSet, System.Generics.Collections;
 
 type
   /// <Description>An instance of this class is returned when a matching token is found.</Description>
@@ -48,7 +48,7 @@ type
     FSource: string;
     /// <Description>Dictionary of (semi)keywords.</Description>
     FWordTypes: TDictionary<string, TTokenType>;
-
+    FLineNo: NativeUInt;
     /// <Description>Adds contents of the given TTokenSet to the FWordTypes dictionary.</Description>
     procedure AddWordTypes(ATokenSet: TTokenSet; ASuffixLength: Integer);
 
@@ -124,6 +124,8 @@ type
     /// <Description>Returns the next Token or nil if end-of-file is reached.</Description>
     /// <Description>The caller is responsible for freeing the Token!</Description>
     function NextToken: TToken;
+
+    property LineNo: NativeUInt read FLineNo;
 
     /// <Description>Returns a Location instance of the current reading position.</Description>
     /// <Description>The caller is responsible for freeing the Location instance!</Description>
@@ -280,6 +282,7 @@ begin
 
   // Set current reading position to zero
   FIndex := 0;
+  FLineNo := 1;
 end;
 
 function TLexScanner.CurlyBraceComment: TMatch;
@@ -373,7 +376,7 @@ end;
 
 function TLexScanner.GetLocation: TLocation;
 begin
-  Result := TLocation.Create(FFileName, FSource, FIndex + 1);
+  Result := TLocation.Create(FFileName, FSource, FIndex + 1, FLineNo);
 end;
 
 function TLexScanner.GetTokens: TObjectList<TToken>;
@@ -497,7 +500,10 @@ begin
   begin
     // If line break was found increase the counter
     if IsLineBreak(Peek(0)) then
-      Inc(ALineBreaksBefore);
+      begin
+        Inc(ALineBreaksBefore);
+        Inc(FLineNo);
+      end;
 
     Inc(FIndex);
   end;

@@ -4,7 +4,7 @@ unit UCompilerDefines;
 interface
 
 uses
-  Generics.Collections, ULocation;
+  System.Generics.Collections, ULocation;
 
 type
   TCompilerDefines = class
@@ -16,7 +16,7 @@ type
     destructor Destroy; override;
 
     function Clone: TCompilerDefines;
-
+// TODO -ochuacw: Add parsing of DEFINED, DECLARED etc
     procedure DefineDirective(const ACompilerDirective: string; AIsTrue: Boolean);
     procedure DefineDirectiveAsFalse(const ACompilerDirective: string);
     procedure DefineDirectiveAsTrue(const ACompilerDirective: string);

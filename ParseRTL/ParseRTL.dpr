@@ -44,7 +44,7 @@ uses
   System.Classes;
 
 var
-  GFileName: string;
+  GFileName: string deprecated 'Hah!';
   GFilenames: TStringList;
 
 procedure ParseFile(const AFileName: string);
@@ -55,7 +55,7 @@ var
   AParser: UParser.TParser;
   ANode: TASTNode;
   I, AOffset, ErrorStartOffset, ErrorEndOffset, HighlightIndex: Integer;
-  AFileSource, ErrorSource: string;
+  AFileSource, ErrorSource: string; ALineNo: NativeUInt;
 begin
   GFileName := AFileName;
 
@@ -87,7 +87,8 @@ begin
               ErrorEndOffset := I-1;
               I := 1+ErrorEndOffset - ErrorStartOffset;
               ErrorSource := Copy(AFileSource, ErrorStartOffset+1, I);
-              WriteLn(Format('Error at position %d of %s', [AOffset, E.Location.FileName]));
+              WriteLn(Format('Error at position %d of %s, line %d, column %d',
+                [AOffset, E.Location.FileName, E.Location.LineNo, AOffset-ErrorStartOffset]));
               WriteLn(ErrorSource);
               HighlightIndex := AOffset-1 - ErrorStartOffset;
               Writeln('':HighlightIndex, '^ Error above');
@@ -173,6 +174,59 @@ begin
 //      end);
 end;
 
+procedure OneAtATime;
+const
+  LSourceDir = 'C:\Program Files (x86)\Embarcadero\RAD Studio\12.0\source\';
+var
+  LFiles: TStringDynArray;
+  LFile: string;
+  F: TextFile;
+  Index: Integer;
+begin
+//  LFile := 'C:\Program Files (x86)\Embarcadero\RAD Studio\12.0\source\rtl\android\Androidapi.JNI.Analytics.pas';
+//  WrapWithException(procedure begin ParseFile(LFile); end);
+//  LFile := 'C:\Program Files (x86)\Embarcadero\RAD Studio\12.0\source\rtl\android\Androidapi.OpenSles.pas';
+//  WrapWithException(procedure begin ParseFile(LFile); end);
+  if GFilenames.Count = 0 then
+    LFiles := TDirectory.GetFiles(LSourceDir+'rtl', '*.pas', TSearchOption.soAllDirectories) else
+  begin
+    LFiles := TStringDynArray(GFilenames.ToStringArray);
+    AssignFile(F, 'c:\temp\parseindex.txt');
+    try
+    if FileExists('c:\temp\parseindex.txt') then
+      begin
+        Reset(F);
+        ReadLn(F, Index);
+        try
+          LFile := LFiles[Index];
+          CloseFile(F);
+          Erase(F);
+          Inc(Index);
+          Rewrite(F);
+          WriteLn(F, Index);
+          ParseFile(LFile);
+        except
+          on E: Exception do
+            begin
+              Writeln(Format('Error parsing %s ', [GFileName]), E.Classname, ': ', E.Message);
+              ReadLn;
+            end;
+        end;
+      end else
+      begin
+        Rewrite(F);
+        Index := 0;
+        WriteLn(F, Index);
+        LFile := LFiles[Index];
+        SetLength(LFiles, 1);
+        LFiles[0] := LFile;
+      end;
+    finally
+      CloseFile(F);
+    end;
+  end;
+end;
+
 var
   LFilename: string;
 begin
@@ -180,7 +234,7 @@ begin
   GFilenames := TStringList.Create;
   if FileExists('c:\temp\parseerrors.txt') then
     GFilenames.LoadFromFile('c:\temp\parseerrors.txt');
-  ParseRTLMain;
+  OneAtATime;
   if not FileExists('c:\temp\parseerrors.txt') then
     for LFilename in GFilenames do
       WriteLn('Error in ', LFilename);

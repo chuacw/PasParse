@@ -41,8 +41,11 @@ begin
   else
   begin
     AReader := TStreamReader.Create(AFileName, True);
-    Result := AReader.ReadToEnd;
-    AReader.Free;
+    try
+      Result := AReader.ReadToEnd;
+    finally
+      AReader.Free;
+    end;
   end;
 end;
 

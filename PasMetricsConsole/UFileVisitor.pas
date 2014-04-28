@@ -5,7 +5,7 @@ interface
 type
   TFileVisitor = class(TObject)
   protected
-    procedure Visit(AFilePath: string); virtual; abstract;
+    procedure Visit(const AFilePath: string); virtual; abstract;
 
   public
     procedure VisitFiles(const ADirectory: string; ARecursive: Boolean = False);

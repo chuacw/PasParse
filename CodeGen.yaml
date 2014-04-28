@@ -52,6 +52,7 @@ NodeTypes:
     - {Name: CloseParenthesisNode, Type: Token}
     - {Name: ContentListNode, Type: ListNode<VisibilitySectionNode>}
     - {Name: EndKeywordNode, Type: Token}
+    - {Name: DirectivesNode, Type: ListNode<DirectiveNode>}
   ConstantDeclNode:
     - {Name: NameNode, Type: Token}
     - {Name: ColonNode, Type: Token}
@@ -281,6 +282,7 @@ NodeTypes:
     - {Name: ContentListNode, Type: ListNode<VisibilitySectionNode>}
     - {Name: VariantSectionNode, Type: VariantSectionNode}
     - {Name: EndKeywordNode, Type: Token}
+    - {Name: DirectivesNode, Type: ListNode<DirectiveNode>}
   RepeatStatementNode:
     - {Name: RepeatKeywordNode, Type: Token}
     - {Name: StatementListNode, Type: ListNode<DelimitedItemNode<AstNode>>}
@@ -319,6 +321,7 @@ NodeTypes:
     - {Name: EndKeywordNode, Type: Token}
   TypeDeclNode:
     - {Name: NameNode, Type: Token}
+    - {Name: TypeParams, Type: AstNode}
     - {Name: EqualSignNode, Type: Token}
     - {Name: TypeKeywordNode, Type: Token}
     - {Name: TypeNode, Type: AstNode}
