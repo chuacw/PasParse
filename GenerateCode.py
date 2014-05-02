@@ -136,6 +136,7 @@ def generate_nodes(yaml_content):
       cs += "begin\n"
       cs += "  // Methods that are not Forward or External must have a body!\n"
       cs += "  Result := True;\n"
+      cs += "  if not Assigned(FDirectiveListNode) then Exit;\n"
       cs += "  // Iterate through method directives to find forward/external keyword\n"
       cs += "  for I := 0 to FDirectiveListNode.ItemsCount - 1 do\n"
       cs += "    if (FDirectiveListNode.Items[I] as TDirectiveNode).ForbidsBody then\n"
@@ -181,7 +182,7 @@ def generate_visitor(yaml_content):
 
   cs += "procedure TVisitor.Visit(ANode: TASTNode);\n"
   cs += "begin\n"
-    
+
   cs += "  // Visit child nodes\n"
   cs += "  if ANode is TDelimitedItemNode then\n"
   cs += "    Visit(ANode as TDelimitedItemNode);\n"
