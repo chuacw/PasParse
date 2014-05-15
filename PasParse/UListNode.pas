@@ -7,6 +7,18 @@ uses
   UNonTerminalNode, UASTNode, System.Generics.Collections;
 
 type
+  TListNode = class;
+  TListNodeEnumerator = class
+  private
+    FIndex: Integer;
+    FListNode: TListNode;
+  public
+    constructor Create(const AListNode: TListNode);
+    function GetCurrent: TASTNode;
+    function MoveNext: Boolean;
+    property Current: TASTNode read GetCurrent;
+  end;
+
   TListNode = class(TNonTerminalNode)
   private
     function GetItem(const AIndex: Integer): TASTNode;
@@ -16,6 +28,7 @@ type
     constructor Create(AItems: TObjectList<TASTNode>);
 
     function Clone: TASTNode; override;
+    function GetEnumerator: TListNodeEnumerator;
 
     property Items[const AIndex: Integer]: TASTNode read GetItem;
     property ItemsCount: Integer read GetCount;
@@ -68,9 +81,35 @@ begin
   Result := FChildNodes.Count;
 end;
 
+function TListNode.GetEnumerator: TListNodeEnumerator;
+begin
+  Result := TListNodeEnumerator.Create(Self);
+end;
+
 function TListNode.GetItem(const AIndex: Integer): TASTNode;
 begin
   Result := FChildNodes.Items[AIndex];
+end;
+
+{ TListNodeEnumerator }
+
+constructor TListNodeEnumerator.Create(const AListNode: TListNode);
+begin
+  inherited Create;
+  FIndex := -1;
+  FListNode := AListNode;
+end;
+
+function TListNodeEnumerator.GetCurrent: TASTNode;
+begin
+  Result := FListNode.Items[FIndex];
+end;
+
+function TListNodeEnumerator.MoveNext: Boolean;
+begin
+  Result := FIndex < FListNode.ItemsCount-1;
+  if Result then
+    Inc(FIndex);
 end;
 
 end.

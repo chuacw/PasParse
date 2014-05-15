@@ -15,7 +15,7 @@ type
   private
     FFirstFrame: IFrame;
     FNextFrame: IFrame;
-    FRules: array of TRule;
+    FRules: array[TRuleType] of TRule;
 
     class function FrameFromTokens(ATokens: TObjectList<TToken>): IFrame;
     function GetIsEOF: Boolean;
@@ -28,7 +28,7 @@ type
     procedure SetNextFrame(const Value: IFrame); override;
 
   public
-    constructor CreateFromText(AText, AFileName: string;
+    constructor CreateFromText(const AText, AFileName: string;
       ACompilerDefines: TCompilerDefines; AFileLoader: IFileLoader);
     constructor CreateFromFrame(AFrame: IFrame);
     constructor CreateFromTokens(ATokens: TObjectList<TToken>);
@@ -39,7 +39,7 @@ type
     function ParseToken(ATokenSet: ITokenSet): TToken; overload; override;
     function ParseToken(ATokenType: TTokenType): TToken; overload; override;
     function ParseTokenList(ATokenSet: ITokenSet): TListNode; override;
-    function CanParseToken(ATokenSet: ITokenSet): Boolean; overload; override;
+    function CanParseToken(ATokenSet: ITokenSet; const APosition: Integer=0): Boolean; overload; override;
     function CanParseToken(ATokenType: TTokenType): Boolean; overload; override;
     function TryParseToken(ATokenType: TTokenType): TToken; override;
 
@@ -69,7 +69,7 @@ uses
 
 function TParser.CanParseRule(ARuleType: TRuleType): Boolean;
 begin
-  Result := FRules[Integer(ARuleType)].CanParse;
+  Result := FRules[ARuleType].CanParse;
 end;
 
 function TParser.CanParseToken(ATokenType: TTokenType): Boolean;
@@ -79,23 +79,25 @@ end;
 
 procedure TParser.AddRule(ARuleType: TRuleType; ARuleClass: TRuleClass);
 begin
-  FRules[Integer(ARuleType)] := ARuleClass.Create(Self, ARuleType);
+  FRules[ARuleType] := ARuleClass.Create(Self, ARuleType);
 end;
 
 procedure TParser.AddTokenRule(ARuleType: TRuleType; ATokenSet: ITokenSet);
 begin
-  FRules[Integer(ARuleType)] := TTokenRule.Create(Self, ARuleType, ATokenSet);
+  FRules[ARuleType] := TTokenRule.Create(Self, ARuleType, ATokenSet);
 end;
 
-function TParser.CanParseToken(ATokenSet: ITokenSet): Boolean;
+function TParser.CanParseToken(ATokenSet: ITokenSet; const APosition: Integer=0): Boolean;
 begin
-  Result := ATokenSet.Contains(Peek(0));
+  Result := ATokenSet.Contains(Peek(APosition));
 end;
 
 function TParser.CreateEmptyListNode: TListNode;
 var
   AList: TObjectList<TASTNode>;
 begin
+  Exit(nil);
+
   AList := TObjectList<TASTNode>.Create;
   Result := TListNode.Create(AList);
   AList.Free;
@@ -106,12 +108,15 @@ begin
   inherited Create;
   FFirstFrame := AFrame;
   FNextFrame := AFrame;
-  SetLength(FRules, Integer(High(TRuleType)) + 1);
+//  SetLength(FRules, Integer(High(TRuleType)) + 1);
 
-  AddRule(RTAnonymousMethodType, TAnonymousTypeRule);
+  AddRule(RTAnonymousMethodDecl, TAnonymousMethodDeclRule);
+  AddRule(RTAnonymousMethodType, TAnonymousMethodTypeRule);
   AddRule(RTArrayType, TArrayTypeRule);
   AddRule(RTAssemblerStatement, TAssemblerStatementRule);
   AddRule(RTAssemblyAttribute, TAssemblyAttributeRule);
+  AddRule(RTAttributes, TAttributeRule);
+  AddRule(RTAttributesBlock, TAttributesBlockRule);
   AddRule(RTAtom, TAtomRule);
   AddRule(RTBareInherited, TBareInheritedRule);
   AddRule(RTBlock, TBlockRule);
@@ -123,6 +128,7 @@ begin
   AddRule(RTConstantDecl, TConstantDeclRule);
   AddRule(RTConstraint, TConstraintRule);
   AddRule(RTConstSection, TConstSectionRule);
+//  AddRule(RTConstSectionInClass, TConstSectionInClassRule);
   AddRule(RTDirective, TDirectiveRule);
   AddRule(RTEnumeratedType, TEnumeratedTypeRule);
   AddRule(RTEnumeratedTypeElement, TEnumeratedTypeElementRule);
@@ -136,6 +142,7 @@ begin
   AddRule(RTExpressionOrRange, TExpressionOrRangeRule);
   AddRule(RTExpressionOrRangeList, TExpressionOrRangeListRule);
   AddRule(RTExtendedIdent, TExtendedIdentRule);
+  AddRule(RTExternalSpecifier, TExternalSpecifierRule);
   AddRule(RTFactor, TFactorRule);
   AddRule(RTFancyBlock, TFancyBlockRule);
   AddRule(RTFieldDecl, TFieldDeclRule);
@@ -145,7 +152,9 @@ begin
   AddRule(RTGoal, TGoalRule);
   AddRule(RTGotoStatement, TGotoStatementRule);
   AddRule(RTIdent, TIdentRule);
+  AddRule(RTIdentAttr, TIdentAttrRule);
   AddRule(RTIdentList, TIdentListRule);
+  AddRule(RTIdentAttrList, TIdentAttrListRule);
   AddRule(RTIfStatement, TIfStatementRule);
   AddRule(RTImplementationDecl, TImplementationDeclRule);
   AddRule(RTImplementationSection, TImplementationSectionRule);
@@ -174,6 +183,7 @@ begin
   AddRule(RTProperty, TPropertyRule);
   AddRule(RTPropertyDirective, TPropertyDirectiveRule);
   AddRule(RTQualifiedIdent, TQualifiedIdentRule);
+  AddRule(RTQualifiedIdentTypeParams, TQualifiedIdentTypeParamsRule);
   AddRule(RTRaiseStatement, TRaiseStatementRule);
   AddRule(RTRecordFieldConstant, TRecordFieldConstantRule);
   AddRule(RTRecordHelperType, TRecordHelperTypeRule);
@@ -183,20 +193,25 @@ begin
   AddRule(RTSetLiteral, TSetLiteralRule);
   AddRule(RTSetType, TSetTypeRule);
   AddRule(RTSimpleExpression, TSimpleExpressionRule);
+  AddRule(RTSimpleParameterType, TSimpleParameterRule);
   AddRule(RTSimpleStatement, TSimpleStatementRule);
   AddRule(RTStatement, TStatementRule);
   AddRule(RTStatementList, TStatementListRule);
   AddRule(RTStringType, TStringTypeRule);
   AddRule(RTTerm, TTermRule);
   AddRule(RTTryStatement, TTryStatementRule);
-  AddRule(RTType, TTypeRule);
+//  AddRule(RTType, TTypeRule);
+  AddRule(RTType, TTypeRHSRule); // to test out generic params on RHS of type decl
   AddRule(RTTypedConstant, TTypedConstantRule);
   AddRule(RTTypeDecl, TTypeDeclRule);
+  AddRule(RTTypeDeclInClass, TTypeDeclInClassRule);
   AddRule(RTTypeParam, TTypeParamRule);
   AddRule(RTTypeParamDecl, TTypeParamDeclRule);
   AddRule(RTTypeParams, TTypeParamsRule);
+  AddRule(RTTypeParamsUsage, TTypeParamsUsageRule);
   AddRule(RTTypeRecordDirectives, TTypeRecordDirectivesRule);
   AddRule(RTTypeSection, TTypeSectionRule);
+  AddRule(RTTypeSectionInClass, TTypeSectionInClassRule);
   AddRule(RTUnit, TUnitRule);
   AddRule(RTUsedUnit, TUsedUnitRule);
   AddRule(RTUsesClause, TUsesClauseRule);
@@ -218,7 +233,7 @@ begin
   AddTokenRule(RTUnaryOperator, TTokenSets.TSUnaryOperator);
 end;
 
-constructor TParser.CreateFromText(AText, AFileName: string;
+constructor TParser.CreateFromText(const AText, AFileName: string;
   ACompilerDefines: TCompilerDefines; AFileLoader: IFileLoader);
 var
   ALexScanner: TLexScanner;
@@ -256,12 +271,12 @@ end;
 destructor TParser.Destroy;
 var
   AFrame: IFrame;
-  I: Integer;
+  ARuleType: TRuleType;
 begin
-  for I := 0 to High(FRules) do
-    FRules[I].Free;
+  for ARuleType := Low(FRules) to High(FRules) do
+    FRules[ARuleType].Free;
 
-  SetLength(FRules, 0);
+//  SetLength(FRules, 0);
 
   if (FNextFrame <> nil) and FNextFrame.IsEOF and (FNextFrame <> FFirstFrame) then
     FNextFrame.Free;
@@ -345,18 +360,26 @@ var
   ADelimiter: TToken;
 begin
   AItems := TObjectList<TASTNode>.Create(False);
-  AItem := nil; ADelimiter := nil;
+  AItem := nil;
+  ADelimiter := nil; Result := nil;
   try
-    repeat
-      AItem := ParseRuleInternal(AItemRule);
-      if CanParseToken(ADelimiterType) then
-        ADelimiter := ParseToken(ADelimiterType);
+    try
+      repeat
+        AItem := ParseRuleInternal(AItemRule);
+        if CanParseToken(ADelimiterType) then
+          ADelimiter := ParseToken(ADelimiterType);
 
-      AItems.Add(TDelimitedItemNode.Create(AItem, ADelimiter));
-      ADelimiter := nil; AItem := nil;
-    until (not CanParseRule(AItemRule));
+        AItems.Add(TDelimitedItemNode.Create(AItem, ADelimiter));
+        ADelimiter := nil; AItem := nil;
+      until (not CanParseRule(AItemRule));
 
-    Result := TListNode.Create(AItems);
+      Result := TListNode.Create(AItems);
+    except
+      FreeAndNil(ADelimiter);
+      FreeAndNil(AItem);
+      AItems.OwnsObjects := True;
+      raise;
+    end;
   finally
     AItems.Free;
   end;
@@ -374,9 +397,10 @@ begin
       while CanParseRule(ARuleType) do
         begin
           AItem := ParseRuleInternal(ARuleType);
-          AItems.Add(AItem); AItem := nil;
+          AItems.Add(AItem);
         end;
-      Result := TListNode.Create(AItems);
+      if AItems.Count>0 then
+        Result := TListNode.Create(AItems);
     except
       AItems.OwnsObjects := True;
       raise;
@@ -391,7 +415,7 @@ begin
   if CanParseRule(RTStatementList) then
     Result := ParseRuleInternal(RTStatementList) as TListNode
   else
-    Result := CreateEmptyListNode;
+    Result := nil; //CreateEmptyListNode;
 end;
 
 function TParser.ParseRequiredRuleList(ARuleType: TRuleType): TListNode;
@@ -399,21 +423,17 @@ var
   AItems: TObjectList<TASTNode>;
   AItem: TASTNode;
 begin
-  Result := nil; AItem := nil;
+  Result := nil;
   AItems := TObjectList<TASTNode>.Create(False);
   try
     try
       repeat
         AItem := ParseRuleInternal(ARuleType);
-        AItems.Add(AItem); AItem := nil;
+        AItems.Add(AItem);
       until (not CanParseRule(ARuleType));
       Result := TListNode.Create(AItems);
     except
-      // Free all objects that are listed already
-      FreeAndNil(AItem);
       AItems.OwnsObjects := True;
-//      AItems.Free;
-      // And raise exception again
       raise;
     end;
   finally
@@ -429,7 +449,7 @@ end;
 
 function TParser.ParseRuleInternal(ARuleType: TRuleType): TASTNode;
 begin
-  Result := FRules[Integer(ARuleType)].Execute;
+  Result := FRules[ARuleType].Execute;
 end;
 
 function TParser.ParseToken(ATokenSet: ITokenSet): TToken;
@@ -442,27 +462,19 @@ function TParser.ParseTokenList(ATokenSet: ITokenSet): TListNode;
 var
   AList: TObjectList<TASTNode>;
   AToken: TToken;
-  LMsg: TASTNode;
 begin
   AList := TObjectList<TASTNode>.Create(False);
 
   while CanParseToken(ATokenSet) do
     begin
       AToken := ParseToken(ATokenSet);
-      if AToken.TokenType = TTDeprecatedSemikeyword then
-        begin
-          if CanParseRule(RTExpression) then
-            begin
-              LMsg := ParseRule(RTExpression);
-              // TODO -ochuacw : Tag the string to the deprecated...
-              LMsg := nil;
-              // TODO -ochuacw: ParseRule(RTDirective) instead?
-            end;
-        end;
       AList.Add(AToken);
     end;
 
-  Result := TListNode.Create(AList);
+  if AList.Count>0 then
+    Result := TListNode.Create(AList) else
+    Result := nil;
+
   AList.Free;
 end;
 

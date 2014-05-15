@@ -17,7 +17,7 @@ type
     function ParseToken(ATokenSet: ITokenSet): TToken; overload; virtual; abstract;
     function ParseToken(ATokenType: TTokenType): TToken; overload; virtual; abstract;
     function ParseTokenList(ATokenSet: ITokenSet): TListNode; virtual; abstract;
-    function CanParseToken(ATokenSet: ITokenSet): Boolean; overload; virtual; abstract;
+    function CanParseToken(ATokenSet: ITokenSet; const APosition: Integer=0): Boolean; overload; virtual; abstract;
     function CanParseToken(ATokenType: TTokenType): Boolean; overload; virtual; abstract;
     function TryParseToken(ATokenType: TTokenType): TToken; virtual; abstract;
 

@@ -1,0 +1,626 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{37051F51-9814-448A-894E-D766A6B5FFAF}</ProjectGuid>
+        <ProjectVersion>15.4</ProjectVersion>
+        <FrameworkType>VCL</FrameworkType>
+        <MainSource>ParseRTLTest.dpr</MainSource>
+        <Base>True</Base>
+        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Platform Condition="'$(Platform)'==''">Win32</Platform>
+        <TargetedPlatforms>3</TargetedPlatforms>
+        <AppType>Console</AppType>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Android' and '$(Base)'=='true') or '$(Base_Android)'!=''">
+        <Base_Android>true</Base_Android>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='iOSDevice' and '$(Base)'=='true') or '$(Base_iOSDevice)'!=''">
+        <Base_iOSDevice>true</Base_iOSDevice>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='iOSSimulator' and '$(Base)'=='true') or '$(Base_iOSSimulator)'!=''">
+        <Base_iOSSimulator>true</Base_iOSSimulator>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='OSX32' and '$(Base)'=='true') or '$(Base_OSX32)'!=''">
+        <Base_OSX32>true</Base_OSX32>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
+        <Base_Win32>true</Base_Win32>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Base)'=='true') or '$(Base_Win64)'!=''">
+        <Base_Win64>true</Base_Win64>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_1)'!=''">
+        <Cfg_1>true</Cfg_1>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win32)'!=''">
+        <Cfg_1_Win32>true</Cfg_1_Win32>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_2)'!=''">
+        <Cfg_2>true</Cfg_2>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
+        <Cfg_2_Win32>true</Cfg_2_Win32>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base)'!=''">
+        <SanitizedProjectName>ParseRTLTest</SanitizedProjectName>
+        <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
+        <DCC_DcuOutput>.\$(Platform)\$(Config)</DCC_DcuOutput>
+        <DCC_ExeOutput>.\$(Platform)\$(Config)</DCC_ExeOutput>
+        <DCC_E>false</DCC_E>
+        <DCC_N>false</DCC_N>
+        <DCC_S>false</DCC_S>
+        <DCC_F>false</DCC_F>
+        <DCC_K>false</DCC_K>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Android)'!=''">
+        <Android_LauncherIcon48>$(BDS)\bin\Artwork\Android\FM_LauncherIcon_48x48.png</Android_LauncherIcon48>
+        <Android_LauncherIcon36>$(BDS)\bin\Artwork\Android\FM_LauncherIcon_36x36.png</Android_LauncherIcon36>
+        <Android_LauncherIcon72>$(BDS)\bin\Artwork\Android\FM_LauncherIcon_72x72.png</Android_LauncherIcon72>
+        <DCC_UsePackage>IndyIPClient;FireDACSqliteDriver;bindcompfmx;FireDACDSDriver;DBXSqliteDriver;RESTBackendComponents;fmx;rtl;dbrtl;DbxClientDriver;IndySystem;FireDACCommon;bindcomp;tethering;DBXInterBaseDriver;DataSnapClient;DataSnapCommon;DataSnapProviderClient;xmlrtl;DataSnapNativeClient;DbxCommonDriver;IndyProtocols;dbxcds;FireDACCommonDriver;bindcompdbx;bindengine;soaprtl;fmxFireDAC;CustomIPTransport;FireDAC;dsnap;IndyCore;IndyIPCommon;IndyIPServer;FireDACIBDriver;inet;DataSnapFireDAC;CloudService;soapmidas;soapserver;FireDACDBXDriver;dsnapxml;RESTComponents;dbexpress;$(DCC_UsePackage)</DCC_UsePackage>
+        <Android_LauncherIcon144>$(BDS)\bin\Artwork\Android\FM_LauncherIcon_144x144.png</Android_LauncherIcon144>
+        <Android_LauncherIcon96>$(BDS)\bin\Artwork\Android\FM_LauncherIcon_96x96.png</Android_LauncherIcon96>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_iOSDevice)'!=''">
+        <DCC_UsePackage>IndyIPClient;FireDACSqliteDriver;bindcompfmx;FireDACDSDriver;DBXSqliteDriver;RESTBackendComponents;fmx;rtl;dbrtl;DbxClientDriver;IndySystem;FireDACCommon;bindcomp;tethering;DBXInterBaseDriver;DataSnapClient;DataSnapCommon;DataSnapProviderClient;xmlrtl;DataSnapNativeClient;DbxCommonDriver;IndyProtocols;dbxcds;FireDACCommonDriver;bindcompdbx;bindengine;soaprtl;fmxFireDAC;CustomIPTransport;FireDAC;dsnap;fmxase;IndyCore;IndyIPCommon;IndyIPServer;FireDACIBDriver;inet;DataSnapFireDAC;CloudService;soapmidas;soapserver;FireDACDBXDriver;dsnapxml;RESTComponents;dbexpress;$(DCC_UsePackage)</DCC_UsePackage>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_iOSSimulator)'!=''">
+        <DCC_UsePackage>IndyIPClient;FireDACSqliteDriver;bindcompfmx;FireDACDSDriver;DBXSqliteDriver;RESTBackendComponents;fmx;rtl;dbrtl;DbxClientDriver;IndySystem;FireDACCommon;bindcomp;tethering;DBXInterBaseDriver;DataSnapClient;DataSnapCommon;DataSnapProviderClient;xmlrtl;DataSnapNativeClient;DbxCommonDriver;IndyProtocols;dbxcds;FireDACCommonDriver;bindcompdbx;bindengine;soaprtl;fmxFireDAC;CustomIPTransport;FireDAC;dsnap;fmxase;IndyCore;IndyIPCommon;IndyIPServer;FireDACIBDriver;inet;DataSnapFireDAC;CloudService;soapmidas;soapserver;FireDACDBXDriver;dsnapxml;RESTComponents;dbexpress;$(DCC_UsePackage)</DCC_UsePackage>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_OSX32)'!=''">
+        <DCC_ConsoleTarget>true</DCC_ConsoleTarget>
+        <DCC_UsePackage>IndyIPClient;FireDACASADriver;FireDACSqliteDriver;bindcompfmx;FireDACDSDriver;DBXSqliteDriver;FireDACPgDriver;FireDACODBCDriver;RESTBackendComponents;fmx;rtl;dbrtl;DbxClientDriver;IndySystem;FireDACCommon;bindcomp;inetdb;tethering;DBXInterBaseDriver;DataSnapClient;DataSnapServer;DataSnapCommon;DataSnapProviderClient;xmlrtl;DataSnapNativeClient;DbxCommonDriver;IndyProtocols;dbxcds;DBXMySQLDriver;FireDACCommonDriver;bindcompdbx;bindengine;soaprtl;fmxFireDAC;FireDACADSDriver;DBXOracleDriver;CustomIPTransport;FireDACMSSQLDriver;FireDAC;dsnap;DBXInformixDriver;fmxase;IndyCore;DataSnapServerMidas;IndyIPCommon;IndyIPServer;FireDACIBDriver;DBXFirebirdDriver;inet;DataSnapFireDAC;fmxobj;CloudService;FireDACMySQLDriver;soapmidas;soapserver;inetdbxpress;FireDACDBXDriver;DBXSybaseASADriver;dsnapxml;FireDACOracleDriver;FireDACInfxDriver;FireDACDb2Driver;fmxdae;RESTComponents;FireDACMSAccDriver;dbexpress;DataSnapIndy10ServerTransport;$(DCC_UsePackage)</DCC_UsePackage>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win32)'!=''">
+        <Manifest_File>None</Manifest_File>
+        <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <DCC_UsePackage>IndyIPClient;FireDACASADriver;FireDACSqliteDriver;bindcompfmx;FireDACDSDriver;DBXSqliteDriver;vcldbx;FireDACPgDriver;FireDACODBCDriver;RESTBackendComponents;fmx;rtl;dbrtl;DbxClientDriver;IndySystem;FireDACCommon;bindcomp;inetdb;tethering;inetdbbde;DBXInterBaseDriver;DataSnapClient;DataSnapServer;DataSnapCommon;DBXOdbcDriver;vclFireDAC;DataSnapProviderClient;xmlrtl;DataSnapNativeClient;DBXSybaseASEDriver;DbxCommonDriver;svnui;vclimg;IndyProtocols;dbxcds;DBXMySQLDriver;DatasnapConnectorsFreePascal;FireDACCommonDriver;MetropolisUILiveTile;bindcompdbx;bindengine;vclactnband;vcldb;soaprtl;vcldsnap;bindcompvcl;vclie;fmxFireDAC;FireDACADSDriver;DBXDb2Driver;vcltouch;DBXOracleDriver;CustomIPTransport;vclribbon;VclSmp;FireDACMSSQLDriver;FireDAC;dsnap;DBXInformixDriver;fmxase;vcl;Intraweb;IndyCore;DataSnapServerMidas;DBXMSSQLDriver;IndyIPCommon;IndyIPServer;dsnapcon;FireDACIBDriver;DBXFirebirdDriver;inet;VCLRESTComponents;DataSnapFireDAC;fmxobj;CloudService;DataSnapConnectors;FireDACMySQLDriver;soapmidas;vclx;soapserver;inetdbxpress;FireDACDBXDriver;svn;DBXSybaseASADriver;dsnapxml;FireDACOracleDriver;FireDACInfxDriver;FireDACDb2Driver;fmxdae;RESTComponents;bdertl;FireDACMSAccDriver;dbexpress;DataSnapIndy10ServerTransport;adortl;$(DCC_UsePackage)</DCC_UsePackage>
+        <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win64)'!=''">
+        <Manifest_File>None</Manifest_File>
+        <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
+        <DCC_ConsoleTarget>true</DCC_ConsoleTarget>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <DCC_UsePackage>IndyIPClient;FireDACASADriver;FireDACSqliteDriver;bindcompfmx;FireDACDSDriver;DBXSqliteDriver;FireDACPgDriver;FireDACODBCDriver;RESTBackendComponents;fmx;rtl;dbrtl;DbxClientDriver;IndySystem;FireDACCommon;bindcomp;inetdb;tethering;DBXInterBaseDriver;DataSnapClient;DataSnapServer;DataSnapCommon;DBXOdbcDriver;vclFireDAC;DataSnapProviderClient;xmlrtl;DataSnapNativeClient;DBXSybaseASEDriver;DbxCommonDriver;vclimg;IndyProtocols;dbxcds;DBXMySQLDriver;DatasnapConnectorsFreePascal;FireDACCommonDriver;MetropolisUILiveTile;bindcompdbx;bindengine;vclactnband;vcldb;soaprtl;vcldsnap;bindcompvcl;vclie;fmxFireDAC;FireDACADSDriver;DBXDb2Driver;vcltouch;DBXOracleDriver;CustomIPTransport;vclribbon;VclSmp;FireDACMSSQLDriver;FireDAC;dsnap;DBXInformixDriver;fmxase;vcl;Intraweb;IndyCore;DataSnapServerMidas;DBXMSSQLDriver;IndyIPCommon;IndyIPServer;dsnapcon;FireDACIBDriver;DBXFirebirdDriver;inet;VCLRESTComponents;DataSnapFireDAC;fmxobj;CloudService;DataSnapConnectors;FireDACMySQLDriver;soapmidas;vclx;soapserver;inetdbxpress;FireDACDBXDriver;DBXSybaseASADriver;dsnapxml;FireDACOracleDriver;FireDACInfxDriver;FireDACDb2Driver;fmxdae;RESTComponents;FireDACMSAccDriver;dbexpress;DataSnapIndy10ServerTransport;adortl;$(DCC_UsePackage)</DCC_UsePackage>
+        <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1)'!=''">
+        <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
+        <DCC_DebugDCUs>true</DCC_DebugDCUs>
+        <DCC_Optimize>false</DCC_Optimize>
+        <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
+        <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
+        <DCC_RemoteDebug>true</DCC_RemoteDebug>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+        <DCC_Define>DUNIT;DETECTMEMLEAKS;FASTMM;$(DCC_Define)</DCC_Define>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <DCC_RemoteDebug>false</DCC_RemoteDebug>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2)'!=''">
+        <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
+        <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
+        <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+        <DCC_DebugInformation>0</DCC_DebugInformation>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <Manifest_File>None</Manifest_File>
+        <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
+        <DCC_Define>DUNIT;$(DCC_Define)</DCC_Define>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+    </PropertyGroup>
+    <ItemGroup>
+        <DelphiCompile Include="$(MainSource)">
+            <MainSource>MainSource</MainSource>
+        </DelphiCompile>
+        <DCCReference Include="UTest.pas"/>
+        <DCCReference Include="..\PasParse\UAlternator.pas"/>
+        <DCCReference Include="..\PasParse\UASTNode.pas"/>
+        <DCCReference Include="..\PasParse\UBaseException.pas"/>
+        <DCCReference Include="..\PasParse\UCompilerDefines.pas"/>
+        <DCCReference Include="..\PasParse\UDelimitedItemNode.pas"/>
+        <DCCReference Include="..\PasParse\UEOFFrame.pas"/>
+        <DCCReference Include="..\PasParse\UFileLoader.pas"/>
+        <DCCReference Include="..\PasParse\UFrame.pas"/>
+        <DCCReference Include="..\PasParse\UGeneratedNodes.pas"/>
+        <DCCReference Include="..\PasParse\UIFileLoader.pas"/>
+        <DCCReference Include="..\PasParse\UIFrame.pas"/>
+        <DCCReference Include="..\PasParse\UInvalidOperationException.pas"/>
+        <DCCReference Include="..\PasParse\UIOException.pas"/>
+        <DCCReference Include="..\PasParse\UIParser.pas"/>
+        <DCCReference Include="..\PasParse\UITokenSet.pas"/>
+        <DCCReference Include="..\PasParse\ULexException.pas"/>
+        <DCCReference Include="..\PasParse\ULexScanner.pas"/>
+        <DCCReference Include="..\PasParse\UListNode.pas"/>
+        <DCCReference Include="..\PasParse\ULocation.pas"/>
+        <DCCReference Include="..\PasParse\UMemoryFileLoader.pas"/>
+        <DCCReference Include="..\PasParse\UNonTerminalNode.pas"/>
+        <DCCReference Include="..\PasParse\UParseException.pas"/>
+        <DCCReference Include="..\PasParse\UParser.pas"/>
+        <DCCReference Include="..\PasParse\UPreprocessorException.pas"/>
+        <DCCReference Include="..\PasParse\URule.pas"/>
+        <DCCReference Include="..\PasParse\URules.pas"/>
+        <DCCReference Include="..\PasParse\URuleType.pas"/>
+        <DCCReference Include="..\PasParse\USingleTokenTokenSet.pas"/>
+        <DCCReference Include="..\PasParse\UToken.pas"/>
+        <DCCReference Include="..\PasParse\UTokenFilter.pas"/>
+        <DCCReference Include="..\PasParse\UTokenRule.pas"/>
+        <DCCReference Include="..\PasParse\UTokenSet.pas"/>
+        <DCCReference Include="..\PasParse\UTokenSets.pas"/>
+        <DCCReference Include="..\PasParse\UTokenType.pas"/>
+        <DCCReference Include="..\PasParse\UVisitor.pas"/>
+        <DCCReference Include="..\PasParseTest\TestFramework.pas"/>
+        <DCCReference Include="GUITestRunner.pas">
+            <Form>GUITestRunner</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="UTestAndroidapi_AppGlue.pas"/>
+        <DCCReference Include="UTestAndroidapi_AssetManager.pas"/>
+        <DCCReference Include="UTestAndroidapi_AssetManagerJni.pas"/>
+        <DCCReference Include="UTestAndroidapi_Bitmap.pas"/>
+        <DCCReference Include="UTestAndroidapi_Configuration.pas"/>
+        <DCCReference Include="UTestAndroidapi_Consts.pas"/>
+        <DCCReference Include="UTestAndroidapi_Egl.pas"/>
+        <DCCReference Include="UTestAndroidapi_Eglext.pas"/>
+        <DCCReference Include="UTestAndroidapi_EglPlatform.pas"/>
+        <DCCReference Include="UTestAndroidapi_Gles.pas"/>
+        <DCCReference Include="UTestAndroidapi_Gles2.pas"/>
+        <DCCReference Include="UTestAndroidapi_Gles2ext.pas"/>
+        <DCCReference Include="UTestAndroidapi_Glesext.pas"/>
+        <DCCReference Include="UTestAndroidapi_Helpers.pas"/>
+        <DCCReference Include="UTestAndroidapi_Input.pas"/>
+        <DCCReference Include="UTestAndroidapi_IOUtils.pas"/>
+        <DCCReference Include="UTestAndroidapi_Jni.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNI_AdMob.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNI_Analytics.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNI_ApkExpansion.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNI_App.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNI_Dalvik.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNI_Embarcadero.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNI_GraphicsContentViewText.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNI_Hardware.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNI_InAppBilling.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNI_InputMethodService.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNI_Java_Security.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNI_JavaTypes.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNI_Licensing.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNI_Location.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNI_Media.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNI_Net.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNI_OpenGL.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNI_Os.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNI_PlayServices.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNI_PlayServices_GCM.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNI_Provider.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNI_Support.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNI_Telephony.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNI_Util.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNI_VideoView.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNI_Webkit.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNI_Widget.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNIBridge.pas"/>
+        <DCCReference Include="UTestAndroidapi_JNIMarshal.pas"/>
+        <DCCReference Include="UTestAndroidapi_KeyCodes.pas"/>
+        <DCCReference Include="UTestAndroidapi_KhrPlatform.pas"/>
+        <DCCReference Include="UTestAndroidapi_Log.pas"/>
+        <DCCReference Include="UTestAndroidapi_Looper.pas"/>
+        <DCCReference Include="UTestAndroidapi_NativeActivity.pas"/>
+        <DCCReference Include="UTestAndroidapi_NativeWindow.pas"/>
+        <DCCReference Include="UTestAndroidapi_NativeWindowJni.pas"/>
+        <DCCReference Include="UTestAndroidapi_Obb.pas"/>
+        <DCCReference Include="UTestAndroidapi_OpenSles.pas"/>
+        <DCCReference Include="UTestAndroidapi_Rect.pas"/>
+        <DCCReference Include="UTestAndroidapi_Sensor.pas"/>
+        <DCCReference Include="UTestAndroidapi_StorageManager.pas"/>
+        <DCCReference Include="UTestAndroidapi_Timer.pas"/>
+        <DCCReference Include="UTestiOSapi_AssetsLibrary.pas"/>
+        <DCCReference Include="UTestiOSapi_AVFoundation.pas"/>
+        <DCCReference Include="UTestiOSapi_CocoaTypes.pas"/>
+        <DCCReference Include="UTestiOSapi_CoreAudio.pas"/>
+        <DCCReference Include="UTestiOSapi_CoreData.pas"/>
+        <DCCReference Include="UTestiOSapi_CoreGraphics.pas"/>
+        <DCCReference Include="UTestiOSapi_CoreImage.pas"/>
+        <DCCReference Include="UTestiOSapi_CoreLocation.pas"/>
+        <DCCReference Include="UTestiOSapi_CoreMedia.pas"/>
+        <DCCReference Include="UTestiOSapi_CoreMotion.pas"/>
+        <DCCReference Include="UTestiOSapi_CoreTelephony.pas"/>
+        <DCCReference Include="UTestiOSapi_CoreText.pas"/>
+        <DCCReference Include="UTestiOSapi_CoreVideo.pas"/>
+        <DCCReference Include="UTestiOSapi_Foundation.pas"/>
+        <DCCReference Include="UTestiOSapi_GLKit.pas"/>
+        <DCCReference Include="UTestiOSapi_iAd.pas"/>
+        <DCCReference Include="UTestiOSapi_MediaPlayer.pas"/>
+        <DCCReference Include="UTestiOSapi_OpenGLES.pas"/>
+        <DCCReference Include="UTestiOSapi_QuartzCore.pas"/>
+        <DCCReference Include="UTestiOSapi_StoreKit.pas"/>
+        <DCCReference Include="UTestiOSapi_UIKit.pas"/>
+        <DCCReference Include="UTestMacapi_AppKit.pas"/>
+        <DCCReference Include="UTestMacapi_AVFoundation.pas"/>
+        <DCCReference Include="UTestMacapi_CocoaTypes.pas"/>
+        <DCCReference Include="UTestMacapi_Consts.pas"/>
+        <DCCReference Include="UTestMacapi_CoreFoundation.pas"/>
+        <DCCReference Include="UTestMacapi_CoreGraphics.pas"/>
+        <DCCReference Include="UTestMacapi_CoreLocation.pas"/>
+        <DCCReference Include="UTestMacapi_CoreMedia.pas"/>
+        <DCCReference Include="UTestMacapi_CoreServices.pas"/>
+        <DCCReference Include="UTestMacapi_CoreText.pas"/>
+        <DCCReference Include="UTestMacapi_CoreVideo.pas"/>
+        <DCCReference Include="UTestMacapi_Dispatch.pas"/>
+        <DCCReference Include="UTestMacapi_Foundation.pas"/>
+        <DCCReference Include="UTestMacapi_Helpers.pas"/>
+        <DCCReference Include="UTestMacapi_ImageIO.pas"/>
+        <DCCReference Include="UTestMacapi_KeyCodes.pas"/>
+        <DCCReference Include="UTestMacapi_Mach.pas"/>
+        <DCCReference Include="UTestMacapi_ObjCRuntime.pas"/>
+        <DCCReference Include="UTestMacapi_ObjectiveC.pas"/>
+        <DCCReference Include="UTestMacapi_OCBlocks.pas"/>
+        <DCCReference Include="UTestMacapi_OCMarshal.pas"/>
+        <DCCReference Include="UTestMacapi_OpenGL.pas"/>
+        <DCCReference Include="UTestMacapi_PrintCore.pas"/>
+        <DCCReference Include="UTestMacapi_QTKit.pas"/>
+        <DCCReference Include="UTestMacapi_QuartzCore.pas"/>
+        <DCCReference Include="UTestMacapi_Quicktime.pas"/>
+        <DCCReference Include="UTestMacapi_Security.pas"/>
+        <DCCReference Include="UTestMacapi_SystemConfiguration.pas"/>
+        <DCCReference Include="UTestMacapi_VecLib.pas"/>
+        <DCCReference Include="UTestPosix_ArpaInet.pas"/>
+        <DCCReference Include="UTestPosix_Base.pas"/>
+        <DCCReference Include="UTestPosix_Dirent.pas"/>
+        <DCCReference Include="UTestPosix_Dlfcn.pas"/>
+        <DCCReference Include="UTestPosix_Errno.pas"/>
+        <DCCReference Include="UTestPosix_Fcntl.pas"/>
+        <DCCReference Include="UTestPosix_Fnmatch.pas"/>
+        <DCCReference Include="UTestPosix_Grp.pas"/>
+        <DCCReference Include="UTestPosix_Iconv.pas"/>
+        <DCCReference Include="UTestPosix_Langinfo.pas"/>
+        <DCCReference Include="UTestPosix_Limits.pas"/>
+        <DCCReference Include="UTestPosix_Locale.pas"/>
+        <DCCReference Include="UTestPosix_NetDB.pas"/>
+        <DCCReference Include="UTestPosix_NetIf.pas"/>
+        <DCCReference Include="UTestPosix_NetinetIcmp6.pas"/>
+        <DCCReference Include="UTestPosix_NetinetIn.pas"/>
+        <DCCReference Include="UTestPosix_NetinetIp6.pas"/>
+        <DCCReference Include="UTestPosix_NetinetTCP.pas"/>
+        <DCCReference Include="UTestPosix_NetinetUDP.pas"/>
+        <DCCReference Include="UTestPosix_Pthread.pas"/>
+        <DCCReference Include="UTestPosix_Pwd.pas"/>
+        <DCCReference Include="UTestPosix_Sched.pas"/>
+        <DCCReference Include="UTestPosix_Semaphore.pas"/>
+        <DCCReference Include="UTestPosix_Signal.pas"/>
+        <DCCReference Include="UTestPosix_StdDef.pas"/>
+        <DCCReference Include="UTestPosix_Stdio.pas"/>
+        <DCCReference Include="UTestPosix_Stdlib.pas"/>
+        <DCCReference Include="UTestPosix_String_.pas"/>
+        <DCCReference Include="UTestPosix_StrOpts.pas"/>
+        <DCCReference Include="UTestPosix_SysMman.pas"/>
+        <DCCReference Include="UTestPosix_SysSelect.pas"/>
+        <DCCReference Include="UTestPosix_SysSocket.pas"/>
+        <DCCReference Include="UTestPosix_SysStat.pas"/>
+        <DCCReference Include="UTestPosix_SysStatvfs.pas"/>
+        <DCCReference Include="UTestPosix_SysSysctl.pas"/>
+        <DCCReference Include="UTestPosix_SysTime.pas"/>
+        <DCCReference Include="UTestPosix_SysTimes.pas"/>
+        <DCCReference Include="UTestPosix_SysTypes.pas"/>
+        <DCCReference Include="UTestPosix_SysUio.pas"/>
+        <DCCReference Include="UTestPosix_SysUn.pas"/>
+        <DCCReference Include="UTestPosix_SysWait.pas"/>
+        <DCCReference Include="UTestPosix_Termios.pas"/>
+        <DCCReference Include="UTestPosix_Time.pas"/>
+        <DCCReference Include="UTestPosix_Unistd.pas"/>
+        <DCCReference Include="UTestPosix_Utime.pas"/>
+        <DCCReference Include="UTestPosix_Wchar.pas"/>
+        <DCCReference Include="UTestPosix_Wctype.pas"/>
+        <DCCReference Include="UTestPosix_Wordexp.pas"/>
+        <DCCReference Include="UTestSysInit.pas"/>
+        <DCCReference Include="UTestSystem.pas"/>
+        <DCCReference Include="UTestSystem_Actions.pas"/>
+        <DCCReference Include="UTestSystem_Android_Sensors.pas"/>
+        <DCCReference Include="UTestSystem_AnsiStrings.pas"/>
+        <DCCReference Include="UTestSystem_Character.pas"/>
+        <DCCReference Include="UTestSystem_Classes.pas"/>
+        <DCCReference Include="UTestSystem_Contnrs.pas"/>
+        <DCCReference Include="UTestSystem_ConvUtils.pas"/>
+        <DCCReference Include="UTestSystem_DateUtils.pas"/>
+        <DCCReference Include="UTestSystem_Diagnostics.pas"/>
+        <DCCReference Include="UTestSystem_Generics_Collections.pas"/>
+        <DCCReference Include="UTestSystem_Generics_Defaults.pas"/>
+        <DCCReference Include="UTestSystem_HelpIntfs.pas"/>
+        <DCCReference Include="UTestSystem_IniFiles.pas"/>
+        <DCCReference Include="UTestSystem_Internal_DebugUtils.pas"/>
+        <DCCReference Include="UTestSystem_Internal_ExcUtils.pas"/>
+        <DCCReference Include="UTestSystem_Internal_ICU.pas"/>
+        <DCCReference Include="UTestSystem_Internal_MachExceptions.pas"/>
+        <DCCReference Include="UTestSystem_Internal_StrHlpr.pas"/>
+        <DCCReference Include="UTestSystem_Internal_Unwind.pas"/>
+        <DCCReference Include="UTestSystem_Internal_Unwinder.pas"/>
+        <DCCReference Include="UTestSystem_Internal_VarHlpr.pas"/>
+        <DCCReference Include="UTestSystem_iOS_Sensors.pas"/>
+        <DCCReference Include="UTestSystem_IOUtils.pas"/>
+        <DCCReference Include="UTestSystem_JSON.pas"/>
+        <DCCReference Include="UTestSystem_JSONConsts.pas"/>
+        <DCCReference Include="UTestSystem_Mac_CFUtils.pas"/>
+        <DCCReference Include="UTestSystem_Mac_Sensors.pas"/>
+        <DCCReference Include="UTestSystem_Masks.pas"/>
+        <DCCReference Include="UTestSystem_MaskUtils.pas"/>
+        <DCCReference Include="UTestSystem_Math.pas"/>
+        <DCCReference Include="UTestSystem_Math_Vectors.pas"/>
+        <DCCReference Include="UTestSystem_Messaging.pas"/>
+        <DCCReference Include="UTestSystem_ObjAuto.pas"/>
+        <DCCReference Include="UTestSystem_Odbc.pas"/>
+        <DCCReference Include="UTestSystem_PushNotification.pas"/>
+        <DCCReference Include="UTestSystem_RegularExpressions.pas"/>
+        <DCCReference Include="UTestSystem_RegularExpressionsAPI.pas"/>
+        <DCCReference Include="UTestSystem_RegularExpressionsConsts.pas"/>
+        <DCCReference Include="UTestSystem_RegularExpressionsCore.pas"/>
+        <DCCReference Include="UTestSystem_RTLConsts.pas"/>
+        <DCCReference Include="UTestSystem_Rtti.pas"/>
+        <DCCReference Include="UTestSystem_Sensors.pas"/>
+        <DCCReference Include="UTestSystem_Sensors_Components.pas"/>
+        <DCCReference Include="UTestSystem_Sharemem.pas"/>
+        <DCCReference Include="UTestSystem_SimpleShareMem.pas"/>
+        <DCCReference Include="UTestSystem_Sqlite.pas"/>
+        <DCCReference Include="UTestSystem_StartUpCopy.pas"/>
+        <DCCReference Include="UTestSystem_StdConvs.pas"/>
+        <DCCReference Include="UTestSystem_StrUtils.pas"/>
+        <DCCReference Include="UTestSystem_SyncObjs.pas"/>
+        <DCCReference Include="UTestSystem_SysConst.pas"/>
+        <DCCReference Include="UTestSystem_SysUtils.pas"/>
+        <DCCReference Include="UTestSystem_TimeSpan.pas"/>
+        <DCCReference Include="UTestSystem_Types.pas"/>
+        <DCCReference Include="UTestSystem_TypInfo.pas"/>
+        <DCCReference Include="UTestSystem_UIConsts.pas"/>
+        <DCCReference Include="UTestSystem_UITypes.pas"/>
+        <DCCReference Include="UTestSystem_VarCmplx.pas"/>
+        <DCCReference Include="UTestSystem_VarConv.pas"/>
+        <DCCReference Include="UTestSystem_Variants.pas"/>
+        <DCCReference Include="UTestSystem_VarUtils.pas"/>
+        <DCCReference Include="UTestSystem_WideStrings.pas"/>
+        <DCCReference Include="UTestSystem_WideStrUtils.pas"/>
+        <DCCReference Include="UTestSystem_Win_ComConst.pas"/>
+        <DCCReference Include="UTestSystem_Win_ComObj.pas"/>
+        <DCCReference Include="UTestSystem_Win_ComObjWrapper.pas"/>
+        <DCCReference Include="UTestSystem_Win_ComServ.pas"/>
+        <DCCReference Include="UTestSystem_Win_Crtl.pas"/>
+        <DCCReference Include="UTestSystem_Win_Mtsobj.pas"/>
+        <DCCReference Include="UTestSystem_Win_ObjComAuto.pas"/>
+        <DCCReference Include="UTestSystem_Win_Registry.pas"/>
+        <DCCReference Include="UTestSystem_Win_ScktComp.pas"/>
+        <DCCReference Include="UTestSystem_Win_Sensors.pas"/>
+        <DCCReference Include="UTestSystem_Win_StdVCL.pas"/>
+        <DCCReference Include="UTestSystem_Win_Taskbar.pas"/>
+        <DCCReference Include="UTestSystem_Win_TaskbarCore.pas"/>
+        <DCCReference Include="UTestSystem_Win_VCLCom.pas"/>
+        <DCCReference Include="UTestSystem_Zip.pas"/>
+        <DCCReference Include="UTestSystem_ZLib.pas"/>
+        <DCCReference Include="UTestSystem_ZLibConst.pas"/>
+        <DCCReference Include="UTestWinapi_AccCtrl.pas"/>
+        <DCCReference Include="UTestWinapi_AclAPI.pas"/>
+        <DCCReference Include="UTestWinapi_ActiveX.pas"/>
+        <DCCReference Include="UTestWinapi_ADOInt.pas"/>
+        <DCCReference Include="UTestWinapi_AspTlb.pas"/>
+        <DCCReference Include="UTestWinapi_COMAdmin.pas"/>
+        <DCCReference Include="UTestWinapi_CommCtrl.pas"/>
+        <DCCReference Include="UTestWinapi_CommDlg.pas"/>
+        <DCCReference Include="UTestWinapi_ComSvcs.pas"/>
+        <DCCReference Include="UTestWinapi_Cor.pas"/>
+        <DCCReference Include="UTestWinapi_CorError.pas"/>
+        <DCCReference Include="UTestWinapi_CorHdr.pas"/>
+        <DCCReference Include="UTestWinapi_Cpl.pas"/>
+        <DCCReference Include="UTestWinapi_D2D1.pas"/>
+        <DCCReference Include="UTestWinapi_D3D10.pas"/>
+        <DCCReference Include="UTestWinapi_D3D10_1.pas"/>
+        <DCCReference Include="UTestWinapi_D3D11.pas"/>
+        <DCCReference Include="UTestWinapi_D3D11sdklayers.pas"/>
+        <DCCReference Include="UTestWinapi_D3D11Shader.pas"/>
+        <DCCReference Include="UTestWinapi_D3DCommon.pas"/>
+        <DCCReference Include="UTestWinapi_D3DX8.pas"/>
+        <DCCReference Include="UTestWinapi_D3DX9.pas"/>
+        <DCCReference Include="UTestWinapi_D3DX10.pas"/>
+        <DCCReference Include="UTestWinapi_DDEml.pas"/>
+        <DCCReference Include="UTestWinapi_Direct3D.pas"/>
+        <DCCReference Include="UTestWinapi_Direct3D8.pas"/>
+        <DCCReference Include="UTestWinapi_Direct3D9.pas"/>
+        <DCCReference Include="UTestWinapi_DirectDraw.pas"/>
+        <DCCReference Include="UTestWinapi_DirectInput.pas"/>
+        <DCCReference Include="UTestWinapi_DirectMusic.pas"/>
+        <DCCReference Include="UTestWinapi_DirectPlay8.pas"/>
+        <DCCReference Include="UTestWinapi_DirectShow9.pas"/>
+        <DCCReference Include="UTestWinapi_DirectSound.pas"/>
+        <DCCReference Include="UTestWinapi_Dlgs.pas"/>
+        <DCCReference Include="UTestWinapi_DwmApi.pas"/>
+        <DCCReference Include="UTestWinapi_DX7toDX8.pas"/>
+        <DCCReference Include="UTestWinapi_DxDiag.pas"/>
+        <DCCReference Include="UTestWinapi_DXFile.pas"/>
+        <DCCReference Include="UTestWinapi_DXGI.pas"/>
+        <DCCReference Include="UTestWinapi_DxgiFormat.pas"/>
+        <DCCReference Include="UTestWinapi_DxgiType.pas"/>
+        <DCCReference Include="UTestWinapi_DXTypes.pas"/>
+        <DCCReference Include="UTestWinapi_FlatSB.pas"/>
+        <DCCReference Include="UTestWinapi_Functiondiscovery.pas"/>
+        <DCCReference Include="UTestWinapi_GDIPAPI.pas"/>
+        <DCCReference Include="UTestWinapi_GDIPOBJ.pas"/>
+        <DCCReference Include="UTestWinapi_GDIPUTIL.pas"/>
+        <DCCReference Include="UTestWinapi_ImageHlp.pas"/>
+        <DCCReference Include="UTestWinapi_Imm.pas"/>
+        <DCCReference Include="UTestWinapi_IpExport.pas"/>
+        <DCCReference Include="UTestWinapi_IpHlpApi.pas"/>
+        <DCCReference Include="UTestWinapi_IpRtrMib.pas"/>
+        <DCCReference Include="UTestWinapi_IpTypes.pas"/>
+        <DCCReference Include="UTestWinapi_Isapi.pas"/>
+        <DCCReference Include="UTestWinapi_Isapi2.pas"/>
+        <DCCReference Include="UTestWinapi_KnownFolders.pas"/>
+        <DCCReference Include="UTestWinapi_Locationapi.pas"/>
+        <DCCReference Include="UTestWinapi_LZExpand.pas"/>
+        <DCCReference Include="UTestWinapi_Manipulations.pas"/>
+        <DCCReference Include="UTestWinapi_Mapi.pas"/>
+        <DCCReference Include="UTestWinapi_Messages.pas"/>
+        <DCCReference Include="UTestWinapi_MMSystem.pas"/>
+        <DCCReference Include="UTestWinapi_MsInkAut.pas"/>
+        <DCCReference Include="UTestWinapi_MsInkAut15.pas"/>
+        <DCCReference Include="UTestWinapi_msxml.pas"/>
+        <DCCReference Include="UTestWinapi_msxmlIntf.pas"/>
+        <DCCReference Include="UTestWinapi_Mtx.pas"/>
+        <DCCReference Include="UTestWinapi_MultiMon.pas"/>
+        <DCCReference Include="UTestWinapi_Nb30.pas"/>
+        <DCCReference Include="UTestWinapi_ObjectArray.pas"/>
+        <DCCReference Include="UTestWinapi_Ole2.pas"/>
+        <DCCReference Include="UTestWinapi_oleacc.pas"/>
+        <DCCReference Include="UTestWinapi_OleCtl.pas"/>
+        <DCCReference Include="UTestWinapi_OleDB.pas"/>
+        <DCCReference Include="UTestWinapi_OleDlg.pas"/>
+        <DCCReference Include="UTestWinapi_OpenGL.pas"/>
+        <DCCReference Include="UTestWinapi_OpenGLext.pas"/>
+        <DCCReference Include="UTestWinapi_PenInputPanel.pas"/>
+        <DCCReference Include="UTestWinapi_Penwin.pas"/>
+        <DCCReference Include="UTestWinapi_Portabledevicetypes.pas"/>
+        <DCCReference Include="UTestWinapi_PropKey.pas"/>
+        <DCCReference Include="UTestWinapi_PropSys.pas"/>
+        <DCCReference Include="UTestWinapi_PsAPI.pas"/>
+        <DCCReference Include="UTestWinapi_Qos.pas"/>
+        <DCCReference Include="UTestWinapi_RegStr.pas"/>
+        <DCCReference Include="UTestWinapi_RichEdit.pas"/>
+        <DCCReference Include="UTestWinapi_RtsCom.pas"/>
+        <DCCReference Include="UTestWinapi_Sensors.pas"/>
+        <DCCReference Include="UTestWinapi_Sensorsapi.pas"/>
+        <DCCReference Include="UTestWinapi_ShellAPI.pas"/>
+        <DCCReference Include="UTestWinapi_SHFolder.pas"/>
+        <DCCReference Include="UTestWinapi_ShlObj.pas"/>
+        <DCCReference Include="UTestWinapi_ShLwApi.pas"/>
+        <DCCReference Include="UTestWinapi_StructuredQuery.pas"/>
+        <DCCReference Include="UTestWinapi_StructuredQueryCondition.pas"/>
+        <DCCReference Include="UTestWinapi_TlHelp32.pas"/>
+        <DCCReference Include="UTestWinapi_TpcShrd.pas"/>
+        <DCCReference Include="UTestWinapi_UrlMon.pas"/>
+        <DCCReference Include="UTestWinapi_UserEnv.pas"/>
+        <DCCReference Include="UTestWinapi_UxTheme.pas"/>
+        <DCCReference Include="UTestWinapi_Wbem.pas"/>
+        <DCCReference Include="UTestWinapi_Wincodec.pas"/>
+        <DCCReference Include="UTestWinapi_Windows.pas"/>
+        <DCCReference Include="UTestWinapi_WinInet.pas"/>
+        <DCCReference Include="UTestWinapi_Winsafer.pas"/>
+        <DCCReference Include="UTestWinapi_WinSock.pas"/>
+        <DCCReference Include="UTestWinapi_Winsock2.pas"/>
+        <DCCReference Include="UTestWinapi_WinSpool.pas"/>
+        <DCCReference Include="UTestWinapi_WinSvc.pas"/>
+        <DCCReference Include="UTestWinapi_WMF9.pas"/>
+        <BuildConfiguration Include="Release">
+            <Key>Cfg_2</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Base">
+            <Key>Base</Key>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Debug">
+            <Key>Cfg_1</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Delphi.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Delphi.Personality>
+                <Source>
+                    <Source Name="MainSource">ParseRTLTest.dpr</Source>
+                </Source>
+                <Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclfmxhrh190.bpl">File c:\program files (x86)\embarcadero\rad studio\12.0\bin\dclfmxhrh190.bpl not found</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\bcboffice2k190.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\bcbofficexp190.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k190.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp190.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclDataSnapFireDAC190.bpl">File c:\program files (x86)\embarcadero\rad studio\12.0\bin\dclDataSnapFireDAC190.bpl not found</Excluded_Packages>
+                </Excluded_Packages>
+                <VersionInfo>
+                    <VersionInfo Name="IncludeVerInfo">False</VersionInfo>
+                    <VersionInfo Name="AutoIncBuild">False</VersionInfo>
+                    <VersionInfo Name="MajorVer">1</VersionInfo>
+                    <VersionInfo Name="MinorVer">0</VersionInfo>
+                    <VersionInfo Name="Release">0</VersionInfo>
+                    <VersionInfo Name="Build">0</VersionInfo>
+                    <VersionInfo Name="Debug">False</VersionInfo>
+                    <VersionInfo Name="PreRelease">False</VersionInfo>
+                    <VersionInfo Name="Special">False</VersionInfo>
+                    <VersionInfo Name="Private">False</VersionInfo>
+                    <VersionInfo Name="DLL">False</VersionInfo>
+                    <VersionInfo Name="Locale">2057</VersionInfo>
+                    <VersionInfo Name="CodePage">1252</VersionInfo>
+                </VersionInfo>
+                <VersionInfoKeys>
+                    <VersionInfoKeys Name="CompanyName"/>
+                    <VersionInfoKeys Name="FileDescription"/>
+                    <VersionInfoKeys Name="FileVersion">1.0.0.0</VersionInfoKeys>
+                    <VersionInfoKeys Name="InternalName"/>
+                    <VersionInfoKeys Name="LegalCopyright"/>
+                    <VersionInfoKeys Name="LegalTrademarks"/>
+                    <VersionInfoKeys Name="OriginalFilename"/>
+                    <VersionInfoKeys Name="ProductName"/>
+                    <VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
+                    <VersionInfoKeys Name="Comments"/>
+                    <VersionInfoKeys Name="CFBundleName"/>
+                    <VersionInfoKeys Name="CFBundleDisplayName"/>
+                    <VersionInfoKeys Name="UIDeviceFamily"/>
+                    <VersionInfoKeys Name="CFBundleIdentifier"/>
+                    <VersionInfoKeys Name="CFBundleVersion"/>
+                    <VersionInfoKeys Name="CFBundlePackageType"/>
+                    <VersionInfoKeys Name="CFBundleSignature"/>
+                    <VersionInfoKeys Name="CFBundleAllowMixedLocalizations"/>
+                    <VersionInfoKeys Name="UISupportedInterfaceOrientations"/>
+                    <VersionInfoKeys Name="CFBundleExecutable"/>
+                    <VersionInfoKeys Name="CFBundleResourceSpecification"/>
+                    <VersionInfoKeys Name="LSRequiresIPhoneOS"/>
+                    <VersionInfoKeys Name="CFBundleInfoDictionaryVersion"/>
+                    <VersionInfoKeys Name="CFBundleDevelopmentRegion"/>
+                    <VersionInfoKeys Name="package"/>
+                    <VersionInfoKeys Name="label"/>
+                    <VersionInfoKeys Name="versionCode"/>
+                    <VersionInfoKeys Name="versionName"/>
+                    <VersionInfoKeys Name="persistent"/>
+                    <VersionInfoKeys Name="restoreAnyVersion"/>
+                    <VersionInfoKeys Name="installLocation"/>
+                    <VersionInfoKeys Name="largeHeap"/>
+                    <VersionInfoKeys Name="theme"/>
+                </VersionInfoKeys>
+            </Delphi.Personality>
+            <Deployment/>
+            <Platforms>
+                <Platform value="Android">False</Platform>
+                <Platform value="iOSDevice">False</Platform>
+                <Platform value="iOSSimulator">False</Platform>
+                <Platform value="OSX32">False</Platform>
+                <Platform value="Win32">True</Platform>
+                <Platform value="Win64">True</Platform>
+            </Platforms>
+        </BorlandProject>
+        <ProjectFileVersion>12</ProjectFileVersion>
+    </ProjectExtensions>
+    <Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"/>
+    <Import Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj" Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')"/>
+</Project>

@@ -198,6 +198,7 @@ begin
         Reset(F);
         ReadLn(F, Index);
         try
+          if Index > High(LFiles) then Exit;
           LFile := LFiles[Index];
           CloseFile(F);
           Erase(F);
@@ -208,6 +209,7 @@ begin
         except
           on E: Exception do
             begin
+              WriteLn(E.StackTrace);
               Writeln(Format('Error parsing %s ', [GFileName]), E.Classname, ': ', E.Message);
               ReadLn;
             end;

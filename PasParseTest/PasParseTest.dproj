@@ -11,14 +11,24 @@
         <AppType>Console</AppType>
         <FrameworkType>None</FrameworkType>
         <Base>True</Base>
-        <TargetedPlatforms>1</TargetedPlatforms>
+        <TargetedPlatforms>3</TargetedPlatforms>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
         <Base>true</Base>
     </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='OSX32' and '$(Base)'=='true') or '$(Base_OSX32)'!=''">
+        <Base_OSX32>true</Base_OSX32>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
     <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
         <Base_Win32>true</Base_Win32>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Base)'=='true') or '$(Base_Win64)'!=''">
+        <Base_Win64>true</Base_Win64>
         <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
@@ -27,13 +37,37 @@
         <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win32)'!=''">
+        <Cfg_1_Win32>true</Cfg_1_Win32>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win64)'!=''">
+        <Cfg_1_Win64>true</Cfg_1_Win64>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Base>true</Base>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_2)'!=''">
         <Cfg_2>true</Cfg_2>
         <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='OSX32' and '$(Cfg_2)'=='true') or '$(Cfg_2_OSX32)'!=''">
+        <Cfg_2_OSX32>true</Cfg_2_OSX32>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Base>true</Base>
+    </PropertyGroup>
     <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
         <Cfg_2_Win32>true</Cfg_2_Win32>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win64)'!=''">
+        <Cfg_2_Win64>true</Cfg_2_Win64>
         <CfgParent>Cfg_2</CfgParent>
         <Cfg_2>true</Cfg_2>
         <Base>true</Base>
@@ -44,8 +78,19 @@
         <VerInfo_Locale>1031</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_OSX32)'!=''">
+        <VerInfo_Keys>CFBundleName=$(MSBuildProjectName);CFBundleDisplayName=$(MSBuildProjectName);CFBundleIdentifier=$(MSBuildProjectName);CFBundleVersion=1.0.0;CFBundlePackageType=APPL;CFBundleSignature=????;CFBundleAllowMixedLocalizations=YES;CFBundleExecutable=$(MSBuildProjectName);NSHighResolutionCapable=true;LSApplicationCategoryType=public.app-category.utilities</VerInfo_Keys>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
+        <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
+        <Manifest_File>None</Manifest_File>
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win64)'!=''">
+        <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
+        <Manifest_File>None</Manifest_File>
+        <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
         <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
@@ -54,6 +99,12 @@
         <DCC_LocalDebugSymbols>False</DCC_LocalDebugSymbols>
         <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
         <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+        <VerInfo_Locale>1033</VerInfo_Locale>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
+        <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <Version>7.0</Version>
@@ -64,10 +115,17 @@
         <DCC_IncludePath>$(BDS)\lib\Debug;$(BDS)\Lib\Debug\Indy10;..\PasParse;..\PasTest;$(DCC_IncludePath)</DCC_IncludePath>
         <DCC_MapFile>3</DCC_MapFile>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2_OSX32)'!=''">
+        <DCC_RemoteDebug>true</DCC_RemoteDebug>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <DCC_Define>DUNIT;DETECTMEMLEAKS;$(DCC_Define)</DCC_Define>
         <DCC_DebugDCUs>true</DCC_DebugDCUs>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <Manifest_File>None</Manifest_File>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
+        <DCC_Define>DUNIT;$(DCC_Define)</DCC_Define>
+        <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <ProjectExtensions>
         <Borland.Personality>Delphi.Personality.12</Borland.Personality>
@@ -106,17 +164,22 @@
                     <Source Name="MainSource">PasParseTest.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\bcboffice2k200.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\bcbofficexp200.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k200.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp200.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclfmxhrh190.bpl">File c:\program files (x86)\embarcadero\rad studio\12.0\bin\dclfmxhrh190.bpl not found</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\bcboffice2k190.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\bcbofficexp190.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k190.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp190.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclDataSnapFireDAC190.bpl">File c:\program files (x86)\embarcadero\rad studio\12.0\bin\dclDataSnapFireDAC190.bpl not found</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Platforms>
                 <Platform value="OSX32">False</Platform>
                 <Platform value="Win32">True</Platform>
-                <Platform value="Win64">False</Platform>
+                <Platform value="Win64">True</Platform>
             </Platforms>
+            <UnitTesting>
+                <TestProjectName>D:\Development\Delphi\PasParse\PasParseTest\Test\PasParseTestTests.dproj</TestProjectName>
+            </UnitTesting>
         </BorlandProject>
         <ProjectFileVersion>12</ProjectFileVersion>
     </ProjectExtensions>
@@ -127,116 +190,155 @@
         <DCCReference Include="UTestLexScanner.pas"/>
         <DCCReference Include="UTestCompilerDefines.pas"/>
         <DCCReference Include="UTestASTNode.pas"/>
-        <DCCReference Include="UTestRelOp.pas"/>
         <DCCReference Include="UTestParser.pas"/>
-        <DCCReference Include="UTestArrayType.pas"/>
         <DCCReference Include="UTestAddOp.pas"/>
-        <DCCReference Include="UTestMulOp.pas"/>
-        <DCCReference Include="UTestPortabilityDirective.pas"/>
-        <DCCReference Include="UTestUnaryOperator.pas"/>
-        <DCCReference Include="UTestExtendedIdent.pas"/>
-        <DCCReference Include="UTestQualifiedIdent.pas"/>
-        <DCCReference Include="UTestIdent.pas"/>
-        <DCCReference Include="UTestFileType.pas"/>
-        <DCCReference Include="UTestIdentList.pas"/>
-        <DCCReference Include="UTestFactor.pas"/>
-        <DCCReference Include="UTestUsedUnit.pas"/>
-        <DCCReference Include="UTestUsesClause.pas"/>
-        <DCCReference Include="UTestClassOf.pas"/>
-        <DCCReference Include="UTestBareInherited.pas"/>
-        <DCCReference Include="UTestAssemblerStatement.pas"/>
         <DCCReference Include="UTestAlternator.pas"/>
-        <DCCReference Include="UTestLabelId.pas"/>
-        <DCCReference Include="UTestVisibility.pas"/>
-        <DCCReference Include="UTestGotoStatement.pas"/>
-        <DCCReference Include="UTestParticle.pas"/>
+        <DCCReference Include="UTestAnonymousMethods.pas"/>
+        <DCCReference Include="UTestArrayType.pas"/>
+        <DCCReference Include="UTestAssemblerStatement.pas"/>
+        <DCCReference Include="UTestAssemblyAttribute.pas"/>
         <DCCReference Include="UTestAtom.pas"/>
-        <DCCReference Include="UTestTerm.pas"/>
-        <DCCReference Include="UTestSimpleExpression.pas"/>
+        <DCCReference Include="UTestBareInherited.pas"/>
+        <DCCReference Include="UTestBlock.pas"/>
+        <DCCReference Include="UTestCaseSelector.pas"/>
+        <DCCReference Include="UTestCaseStatement.pas"/>
+        <DCCReference Include="UTestClassHelperType.pas"/>
+        <DCCReference Include="UTestClassOf.pas"/>
+        <DCCReference Include="UTestClassType.pas"/>
+        <DCCReference Include="UTestConstSection.pas"/>
+        <DCCReference Include="UTestConstantDecl.pas"/>
+        <DCCReference Include="UTestConstraint.pas"/>
+        <DCCReference Include="UTestDirective.pas"/>
+        <DCCReference Include="UTestEnumeratedType.pas"/>
+        <DCCReference Include="UTestEnumeratedTypeElement.pas"/>
+        <DCCReference Include="UTestExceptionItem.pas"/>
+        <DCCReference Include="UTestExportsItem.pas"/>
+        <DCCReference Include="UTestExportsSpecifier.pas"/>
+        <DCCReference Include="UTestExportsStatement.pas"/>
         <DCCReference Include="UTestExpression.pas"/>
-        <DCCReference Include="UTestParenthesizedExpression.pas"/>
         <DCCReference Include="UTestExpressionList.pas"/>
         <DCCReference Include="UTestExpressionOrAssignment.pas"/>
         <DCCReference Include="UTestExpressionOrRange.pas"/>
         <DCCReference Include="UTestExpressionOrRangeList.pas"/>
-        <DCCReference Include="UTestSetType.pas"/>
-        <DCCReference Include="UTestSetLiteral.pas"/>
-        <DCCReference Include="UTestIfStatement.pas"/>
-        <DCCReference Include="UTestStatement.pas"/>
-        <DCCReference Include="UTestWhileStatement.pas"/>
-        <DCCReference Include="UTestWithStatement.pas"/>
-        <DCCReference Include="UTestBlock.pas"/>
-        <DCCReference Include="UTestStatementList.pas"/>
-        <DCCReference Include="UTestCaseSelector.pas"/>
-        <DCCReference Include="UTestCaseStatement.pas"/>
-        <DCCReference Include="UTestExceptionItem.pas"/>
-        <DCCReference Include="UTestRaiseStatement.pas"/>
-        <DCCReference Include="UTestParameterExpression.pas"/>
-        <DCCReference Include="UTestRepeatStatement.pas"/>
-        <DCCReference Include="UTestForStatement.pas"/>
-        <DCCReference Include="UTestTryStatement.pas"/>
-        <DCCReference Include="UTestSimpleStatement.pas"/>
-        <DCCReference Include="UTestOpenArray.pas"/>
-        <DCCReference Include="UTestParameterType.pas"/>
-        <DCCReference Include="UTestParameter.pas"/>
-        <DCCReference Include="UTestEnumeratedTypeElement.pas"/>
-        <DCCReference Include="UTestEnumeratedType.pas"/>
-        <DCCReference Include="UTestMethodReturnType.pas"/>
-        <DCCReference Include="UTestMethodHeading.pas"/>
-        <DCCReference Include="UTestExportsSpecifier.pas"/>
-        <DCCReference Include="UTestDirective.pas"/>
-        <DCCReference Include="UTestPropertyDirective.pas"/>
-        <DCCReference Include="UTestProperty.pas"/>
-        <DCCReference Include="UTestMethodOrProperty.pas"/>
-        <DCCReference Include="UTestInterfaceType.pas"/>
-        <DCCReference Include="UTestAssemblyAttribute.pas"/>
-        <DCCReference Include="UTestExportsItem.pas"/>
-        <DCCReference Include="UTestExportsStatement.pas"/>
-        <DCCReference Include="UTestInitSection.pas"/>
-        <DCCReference Include="UTestLabelDeclSection.pas"/>
-        <DCCReference Include="UTestProcedureType.pas"/>
-        <DCCReference Include="UTestRecordHelperType.pas"/>
-        <DCCReference Include="UTestType.pas"/>
-        <DCCReference Include="UTestPackedType.pas"/>
-        <DCCReference Include="UTestPointerType.pas"/>
-        <DCCReference Include="UTestTypedConstant.pas"/>
-        <DCCReference Include="UTestRecordFieldConstant.pas"/>
-        <DCCReference Include="UTestVarDecl.pas"/>
-        <DCCReference Include="UTestConstantDecl.pas"/>
-        <DCCReference Include="UTestVarSection.pas"/>
-        <DCCReference Include="UTestConstSection.pas"/>
+        <DCCReference Include="UTestExtendedIdent.pas"/>
+        <DCCReference Include="UTestFactor.pas"/>
+        <DCCReference Include="UTestFancyBlock.pas"/>
         <DCCReference Include="UTestFieldDecl.pas"/>
         <DCCReference Include="UTestFieldSection.pas"/>
-        <DCCReference Include="UTestTypeDecl.pas"/>
-        <DCCReference Include="UTestTypeSection.pas"/>
-        <DCCReference Include="UTestVisibilitySectionContent.pas"/>
-        <DCCReference Include="UTestVisibilitySection.pas"/>
-        <DCCReference Include="UTestVariantGroup.pas"/>
-        <DCCReference Include="UTestVariantSection.pas"/>
-        <DCCReference Include="UTestRecordType.pas"/>
-        <DCCReference Include="UTestClassHelperType.pas"/>
-        <DCCReference Include="UTestStringType.pas"/>
-        <DCCReference Include="UTestClassType.pas"/>
+        <DCCReference Include="UTestFileLoader.pas"/>
+        <DCCReference Include="UTestFileType.pas"/>
+        <DCCReference Include="UTestForStatement.pas"/>
+        <DCCReference Include="UTestGenerics.pas"/>
+        <DCCReference Include="UTestGoal.pas"/>
+        <DCCReference Include="UTestGotoStatement.pas"/>
+        <DCCReference Include="UTestIdent.pas"/>
+        <DCCReference Include="UTestIdentList.pas"/>
+        <DCCReference Include="UTestIfStatement.pas"/>
+        <DCCReference Include="UTestImplementationDecl.pas"/>
+        <DCCReference Include="UTestImplementationSection.pas"/>
+        <DCCReference Include="UTestInitSection.pas"/>
         <DCCReference Include="UTestInterfaceDecl.pas"/>
         <DCCReference Include="UTestInterfaceSection.pas"/>
-        <DCCReference Include="UTestImplementationDecl.pas"/>
-        <DCCReference Include="UTestFancyBlock.pas"/>
-        <DCCReference Include="UTestMethodImplementation.pas"/>
-        <DCCReference Include="UTestImplementationSection.pas"/>
-        <DCCReference Include="UTestUnit.pas"/>
-        <DCCReference Include="UTestRequiresClause.pas"/>
-        <DCCReference Include="UTestProgram.pas"/>
-        <DCCReference Include="UTestPackage.pas"/>
-        <DCCReference Include="UTestTokenFilter.pas"/>
+        <DCCReference Include="UTestInterfaceType.pas"/>
+        <DCCReference Include="UTestLabelDeclSection.pas"/>
+        <DCCReference Include="UTestLabelId.pas"/>
         <DCCReference Include="UTestMemoryFileLoader.pas"/>
-        <DCCReference Include="UTestFileLoader.pas"/>
-        <DCCReference Include="UTestVisitor.pas"/>
-        <DCCReference Include="UTestGoal.pas"/>
-        <DCCReference Include="UTestConstraint.pas"/>
+        <DCCReference Include="UTestMethodHeading.pas"/>
+        <DCCReference Include="UTestMethodImplementation.pas"/>
+        <DCCReference Include="UTestMethodOrProperty.pas"/>
+        <DCCReference Include="UTestMethodReturnType.pas"/>
+        <DCCReference Include="UTestMulOp.pas"/>
+        <DCCReference Include="UTestOpenArray.pas"/>
+        <DCCReference Include="UTestPackage.pas"/>
+        <DCCReference Include="UTestPackedType.pas"/>
+        <DCCReference Include="UTestParameter.pas"/>
+        <DCCReference Include="UTestParameterExpression.pas"/>
+        <DCCReference Include="UTestParameterType.pas"/>
+        <DCCReference Include="UTestParenthesizedExpression.pas"/>
+        <DCCReference Include="UTestParticle.pas"/>
+        <DCCReference Include="UTestPointerType.pas"/>
+        <DCCReference Include="UTestPortabilityDirective.pas"/>
+        <DCCReference Include="UTestProcedureType.pas"/>
+        <DCCReference Include="UTestProgram.pas"/>
+        <DCCReference Include="UTestProperty.pas"/>
+        <DCCReference Include="UTestPropertyDirective.pas"/>
+        <DCCReference Include="UTestQualifiedIdent.pas"/>
+        <DCCReference Include="UTestRaiseStatement.pas"/>
+        <DCCReference Include="UTestRecordFieldConstant.pas"/>
+        <DCCReference Include="UTestRecordHelperType.pas"/>
+        <DCCReference Include="UTestRecordType.pas"/>
+        <DCCReference Include="UTestRelOp.pas"/>
+        <DCCReference Include="UTestRepeatStatement.pas"/>
+        <DCCReference Include="UTestRequiresClause.pas"/>
+        <DCCReference Include="UTestSetLiteral.pas"/>
+        <DCCReference Include="UTestSetType.pas"/>
+        <DCCReference Include="UTestSimpleExpression.pas"/>
+        <DCCReference Include="UTestSimpleStatement.pas"/>
+        <DCCReference Include="UTestStatement.pas"/>
+        <DCCReference Include="UTestStatementList.pas"/>
+        <DCCReference Include="UTestStringType.pas"/>
+        <DCCReference Include="UTestTerm.pas"/>
+        <DCCReference Include="UTestTryStatement.pas"/>
+        <DCCReference Include="UTestType.pas"/>
+        <DCCReference Include="UTestTypeDecl.pas"/>
         <DCCReference Include="UTestTypeParam.pas"/>
         <DCCReference Include="UTestTypeParamDecl.pas"/>
         <DCCReference Include="UTestTypeParams.pas"/>
-        <DCCReference Include="UTestGenerics.pas"/>
+        <DCCReference Include="UTestTypeSection.pas"/>
+        <DCCReference Include="UTestTypedConstant.pas"/>
+        <DCCReference Include="UTestUnaryOperator.pas"/>
+        <DCCReference Include="UTestUnit.pas"/>
+        <DCCReference Include="UTestUsedUnit.pas"/>
+        <DCCReference Include="UTestUsesClause.pas"/>
+        <DCCReference Include="UTestVarDecl.pas"/>
+        <DCCReference Include="UTestVarSection.pas"/>
+        <DCCReference Include="UTestVariantGroup.pas"/>
+        <DCCReference Include="UTestVariantSection.pas"/>
+        <DCCReference Include="UTestVisibility.pas"/>
+        <DCCReference Include="UTestVisibilitySection.pas"/>
+        <DCCReference Include="UTestVisibilitySectionContent.pas"/>
+        <DCCReference Include="UTestVisitor.pas"/>
+        <DCCReference Include="UTestWhileStatement.pas"/>
+        <DCCReference Include="UTestWithStatement.pas"/>
+        <DCCReference Include="UTestAttributes.pas"/>
+        <DCCReference Include="..\PasTest\UTest.pas"/>
+        <DCCReference Include="..\PasParse\UVisitor.pas"/>
+        <DCCReference Include="..\PasParse\UTokenType.pas"/>
+        <DCCReference Include="..\PasParse\UTokenSets.pas"/>
+        <DCCReference Include="..\PasParse\UTokenSet.pas"/>
+        <DCCReference Include="..\PasParse\UTokenRule.pas"/>
+        <DCCReference Include="..\PasParse\UTokenFilter.pas"/>
+        <DCCReference Include="..\PasParse\UToken.pas"/>
+        <DCCReference Include="..\PasParse\USingleTokenTokenSet.pas"/>
+        <DCCReference Include="..\PasParse\URuleType.pas"/>
+        <DCCReference Include="..\PasParse\URules.pas"/>
+        <DCCReference Include="..\PasParse\URule.pas"/>
+        <DCCReference Include="..\PasParse\UPreprocessorException.pas"/>
+        <DCCReference Include="..\PasParse\UParser.pas"/>
+        <DCCReference Include="..\PasParse\UParseException.pas"/>
+        <DCCReference Include="..\PasParse\UNonTerminalNode.pas"/>
+        <DCCReference Include="..\PasParse\ULocation.pas"/>
+        <DCCReference Include="..\PasParse\UListNode.pas"/>
+        <DCCReference Include="..\PasParse\ULexScanner.pas"/>
+        <DCCReference Include="..\PasParse\ULexException.pas"/>
+        <DCCReference Include="..\PasParse\UITokenSet.pas"/>
+        <DCCReference Include="..\PasParse\UIParser.pas"/>
+        <DCCReference Include="..\PasParse\UInvalidOperationException.pas"/>
+        <DCCReference Include="..\PasParse\UIFrame.pas"/>
+        <DCCReference Include="..\PasParse\UIFileLoader.pas"/>
+        <DCCReference Include="..\PasParse\UGeneratedNodes.pas"/>
+        <DCCReference Include="..\PasParse\UFrame.pas"/>
+        <DCCReference Include="..\PasParse\UFileLoader.pas"/>
+        <DCCReference Include="..\PasParse\UEOFFrame.pas"/>
+        <DCCReference Include="..\PasParse\UDelimitedItemNode.pas"/>
+        <DCCReference Include="..\PasParse\UCompilerDefines.pas"/>
+        <DCCReference Include="..\PasParse\UBaseException.pas"/>
+        <DCCReference Include="..\PasParse\UASTNode.pas"/>
+        <DCCReference Include="..\PasParse\UAlternator.pas"/>
+        <DCCReference Include="UTestTokenFilter.pas"/>
+        <DCCReference Include="..\PasParse\UMemoryFileLoader.pas"/>
+        <DCCReference Include="UAttrToken.pas"/>
+        <DCCReference Include="TestFramework.pas"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

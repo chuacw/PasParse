@@ -29,7 +29,7 @@ end;
 function TFileLoader.ExpandFileName(const ACurrentDirectory,
   AFileName: string): string;
 begin
-  Result := ACurrentDirectory + '\' + AFileName;
+  Result := ACurrentDirectory + PathDelim + AFileName;
 end;
 
 function TFileLoader.Load(const AFileName: string): string;
@@ -40,7 +40,8 @@ begin
     raise EInOutError.Create('File not found: ' + AFileName)
   else
   begin
-    AReader := TStreamReader.Create(AFileName, True);
+    AReader := TStreamReader.Create(AFileName, TEncoding.ANSI,
+      True);
     try
       Result := AReader.ReadToEnd;
     finally

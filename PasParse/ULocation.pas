@@ -1,10 +1,20 @@
+/// <remarks>
+///   remarks
+/// </remarks>
+/// <seealso cref="reference">
+///   display name
+/// </seealso>
 unit ULocation;
 {$RTTI EXPLICIT METHODS([]) PROPERTIES([]) FIELDS([])}
 {$WEAKLINKRTTI ON}
 interface
 
 type
-  /// <Description>A class holding information about a certain Location in a code file.</Description>
+  /// <summary>
+  ///   Location description
+  /// </summary>
+  /// <Description>A class holding information about a certain Location in a
+  ///   code file.</Description>
   TLocation = class
   private
     /// <Description>The name of the file where the Location can be found.</Description>

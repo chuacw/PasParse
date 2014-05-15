@@ -10,7 +10,14 @@ type
   TCompilerDefines = class
   private
     FDictionary: TDictionary<string, Boolean>;
-
+  protected
+    ///<summary>provides the functionality of the Delphi compiler directive DEFINED</summary>
+    function DEFINED(const ACondition: string): Boolean;
+    ///<summary>provides the functionality of the Delphi compiler directive DECLARED</summary>
+    function DECLARED(const ACondition: string): Boolean;
+    ///<summary>provides the functionality to evaluate Delphi compiler directive expressions in $IF and $ELSEIF
+    ///</summary>
+    function Evaluate(const AExpression: string): Boolean;
   public
     constructor Create(ADefineStandards: Boolean = False);
     destructor Destroy; override;
@@ -106,6 +113,16 @@ begin
   end;
 end;
 
+function TCompilerDefines.DECLARED(const ACondition: string): Boolean;
+begin
+  // TODO -ochuacw: Complete the functionality to support evaluating DECLARED expressions
+end;
+
+function TCompilerDefines.DEFINED(const ACondition: string): Boolean;
+begin
+  // TODO -ochuacw: Complete the functionality to support evaluating DEFINED expressions
+end;
+
 procedure TCompilerDefines.DefineDirective(const ACompilerDirective: string;
   AIsTrue: Boolean);
 begin
@@ -137,6 +154,11 @@ destructor TCompilerDefines.Destroy;
 begin
   FDictionary.Free;
   inherited;
+end;
+
+function TCompilerDefines.Evaluate(const AExpression: string): Boolean;
+begin
+  // TODO -ochuacw: Complete the functionality to evaluate compiler directive expressions
 end;
 
 function TCompilerDefines.IsTrue(const ACompilerDirective: string;

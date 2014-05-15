@@ -8,6 +8,7 @@ uses
 type
   TTestASTNode = class(TTest)
   private
+{$IF NOT DEFINED(DUNIT)}
     /// Creates a testing token.
     ///  Callers are responsible for destroying the resulting TToken instance!
     class function MakeToken(ATokenType: TTokenType; const AText: string): TToken;
@@ -17,10 +18,10 @@ type
     class function TestInspectBinaryOperationNode: Boolean;
     /// Tests if TBinaryOperationNode.Inspect() works as expected
     class function TestInspectNestedBinaryOperationNodes: Boolean;
-
   protected
     class procedure TestAll; override;
     class function GetName: string; override;
+{$ENDIF}
   end;
 
 implementation
@@ -30,15 +31,10 @@ uses
 
 { TTestASTNode }
 
+{$IF NOT DEFINED(DUNIT)}
 class function TTestASTNode.GetName: string;
 begin
   Result := 'ASTNode';
-end;
-
-class function TTestASTNode.MakeToken(ATokenType: TTokenType;
-  const AText: string): TToken;
-begin
-  Result := TToken.Create(ATokenType, TLocation.Create('', '', 0, 0), AText, '');
 end;
 
 class procedure TTestASTNode.TestAll;
@@ -46,6 +42,12 @@ begin
   OK('InspectToken', TestInspectToken);
   OK('InspectBinaryOperationNode', TestInspectBinaryOperationNode);
   OK('InspectNestedBinaryOperationNodes', TestInspectNestedBinaryOperationNodes);
+end;
+
+class function TTestASTNode.MakeToken(ATokenType: TTokenType;
+  const AText: string): TToken;
+begin
+  Result := TToken.Create(ATokenType, TLocation.Create('', '', 0, 0), AText, '');
 end;
 
 class function TTestASTNode.TestInspectBinaryOperationNode: Boolean;
@@ -108,5 +110,9 @@ begin
   ANode.Free;
 end;
 
+{$ELSE}
+initialization
+//  RegisterTest();
+{$ENDIF}
 end.
 

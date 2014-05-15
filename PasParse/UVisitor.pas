@@ -19,10 +19,12 @@ type
     procedure Visit(ANode: TToken); overload; virtual;
 
     // Generated Nodes
+    procedure Visit(ANode: TAnonymousMethodDeclNode); overload; virtual;
     procedure Visit(ANode: TAnonymousMethodTypeNode); overload; virtual;
     procedure Visit(ANode: TArrayTypeNode); overload; virtual;
     procedure Visit(ANode: TAssemblerStatementNode); overload; virtual;
-    procedure Visit(ANode: TAttributeNode); overload; virtual;
+    procedure Visit(ANode: TAssemblyAttributeNode); overload; virtual;
+    procedure Visit(ANode: TAttributesNode); overload; virtual;
     procedure Visit(ANode: TBinaryOperationNode); overload; virtual;
     procedure Visit(ANode: TBlockNode); overload; virtual;
     procedure Visit(ANode: TCaseSelectorNode); overload; virtual;
@@ -32,6 +34,7 @@ type
     procedure Visit(ANode: TConstSectionNode); overload; virtual;
     procedure Visit(ANode: TConstantDeclNode); overload; virtual;
     procedure Visit(ANode: TConstantListNode); overload; virtual;
+    procedure Visit(ANode: TDeprecatedSpecifierNode); overload; virtual;
     procedure Visit(ANode: TDirectiveNode); overload; virtual;
     procedure Visit(ANode: TEnumeratedTypeElementNode); overload; virtual;
     procedure Visit(ANode: TEnumeratedTypeNode); overload; virtual;
@@ -39,6 +42,7 @@ type
     procedure Visit(ANode: TExportsItemNode); overload; virtual;
     procedure Visit(ANode: TExportsSpecifierNode); overload; virtual;
     procedure Visit(ANode: TExportsStatementNode); overload; virtual;
+    procedure Visit(ANode: TExternalSpecifierNode); overload; virtual;
     procedure Visit(ANode: TFancyBlockNode); overload; virtual;
     procedure Visit(ANode: TFieldDeclNode); overload; virtual;
     procedure Visit(ANode: TFieldSectionNode); overload; virtual;
@@ -46,6 +50,8 @@ type
     procedure Visit(ANode: TForInStatementNode); overload; virtual;
     procedure Visit(ANode: TForStatementNode); overload; virtual;
     procedure Visit(ANode: TGotoStatementNode); overload; virtual;
+    procedure Visit(ANode: TIdentAttrNode); overload; virtual;
+    procedure Visit(ANode: TIdentTypeArgsNode); overload; virtual;
     procedure Visit(ANode: TIfStatementNode); overload; virtual;
     procedure Visit(ANode: TInitSectionNode); overload; virtual;
     procedure Visit(ANode: TInterfaceTypeNode); overload; virtual;
@@ -68,6 +74,7 @@ type
     procedure Visit(ANode: TProgramNode); overload; virtual;
     procedure Visit(ANode: TPropertyNode); overload; virtual;
     procedure Visit(ANode: TRaiseStatementNode); overload; virtual;
+    procedure Visit(ANode: TRecordAlignSpecifierNode); overload; virtual;
     procedure Visit(ANode: TRecordFieldConstantNode); overload; virtual;
     procedure Visit(ANode: TRecordTypeNode); overload; virtual;
     procedure Visit(ANode: TRepeatStatementNode); overload; virtual;
@@ -83,6 +90,7 @@ type
     procedure Visit(ANode: TTypeParamDeclNode); overload; virtual;
     procedure Visit(ANode: TTypeParamNode); overload; virtual;
     procedure Visit(ANode: TTypeParamsNode); overload; virtual;
+    procedure Visit(ANode: TTypeParamsUsageNode); overload; virtual;
     procedure Visit(ANode: TTypeSectionNode); overload; virtual;
     procedure Visit(ANode: TUnaryOperationNode); overload; virtual;
     procedure Visit(ANode: TUnitNode); overload; virtual;
@@ -114,14 +122,18 @@ begin
     Visit(ANode as TToken);
 
   // Generated Nodes
+  if ANode is TAnonymousMethodDeclNode then
+    Visit(ANode as TAnonymousMethodDeclNode);
   if ANode is TAnonymousMethodTypeNode then
     Visit(ANode as TAnonymousMethodTypeNode);
   if ANode is TArrayTypeNode then
     Visit(ANode as TArrayTypeNode);
   if ANode is TAssemblerStatementNode then
     Visit(ANode as TAssemblerStatementNode);
-  if ANode is TAttributeNode then
-    Visit(ANode as TAttributeNode);
+  if ANode is TAssemblyAttributeNode then
+    Visit(ANode as TAssemblyAttributeNode);
+  if ANode is TAttributesNode then
+    Visit(ANode as TAttributesNode);
   if ANode is TBinaryOperationNode then
     Visit(ANode as TBinaryOperationNode);
   if ANode is TBlockNode then
@@ -140,6 +152,8 @@ begin
     Visit(ANode as TConstantDeclNode);
   if ANode is TConstantListNode then
     Visit(ANode as TConstantListNode);
+  if ANode is TDeprecatedSpecifierNode then
+    Visit(ANode as TDeprecatedSpecifierNode);
   if ANode is TDirectiveNode then
     Visit(ANode as TDirectiveNode);
   if ANode is TEnumeratedTypeElementNode then
@@ -154,6 +168,8 @@ begin
     Visit(ANode as TExportsSpecifierNode);
   if ANode is TExportsStatementNode then
     Visit(ANode as TExportsStatementNode);
+  if ANode is TExternalSpecifierNode then
+    Visit(ANode as TExternalSpecifierNode);
   if ANode is TFancyBlockNode then
     Visit(ANode as TFancyBlockNode);
   if ANode is TFieldDeclNode then
@@ -168,6 +184,10 @@ begin
     Visit(ANode as TForStatementNode);
   if ANode is TGotoStatementNode then
     Visit(ANode as TGotoStatementNode);
+  if ANode is TIdentAttrNode then
+    Visit(ANode as TIdentAttrNode);
+  if ANode is TIdentTypeArgsNode then
+    Visit(ANode as TIdentTypeArgsNode);
   if ANode is TIfStatementNode then
     Visit(ANode as TIfStatementNode);
   if ANode is TInitSectionNode then
@@ -212,6 +232,8 @@ begin
     Visit(ANode as TPropertyNode);
   if ANode is TRaiseStatementNode then
     Visit(ANode as TRaiseStatementNode);
+  if ANode is TRecordAlignSpecifierNode then
+    Visit(ANode as TRecordAlignSpecifierNode);
   if ANode is TRecordFieldConstantNode then
     Visit(ANode as TRecordFieldConstantNode);
   if ANode is TRecordTypeNode then
@@ -242,6 +264,8 @@ begin
     Visit(ANode as TTypeParamNode);
   if ANode is TTypeParamsNode then
     Visit(ANode as TTypeParamsNode);
+  if ANode is TTypeParamsUsageNode then
+    Visit(ANode as TTypeParamsUsageNode);
   if ANode is TTypeSectionNode then
     Visit(ANode as TTypeSectionNode);
   if ANode is TUnaryOperationNode then
@@ -298,6 +322,15 @@ begin
   // Do nothing
 end;
 
+procedure TVisitor.Visit(ANode: TAnonymousMethodDeclNode);
+begin
+  // Visit child nodes
+  if ANode.MethodNode <> nil then
+    Visit(ANode.MethodNode);
+  if ANode.FancyBlockNode <> nil then
+    Visit(ANode.FancyBlockNode);
+end;
+
 procedure TVisitor.Visit(ANode: TAnonymousMethodTypeNode);
 begin
   // Visit child nodes
@@ -335,7 +368,22 @@ begin
     Visit(ANode.EndKeywordNode);
 end;
 
-procedure TVisitor.Visit(ANode: TAttributeNode);
+procedure TVisitor.Visit(ANode: TAssemblyAttributeNode);
+begin
+  // Visit child nodes
+  if ANode.OpenBracketNode <> nil then
+    Visit(ANode.OpenBracketNode);
+  if ANode.ScopeNode <> nil then
+    Visit(ANode.ScopeNode);
+  if ANode.ColonNode <> nil then
+    Visit(ANode.ColonNode);
+  if ANode.ValueNode <> nil then
+    Visit(ANode.ValueNode);
+  if ANode.CloseBracketNode <> nil then
+    Visit(ANode.CloseBracketNode);
+end;
+
+procedure TVisitor.Visit(ANode: TAttributesNode);
 begin
   // Visit child nodes
   if ANode.OpenBracketNode <> nil then
@@ -432,6 +480,8 @@ begin
     Visit(ANode.ContentListNode);
   if ANode.EndKeywordNode <> nil then
     Visit(ANode.EndKeywordNode);
+  if ANode.DirectivesNode <> nil then
+    Visit(ANode.DirectivesNode);
 end;
 
 procedure TVisitor.Visit(ANode: TConstSectionNode);
@@ -471,6 +521,15 @@ begin
     Visit(ANode.ItemListNode);
   if ANode.CloseParenthesisNode <> nil then
     Visit(ANode.CloseParenthesisNode);
+end;
+
+procedure TVisitor.Visit(ANode: TDeprecatedSpecifierNode);
+begin
+  // Visit child nodes
+  if ANode.DeprecatedKeywordNode <> nil then
+    Visit(ANode.DeprecatedKeywordNode);
+  if ANode.DeprecatedMsgNode <> nil then
+    Visit(ANode.DeprecatedMsgNode);
 end;
 
 procedure TVisitor.Visit(ANode: TDirectiveNode);
@@ -554,6 +613,15 @@ begin
     Visit(ANode.ItemListNode);
   if ANode.SemicolonNode <> nil then
     Visit(ANode.SemicolonNode);
+end;
+
+procedure TVisitor.Visit(ANode: TExternalSpecifierNode);
+begin
+  // Visit child nodes
+  if ANode.KeywordNode <> nil then
+    Visit(ANode.KeywordNode);
+  if ANode.ValueNode <> nil then
+    Visit(ANode.ValueNode);
 end;
 
 procedure TVisitor.Visit(ANode: TFancyBlockNode);
@@ -649,6 +717,24 @@ begin
     Visit(ANode.LabelIdNode);
 end;
 
+procedure TVisitor.Visit(ANode: TIdentAttrNode);
+begin
+  // Visit child nodes
+  if ANode.AttributesListNode <> nil then
+    Visit(ANode.AttributesListNode);
+  if ANode.Ident <> nil then
+    Visit(ANode.Ident);
+end;
+
+procedure TVisitor.Visit(ANode: TIdentTypeArgsNode);
+begin
+  // Visit child nodes
+  if ANode.Ident <> nil then
+    Visit(ANode.Ident);
+  if ANode.TypeArgsNode <> nil then
+    Visit(ANode.TypeArgsNode);
+end;
+
 procedure TVisitor.Visit(ANode: TIfStatementNode);
 begin
   // Visit child nodes
@@ -669,6 +755,8 @@ end;
 procedure TVisitor.Visit(ANode: TInitSectionNode);
 begin
   // Visit child nodes
+  if ANode.AttributesListNode <> nil then
+    Visit(ANode.AttributesListNode);
   if ANode.InitializationKeywordNode <> nil then
     Visit(ANode.InitializationKeywordNode);
   if ANode.InitializationStatementListNode <> nil then
@@ -991,6 +1079,15 @@ begin
     Visit(ANode.AddressNode);
 end;
 
+procedure TVisitor.Visit(ANode: TRecordAlignSpecifierNode);
+begin
+  // Visit child nodes
+  if ANode.KeywordNode <> nil then
+    Visit(ANode.KeywordNode);
+  if ANode.ValueNode <> nil then
+    Visit(ANode.ValueNode);
+end;
+
 procedure TVisitor.Visit(ANode: TRecordFieldConstantNode);
 begin
   // Visit child nodes
@@ -1013,6 +1110,8 @@ begin
     Visit(ANode.VariantSectionNode);
   if ANode.EndKeywordNode <> nil then
     Visit(ANode.EndKeywordNode);
+  if ANode.DirectivesNode <> nil then
+    Visit(ANode.DirectivesNode);
 end;
 
 procedure TVisitor.Visit(ANode: TRepeatStatementNode);
@@ -1111,6 +1210,8 @@ end;
 procedure TVisitor.Visit(ANode: TTypeDeclNode);
 begin
   // Visit child nodes
+  if ANode.AttributesListNode <> nil then
+    Visit(ANode.AttributesListNode);
   if ANode.NameNode <> nil then
     Visit(ANode.NameNode);
   if ANode.TypeParams <> nil then
@@ -1190,6 +1291,17 @@ begin
     Visit(ANode.OpenBracketNode);
   if ANode.TypeParamDeclNode <> nil then
     Visit(ANode.TypeParamDeclNode);
+  if ANode.CloseBracketNode <> nil then
+    Visit(ANode.CloseBracketNode);
+end;
+
+procedure TVisitor.Visit(ANode: TTypeParamsUsageNode);
+begin
+  // Visit child nodes
+  if ANode.OpenBracketNode <> nil then
+    Visit(ANode.OpenBracketNode);
+  if ANode.TypeParamNode <> nil then
+    Visit(ANode.TypeParamNode);
   if ANode.CloseBracketNode <> nil then
     Visit(ANode.CloseBracketNode);
 end;

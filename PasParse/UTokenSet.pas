@@ -24,6 +24,8 @@ type
     procedure Add(ATokenType: TTokenType);
     /// Add a range of token types to the set
     procedure AddRange(ATokenSet: TTokenSet);
+    procedure RemoveRange(ATokenSet: TTokenSet);
+    procedure Remove(ATokenType: TTokenType);
     /// Checks whether the set contains the given token type
     function Contains(ATokenType: TTokenType): Boolean; override;
     function ToString: string; override;
@@ -52,6 +54,25 @@ begin
       // Add the token type to our own token set too
       Add(ATokenType);
   end;
+end;
+
+procedure TTokenSet.RemoveRange(ATokenSet: TTokenSet);
+var
+  LTokenType: TTokenType;
+begin
+  // Iterate through all available token types
+  for LTokenType := Low(TTokenType) to High(TTokenType) do
+  begin
+    // If the given token set contains the current token type
+    if ATokenSet.Contains(LTokenType) then
+      // Remove the token type from our own token set too
+      Remove(LTokenType);
+  end;
+end;
+
+procedure TTokenSet.Remove(ATokenType: TTokenType);
+begin
+  Exclude(FTokenSet, ATokenType);
 end;
 
 function TTokenSet.Contains(ATokenType: TTokenType): Boolean;

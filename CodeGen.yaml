@@ -1,4 +1,7 @@
 NodeTypes:
+  AnonymousMethodDeclNode:
+    - {Name: MethodNode, Type: AstNode}
+    - {Name: FancyBlockNode, Type: FancyBlockNode}
   AnonymousMethodTypeNode:
     - {Name: ReferenceKeywordNode, Type: Token}
     - {Name: ToKeywordNode, Type: Token}
@@ -13,7 +16,13 @@ NodeTypes:
   AssemblerStatementNode:
     - {Name: AsmKeywordNode, Type: Token}
     - {Name: EndKeywordNode, Type: Token}
-  AttributeNode:
+  AttributesNode:
+    - {Name: OpenBracketNode, Type: Token}
+    - {Name: ScopeNode, Type: Token}
+    - {Name: ColonNode, Type: Token}
+    - {Name: ValueNode, Type: ListNode<DelimitedItemNode<AstNode>>}
+    - {Name: CloseBracketNode, Type: Token}
+  AssemblyAttributeNode:
     - {Name: OpenBracketNode, Type: Token}
     - {Name: ScopeNode, Type: Token}
     - {Name: ColonNode, Type: Token}
@@ -68,6 +77,9 @@ NodeTypes:
   ConstSectionNode:
     - {Name: ConstKeywordNode, Type: Token}
     - {Name: ConstListNode, Type: ListNode<ConstantDeclNode>}
+  DeprecatedSpecifierNode:
+    - {Name: DeprecatedKeywordNode, Type: Token}
+    - {Name: DeprecatedMsgNode, Type: AstNode}
   DirectiveNode:
     - {Name: SemicolonNode, Type: Token}
     - {Name: KeywordNode, Type: Token}
@@ -99,6 +111,9 @@ NodeTypes:
     - {Name: ExportsKeywordNode, Type: Token}
     - {Name: ItemListNode, Type: ListNode<DelimitedItemNode<ExportsItemNode>>}
     - {Name: SemicolonNode, Type: Token}
+  ExternalSpecifierNode:
+    - {Name: KeywordNode, Type: Token}
+    - {Name: ValueNode, Type: AstNode}
   FancyBlockNode:
     - {Name: DeclListNode, Type: ListNode<AstNode>}
     - {Name: BlockNode, Type: AstNode}
@@ -135,6 +150,12 @@ NodeTypes:
   GotoStatementNode:
     - {Name: GotoKeywordNode, Type: Token}
     - {Name: LabelIdNode, Type: Token}
+  IdentAttrNode:
+    - {Name: AttributesListNode, Type: ListNode<AttributesNode>}
+    - {Name: Ident, Type: AstNode}
+  IdentTypeArgsNode:
+    - {Name: Ident, Type: AstNode}
+    - {Name: TypeArgsNode, Type: TypeParamsUsageNode}
   IfStatementNode:
     - {Name: IfKeywordNode, Type: Token}
     - {Name: ConditionNode, Type: AstNode}
@@ -143,13 +164,14 @@ NodeTypes:
     - {Name: ElseKeywordNode, Type: Token}
     - {Name: ElseStatementNode, Type: AstNode}
   InitSectionNode:
+    - {Name: AttributesListNode, Type: ListNode<AttributesNode>}
     - {Name: InitializationKeywordNode, Type: Token}
     - {Name: InitializationStatementListNode, Type: ListNode<DelimitedItemNode<AstNode>>}
     - {Name: FinalizationKeywordNode, Type: Token}
     - {Name: FinalizationStatementListNode, Type: ListNode<DelimitedItemNode<AstNode>>}
     - {Name: EndKeywordNode, Type: Token}
   InterfaceTypeNode:
-    - {Name: InterfaceKeywordNode, Type: Token}
+    - {Name: InterfaceKeywordNode, Type: AstNode}
     - {Name: OpenParenthesisNode, Type: Token}
     - {Name: BaseInterfaceNode, Type: AstNode}
     - {Name: CloseParenthesisNode, Type: Token}
@@ -273,6 +295,9 @@ NodeTypes:
     - {Name: ExceptionNode, Type: AstNode}
     - {Name: AtSemikeywordNode, Type: Token}
     - {Name: AddressNode, Type: AstNode}
+  RecordAlignSpecifierNode:
+    - {Name: KeywordNode, Type: Token}
+    - {Name: ValueNode, Type: AstNode}
   RecordFieldConstantNode:
     - {Name: NameNode, Type: AstNode}
     - {Name: ColonNode, Type: Token}
@@ -320,6 +345,7 @@ NodeTypes:
     - {Name: FinallyStatementListNode, Type: ListNode<DelimitedItemNode<AstNode>>}
     - {Name: EndKeywordNode, Type: Token}
   TypeDeclNode:
+    - {Name: AttributesListNode, Type: ListNode<AttributesNode>}
     - {Name: NameNode, Type: Token}
     - {Name: TypeParams, Type: AstNode}
     - {Name: EqualSignNode, Type: Token}
@@ -351,7 +377,11 @@ NodeTypes:
     - {Name: ConstraintListNode, Type: ListNode<DelimitedItemNode<AstNode>>}
   TypeParamsNode:
     - {Name: OpenBracketNode, Type: Token}
-    - {Name: TypeParamDeclNode, Type: TypeParamDeclNode}
+    - {Name: TypeParamDeclNode, Type: ListNode<TypeParamDeclNode>}
+    - {Name: CloseBracketNode, Type: Token}
+  TypeParamsUsageNode:
+    - {Name: OpenBracketNode, Type: Token}
+    - {Name: TypeParamNode, Type: AstNode}
     - {Name: CloseBracketNode, Type: Token}
   TypeSectionNode:
     - {Name: TypeKeywordNode, Type: Token}

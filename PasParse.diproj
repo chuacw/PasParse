@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project Version="1.0">
+  <Title>PasParse</Title>
+  <Summary/>
+  <Author/>
+  <Email/>
+  <Copyright/>
+  <Comment/>
+  <Language/>
+  <Charset/>
+  <HeaderHtml>&lt;%TopicTitle%&gt;</HeaderHtml>
+  <FooterHtml>Powered by &lt;a href="http://www.devjetsoftware.com/products/documentation-insight/" target="_blank"&gt;Documentation Insight&lt;/a&gt;</FooterHtml>
+  <CustomDefines/>
+  <ShowImplementationSection>false</ShowImplementationSection>
+  <ShowPrivateMembers>false</ShowPrivateMembers>
+  <ShowInheritedMembers>true</ShowInheritedMembers>
+  <ShowPropertyAccessors>true</ShowPropertyAccessors>
+  <FileNamePolicy>0</FileNamePolicy>
+  <CompilerVersion>17</CompilerVersion>
+  <TargetPlatform>0</TargetPlatform>
+  <Sources>
+    <Source>.\PasParse\PasParse.dpk</Source>
+    <Source>.\PasMetrics\PasMetrics.dpk</Source>
+    <Source>.\PasTest\PasTest.dpk</Source>
+    <Source>.\PasParseTest\PasParseTest.dpr</Source>
+    <Source>.\PasMetricsTest\PasMetricsTest.dpr</Source>
+    <Source>.\PasLexConsole\PasLexConsole.dpr</Source>
+    <Source>.\PasParseConsole\PasParseConsole.dpr</Source>
+    <Source>.\PasMetricsConsole\PasMetricsConsole.dpr</Source>
+    <Source>.\ParseRTL\ParseRTL.dpr</Source>
+    <Source>.\ParseRTLTest\ParseRTLCreateUnits.dpr</Source>
+    <Source>.\ParseRTLTest\ParseRTLTest.dpr</Source>
+  </Sources>
+  <Outputs>
+    <Output Type="HTML">
+      <Active>true</Active>
+      <OutputDirectory>Doc\Html</OutputDirectory>
+    </Output>
+    <Output Type="CHM">
+      <Active>true</Active>
+      <OutputFileName>Doc\CHM\PasParse.chm</OutputFileName>
+    </Output>
+    <Output Type="MSHELP2">
+      <Active>false</Active>
+      <OutputFileName>Doc\MSHelp2\PasParse.HxS</OutputFileName>
+      <Namespace>PasParse</Namespace>
+      <TitleID>library</TitleID>
+    </Output>
+    <Output Type="HelpAndManual">
+      <Active>false</Active>
+      <OutputFileName>Doc\HM\PasParse.hmxp</OutputFileName>
+    </Output>
+  </Outputs>
+</Project>

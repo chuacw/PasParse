@@ -118,7 +118,7 @@ implementation
 
 uses
   USingleTokenTokenSet, System.TypInfo, UInvalidOperationException,
-  UParseException, UIFrame;
+  UParseException, UIFrame, UEOFFrame;
 
 { TAlternator }
 
@@ -184,6 +184,8 @@ begin
         begin
           Result.Free;
           Result := nil;
+          if AParser.NextFrame.ClassType = TEOFFrame then
+            AParser.NextFrame.Free; // free EOF frames
           AParser.NextFrame := ANextFrame;
           if not FDiscardParseExceptions then
             raise;
@@ -241,8 +243,9 @@ begin
     if FAlternates[I].LookAhead(AParser) then
     begin
       // ... and stop iterating if we find an Alternate that can
-      Result := True;
-      Break;
+//      Result := True;
+//      Break;
+      Exit(True);
     end;
   end;
 end;

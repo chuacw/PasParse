@@ -3,7 +3,7 @@ unit UTestParser;
 interface
 
 uses
-  URuleType;
+  UTest, URuleType;
 
 type
   TTestParser = class
@@ -14,9 +14,22 @@ type
 implementation
 
 uses
-  UCompilerDefines, UASTNode, UParser, UInvalidOperationException;
+  UCompilerDefines, UASTNode, UParser, UInvalidOperationException{$IF DEFINED(DUNIT)},
+  TestFramework{$ENDIF}
+  {$IF DEFINED(DEBUG)},
+  FMX.Platform, System.SysUtils
+  {$ENDIF};
 
 { TTestParser }
+
+{$IF DEFINED(DEBUG)}
+function ConvertToPascalString(const AString: string): string;
+begin
+  Result := StringReplace(AString, '''', '''''', [rfReplaceAll]);
+  Result := '''' + StringReplace(Result, sLineBreak,
+    '''+ #13#10 +'+sLineBreak+'''', [rfReplaceAll]) + '''';
+end;
+{$ENDIF}
 
 class function TTestParser.ParsesAs(const ASource, AGoal: string;
   ARuleType: TRuleType): Boolean;
@@ -25,6 +38,10 @@ var
   AParser: TParser;
   ANode: TASTNode;
   AActualString: string;
+{$IF DEFINED(DEBUG)}
+  ClipboardString: string;
+  Clipboard: IFMXClipboardService;
+{$ENDIF}
 begin
   Result := False;
   ACompilerDefines := TCompilerDefines.Create;
@@ -32,6 +49,14 @@ begin
   try
     ANode := AParser.ParseRule(ARuleType);
     AActualString := ANode.Inspect;
+{$IF DEFINED(DEBUG)}
+    if TPlatformServices.Current.SupportsPlatformService(IFMXClipboardService,
+      IInterface(Clipboard)) then
+      begin
+        ClipboardString := ConvertToPascalString(AActualString);
+        Clipboard.SetClipboard(ClipboardString);
+      end;
+{$ENDIF}
     ANode.Free;
 
     try

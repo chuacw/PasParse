@@ -8,17 +8,22 @@ uses
 type
   TTestVarSection = class(TTest)
   public
+{$IF NOT DEFINED(DUNIT)}
     class procedure TestAll; override;
     class function GetName: string; override;
+{$ELSE}
+  published
+    procedure TestVarSection;
+{$ENDIF}
   end;
 
 implementation
 
 uses
-  UTestParser, URuleType, UParseException;
+  UTestParser, URuleType, UParseException{$IF DEFINED(DUNIT)}, TestFramework{$ENDIF};
 
 { TTestVarSection }
-
+{$IF NOT DEFINED(DUNIT)}
 class function TTestVarSection.GetName: string;
 begin
   Result := 'VarSection';
@@ -75,5 +80,61 @@ begin
     OK(False, 'var exception');
   end;
 end;
+{$ELSE}
 
+procedure TTestVarSection.TestVarSection;
+begin
+  OK('var Foo: Integer;', TTestParser.ParsesAs('var Foo: Integer;',
+    'VarSectionNode' + #13#10 +
+    '  VarKeywordNode: VarKeyword |var|' + #13#10 +
+    '  VarListNode: ListNode' + #13#10 +
+    '    Items[0]: VarDeclNode' + #13#10 +
+    '      NameListNode: ListNode' + #13#10 +
+    '        Items[0]: DelimitedItemNode' + #13#10 +
+    '          ItemNode: Identifier |Foo|' + #13#10 +
+    '          DelimiterNode: (none)' + #13#10 +
+    '      ColonNode: Colon |:|' + #13#10 +
+    '      TypeNode: Identifier |Integer|' + #13#10 +
+    '      FirstPortabilityDirectiveListNode: (none)' + #13#10 +
+    '      AbsoluteSemikeywordNode: (none)' + #13#10 +
+    '      AbsoluteAddressNode: (none)' + #13#10 +
+    '      EqualSignNode: (none)' + #13#10 +
+    '      ValueNode: (none)' + #13#10 +
+    '      SecondPortabilityDirectiveListNode: (none)' + #13#10 +
+    '      SemicolonNode: Semicolon |;|', RTVarSection));
+
+  OK('threadvar Foo: Integer;', TTestParser.ParsesAs('threadvar Foo: Integer;',
+    'VarSectionNode' + #13#10 +
+    '  VarKeywordNode: ThreadVarKeyword |threadvar|' + #13#10 +
+    '  VarListNode: ListNode' + #13#10 +
+    '    Items[0]: VarDeclNode' + #13#10 +
+    '      NameListNode: ListNode' + #13#10 +
+    '        Items[0]: DelimitedItemNode' + #13#10 +
+    '          ItemNode: Identifier |Foo|' + #13#10 +
+    '          DelimiterNode: (none)' + #13#10 +
+    '      ColonNode: Colon |:|' + #13#10 +
+    '      TypeNode: Identifier |Integer|' + #13#10 +
+    '      FirstPortabilityDirectiveListNode: (none)' + #13#10 +
+    '      AbsoluteSemikeywordNode: (none)' + #13#10 +
+    '      AbsoluteAddressNode: (none)' + #13#10 +
+    '      EqualSignNode: (none)' + #13#10 +
+    '      ValueNode: (none)' + #13#10 +
+    '      SecondPortabilityDirectiveListNode: (none)' + #13#10 +
+    '      SemicolonNode: Semicolon |;|', RTVarSection));
+
+  try
+    TTestParser.ParsesAs('var', '', RTVarSection);
+    OK(False, 'var exception');
+  except
+    on ETestException do;
+    on EParseException do
+      OK(True, 'var exception');
+  else
+    OK(False, 'var exception');
+  end;
+end;
+
+initialization
+  RegisterTest(TTestVarSection.Suite);
+{$ENDIF}
 end.

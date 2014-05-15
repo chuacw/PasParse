@@ -8,17 +8,22 @@ uses
 type
   TTestIfStatement = class(TTest)
   public
+{$IF NOT DEFINED(DUNIT)}
     class procedure TestAll; override;
     class function GetName: string; override;
+{$ELSE}
+  published
+    procedure TestIfStatement;
+{$ENDIF}
   end;
 
 implementation
 
 uses
-  UTestParser, URuleType;
+  UTestParser, URuleType{$IF DEFINED(DUNIT)}, TestFramework{$ENDIF};
 
 { TTestIfStatement }
-
+{$IF NOT DEFINED(DUNIT)}
 class function TTestIfStatement.GetName: string;
 begin
   Result := 'IfStatement';
@@ -94,5 +99,80 @@ begin
     '  ElseKeywordNode: ElseKeyword |else|' + #13#10 +
     '  ElseStatementNode: (none)', RTIfStatement));
 end;
+{$ELSE}
 
+procedure TTestIfStatement.TestIfStatement;
+begin
+  OK('if Foo then', TTestParser.ParsesAs('if Foo then',
+    'IfStatementNode' + #13#10 +
+    '  IfKeywordNode: IfKeyword |if|' + #13#10 +
+    '  ConditionNode: Identifier |Foo|' + #13#10 +
+    '  ThenKeywordNode: ThenKeyword |then|' + #13#10 +
+    '  ThenStatementNode: (none)' + #13#10 +
+    '  ElseKeywordNode: (none)' + #13#10 +
+    '  ElseStatementNode: (none)', RTIfStatement));
+
+  OK('if Foo then Bar', TTestParser.ParsesAs('if Foo then Bar',
+    'IfStatementNode' + #13#10 +
+    '  IfKeywordNode: IfKeyword |if|' + #13#10 +
+    '  ConditionNode: Identifier |Foo|' + #13#10 +
+    '  ThenKeywordNode: ThenKeyword |then|' + #13#10 +
+    '  ThenStatementNode: Identifier |Bar|' + #13#10 +
+    '  ElseKeywordNode: (none)' + #13#10 +
+    '  ElseStatementNode: (none)', RTIfStatement));
+
+  OK('if Foo then else', TTestParser.ParsesAs('if Foo then else',
+    'IfStatementNode' + #13#10 +
+    '  IfKeywordNode: IfKeyword |if|' + #13#10 +
+    '  ConditionNode: Identifier |Foo|' + #13#10 +
+    '  ThenKeywordNode: ThenKeyword |then|' + #13#10 +
+    '  ThenStatementNode: (none)' + #13#10 +
+    '  ElseKeywordNode: ElseKeyword |else|' + #13#10 +
+    '  ElseStatementNode: (none)', RTIfStatement));
+
+  OK('if Foo then Bar else Baz', TTestParser.ParsesAs('if Foo then Bar else Baz',
+    'IfStatementNode' + #13#10 +
+    '  IfKeywordNode: IfKeyword |if|' + #13#10 +
+    '  ConditionNode: Identifier |Foo|' + #13#10 +
+    '  ThenKeywordNode: ThenKeyword |then|' + #13#10 +
+    '  ThenStatementNode: Identifier |Bar|' + #13#10 +
+    '  ElseKeywordNode: ElseKeyword |else|' + #13#10 +
+    '  ElseStatementNode: Identifier |Baz|', RTIfStatement));
+
+  OK('if Foo then if Bar then else',
+    TTestParser.ParsesAs('if Foo then if Bar then else',
+    'IfStatementNode' + #13#10 +
+    '  IfKeywordNode: IfKeyword |if|' + #13#10 +
+    '  ConditionNode: Identifier |Foo|' + #13#10 +
+    '  ThenKeywordNode: ThenKeyword |then|' + #13#10 +
+    '  ThenStatementNode: IfStatementNode' + #13#10 +
+    '    IfKeywordNode: IfKeyword |if|' + #13#10 +
+    '    ConditionNode: Identifier |Bar|' + #13#10 +
+    '    ThenKeywordNode: ThenKeyword |then|' + #13#10 +
+    '    ThenStatementNode: (none)' + #13#10 +
+    '    ElseKeywordNode: ElseKeyword |else|' + #13#10 +
+    '    ElseStatementNode: (none)' + #13#10 +
+    '  ElseKeywordNode: (none)' + #13#10 +
+    '  ElseStatementNode: (none)', RTIfStatement));
+
+  OK('if Foo then if Bar then else else',
+    TTestParser.ParsesAs('if Foo then if Bar then else else',
+    'IfStatementNode' + #13#10 +
+    '  IfKeywordNode: IfKeyword |if|' + #13#10 +
+    '  ConditionNode: Identifier |Foo|' + #13#10 +
+    '  ThenKeywordNode: ThenKeyword |then|' + #13#10 +
+    '  ThenStatementNode: IfStatementNode' + #13#10 +
+    '    IfKeywordNode: IfKeyword |if|' + #13#10 +
+    '    ConditionNode: Identifier |Bar|' + #13#10 +
+    '    ThenKeywordNode: ThenKeyword |then|' + #13#10 +
+    '    ThenStatementNode: (none)' + #13#10 +
+    '    ElseKeywordNode: ElseKeyword |else|' + #13#10 +
+    '    ElseStatementNode: (none)' + #13#10 +
+    '  ElseKeywordNode: ElseKeyword |else|' + #13#10 +
+    '  ElseStatementNode: (none)', RTIfStatement));
+end;
+
+initialization
+  RegisterTest(TTestIfStatement.Suite);
+{$ENDIF}
 end.

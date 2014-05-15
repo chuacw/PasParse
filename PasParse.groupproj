@@ -13,7 +13,7 @@
             <Dependencies/>
         </Projects>
         <Projects Include="PasParseTest\PasParseTest.dproj">
-            <Dependencies>PasMetrics\PasMetrics.dproj;PasTest\PasTest.dproj</Dependencies>
+            <Dependencies/>
         </Projects>
         <Projects Include="PasMetricsTest\PasMetricsTest.dproj">
             <Dependencies>PasMetrics\PasMetrics.dproj;PasTest\PasTest.dproj</Dependencies>
@@ -28,6 +28,12 @@
             <Dependencies>PasParse\PasParse.dproj;PasMetrics\PasMetrics.dproj</Dependencies>
         </Projects>
         <Projects Include="ParseRTL\ParseRTL.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="ParseRTLTest\ParseRTLCreateUnits.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="ParseRTLTest\ParseRTLTest.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -65,13 +71,13 @@
     <Target Name="PasTest:Make">
         <MSBuild Projects="PasTest\PasTest.dproj" Targets="Make"/>
     </Target>
-    <Target Name="PasParseTest" DependsOnTargets="PasMetrics;PasTest">
+    <Target Name="PasParseTest">
         <MSBuild Projects="PasParseTest\PasParseTest.dproj"/>
     </Target>
-    <Target Name="PasParseTest:Clean" DependsOnTargets="PasMetrics:Clean;PasTest:Clean">
+    <Target Name="PasParseTest:Clean">
         <MSBuild Projects="PasParseTest\PasParseTest.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="PasParseTest:Make" DependsOnTargets="PasMetrics:Make;PasTest:Make">
+    <Target Name="PasParseTest:Make">
         <MSBuild Projects="PasParseTest\PasParseTest.dproj" Targets="Make"/>
     </Target>
     <Target Name="PasMetricsTest" DependsOnTargets="PasMetrics;PasTest">
@@ -119,14 +125,32 @@
     <Target Name="ParseRTL:Make">
         <MSBuild Projects="ParseRTL\ParseRTL.dproj" Targets="Make"/>
     </Target>
+    <Target Name="ParseRTLCreateUnits">
+        <MSBuild Projects="ParseRTLTest\ParseRTLCreateUnits.dproj"/>
+    </Target>
+    <Target Name="ParseRTLCreateUnits:Clean">
+        <MSBuild Projects="ParseRTLTest\ParseRTLCreateUnits.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ParseRTLCreateUnits:Make">
+        <MSBuild Projects="ParseRTLTest\ParseRTLCreateUnits.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ParseRTLTest">
+        <MSBuild Projects="ParseRTLTest\ParseRTLTest.dproj"/>
+    </Target>
+    <Target Name="ParseRTLTest:Clean">
+        <MSBuild Projects="ParseRTLTest\ParseRTLTest.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ParseRTLTest:Make">
+        <MSBuild Projects="ParseRTLTest\ParseRTLTest.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="PasParse;PasMetrics;PasTest;PasParseTest;PasMetricsTest;PasLexConsole;PasParseConsole;PasMetricsConsole;ParseRTL"/>
+        <CallTarget Targets="PasParse;PasMetrics;PasTest;PasParseTest;PasMetricsTest;PasLexConsole;PasParseConsole;PasMetricsConsole;ParseRTL;ParseRTLCreateUnits;ParseRTLTest"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="PasParse:Clean;PasMetrics:Clean;PasTest:Clean;PasParseTest:Clean;PasMetricsTest:Clean;PasLexConsole:Clean;PasParseConsole:Clean;PasMetricsConsole:Clean;ParseRTL:Clean"/>
+        <CallTarget Targets="PasParse:Clean;PasMetrics:Clean;PasTest:Clean;PasParseTest:Clean;PasMetricsTest:Clean;PasLexConsole:Clean;PasParseConsole:Clean;PasMetricsConsole:Clean;ParseRTL:Clean;ParseRTLCreateUnits:Clean;ParseRTLTest:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="PasParse:Make;PasMetrics:Make;PasTest:Make;PasParseTest:Make;PasMetricsTest:Make;PasLexConsole:Make;PasParseConsole:Make;PasMetricsConsole:Make;ParseRTL:Make"/>
+        <CallTarget Targets="PasParse:Make;PasMetrics:Make;PasTest:Make;PasParseTest:Make;PasMetricsTest:Make;PasLexConsole:Make;PasParseConsole:Make;PasMetricsConsole:Make;ParseRTL:Make;ParseRTLCreateUnits:Make;ParseRTLTest:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

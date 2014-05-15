@@ -8,17 +8,22 @@ uses
 type
   TTestFieldSection = class(TTest)
   public
+{$IF NOT DEFINED(DUNIT)}
     class procedure TestAll; override;
     class function GetName: string; override;
+{$ELSE}
+  published
+    procedure TestFieldSection;
+{$ENDIF}
   end;
 
 implementation
 
 uses
-  UTestParser, URuleType, UParseException;
+  UTestParser, URuleType, UParseException{$IF DEFINED(DUNIT)}, TestFramework{$ENDIF};
 
 { TTestFieldSection }
-
+{$IF NOT DEFINED(DUNIT)}
 class function TTestFieldSection.GetName: string;
 begin
   Result := 'FieldSection';
@@ -105,5 +110,91 @@ begin
     OK(False, 'class exception');
   end;
 end;
+{$ELSE}
 
+procedure TTestFieldSection.TestFieldSection;
+begin
+  OK('Foo: Integer; Bar: Boolean;',
+    TTestParser.ParsesAs('Foo: Integer; Bar: Boolean;',
+    'FieldSectionNode' + #13#10 +
+    '  ClassKeywordNode: (none)' + #13#10 +
+    '  VarKeywordNode: (none)' + #13#10 +
+    '  FieldListNode: ListNode' + #13#10 +
+    '    Items[0]: FieldDeclNode' + #13#10 +
+    '      NameListNode: ListNode' + #13#10 +
+    '        Items[0]: DelimitedItemNode' + #13#10 +
+    '          ItemNode: Identifier |Foo|' + #13#10 +
+    '          DelimiterNode: (none)' + #13#10 +
+    '      ColonNode: Colon |:|' + #13#10 +
+    '      TypeNode: Identifier |Integer|' + #13#10 +
+    '      PortabilityDirectiveListNode: (none)' + #13#10 +
+    '      SemicolonNode: Semicolon |;|' + #13#10 +
+    '    Items[1]: FieldDeclNode' + #13#10 +
+    '      NameListNode: ListNode' + #13#10 +
+    '        Items[0]: DelimitedItemNode' + #13#10 +
+    '          ItemNode: Identifier |Bar|' + #13#10 +
+    '          DelimiterNode: (none)' + #13#10 +
+    '      ColonNode: Colon |:|' + #13#10 +
+    '      TypeNode: Identifier |Boolean|' + #13#10 +
+    '      PortabilityDirectiveListNode: (none)' + #13#10 +
+    '      SemicolonNode: Semicolon |;|', RTFieldSection));
+
+  OK('var Foo: Integer;', TTestParser.ParsesAs('var Foo: Integer;',
+    'FieldSectionNode' + #13#10 +
+    '  ClassKeywordNode: (none)' + #13#10 +
+    '  VarKeywordNode: VarKeyword |var|' + #13#10 +
+    '  FieldListNode: ListNode' + #13#10 +
+    '    Items[0]: FieldDeclNode' + #13#10 +
+    '      NameListNode: ListNode' + #13#10 +
+    '        Items[0]: DelimitedItemNode' + #13#10 +
+    '          ItemNode: Identifier |Foo|' + #13#10 +
+    '          DelimiterNode: (none)' + #13#10 +
+    '      ColonNode: Colon |:|' + #13#10 +
+    '      TypeNode: Identifier |Integer|' + #13#10 +
+    '      PortabilityDirectiveListNode: (none)' + #13#10 +
+    '      SemicolonNode: Semicolon |;|', RTFieldSection));
+
+  OK('class var Foo: Integer;', TTestParser.ParsesAs('class var Foo: Integer;',
+    'FieldSectionNode' + #13#10 +
+    '  ClassKeywordNode: ClassKeyword |class|' + #13#10 +
+    '  VarKeywordNode: VarKeyword |var|' + #13#10 +
+    '  FieldListNode: ListNode' + #13#10 +
+    '    Items[0]: FieldDeclNode' + #13#10 +
+    '      NameListNode: ListNode' + #13#10 +
+    '        Items[0]: DelimitedItemNode' + #13#10 +
+    '          ItemNode: Identifier |Foo|' + #13#10 +
+    '          DelimiterNode: (none)' + #13#10 +
+    '      ColonNode: Colon |:|' + #13#10 +
+    '      TypeNode: Identifier |Integer|' + #13#10 +
+    '      PortabilityDirectiveListNode: (none)' + #13#10 +
+    '      SemicolonNode: Semicolon |;|', RTFieldSection));
+
+  OK('var', TTestParser.ParsesAs('var',
+    'FieldSectionNode' + #13#10 +
+    '  ClassKeywordNode: (none)' + #13#10 +
+    '  VarKeywordNode: VarKeyword |var|' + #13#10 +
+    '  FieldListNode: (none)', RTFieldSection));
+
+  OK('class var', TTestParser.ParsesAs('class var',
+    'FieldSectionNode' + #13#10 +
+    '  ClassKeywordNode: ClassKeyword |class|' + #13#10 +
+    '  VarKeywordNode: VarKeyword |var|' + #13#10 +
+    '  FieldListNode: (none)', RTFieldSection));
+
+
+  try
+    TTestParser.ParsesAs('class', '', RTFieldSection);
+    OK(False, 'class exception');
+  except
+    on ETestException do;
+    on EParseException do
+      OK(True, 'class exception');
+  else
+    OK(False, 'class exception');
+  end;
+end;
+
+initialization
+  RegisterTest(TTestFieldSection.Suite);
+{$ENDIF}
 end.

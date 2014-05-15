@@ -45,7 +45,7 @@ type
     procedure HandleElseIf(AIfDefStack: TIfDefStack; const ADirective: string; ALocation: TLocation);
     procedure HandleElse(AIfDefStack: TIfDefStack);
     procedure HandleInclude(AIfDefStack: TIfDefStack;
-      ATokens: TObjectList<TToken>; const ADirectory: string; AFileName: string);
+      ATokens: TObjectList<TToken>; ABaseDirectory, AFileName: string);
 
   public
     constructor Create(ATokens: TObjectList<TToken>; ACompilerDefines: TCompilerDefines;
@@ -99,7 +99,7 @@ begin
   FDirectiveTypes.AddOrSetValue('EXTENDEDCOMPATIBILITY', DTIgnored);
   FDirectiveTypes.AddOrSetValue('EXTENDEDSYNTAX', DTIgnored);
   FDirectiveTypes.AddOrSetValue('EXTENSION', DTIgnored);
-  FDirectiveTypes.AddOrSetValue('FINITEFLOAT', DTIgnored);
+  FDirectiveTypes.AddOrSetValue('FINITEFLOAT', DTIgnored); // .Net only?
   FDirectiveTypes.AddOrSetValue('HIGHCHARUNICODE', DTIgnored);
   FDirectiveTypes.AddOrSetValue('HINTS', DTIgnored);
   FDirectiveTypes.AddOrSetValue('HPPEMIT', DTIgnored);
@@ -140,7 +140,7 @@ begin
   FDirectiveTypes.AddOrSetValue('SAFEDIVIDE', DTIgnored);
   FDirectiveTypes.AddOrSetValue('SCOPEDENUMS', DTIgnored);
   FDirectiveTypes.AddOrSetValue('SETPEFLAGS', DTIgnored);
-  FDirectiveTypes.AddOrSetValue('SetPEOptFlags', DTIgnored);
+  FDirectiveTypes.AddOrSetValue('SETPEOPTFlags', DTIgnored);
   FDirectiveTypes.AddOrSetValue('SOPREFIX', DTIgnored); // undocumented
   FDirectiveTypes.AddOrSetValue('SOSUFFIX', DTIgnored); // undocumented
   FDirectiveTypes.AddOrSetValue('SOVERSION', DTIgnored); // undocumented
@@ -335,33 +335,76 @@ begin
     AIfDefStack.Push(IDTForeverFalse);
 end;
 
-procedure TTokenFilter.HandleInclude(AIfDefStack: TIfDefStack; ATokens: TObjectList<TToken>;
-  const ADirectory: string; AFileName: string);
+procedure TTokenFilter.HandleInclude(AIfDefStack: TIfDefStack;
+  ATokens: TObjectList<TToken>; ABaseDirectory, AFileName: string);
 var
-  ASource: string;
+  LDelim: Char; LFileName, ASource: string;
   ALexer: TLexScanner;
   ALexTokens, ANewTokens: TObjectList<TToken>;
-  I: Integer;
+  I, FindResult: Integer;
+  F: TSearchRec;
+label
+  __LoadFile;
 begin
-  AFileName := FFileLoader.ExpandFileName(ADirectory, AFileName);
-  ASource := FFileLoader.LoadFromParentDirs(AFileName);
 
-  ALexer := TLexScanner.Create(ASource, AFileName);
+  if PathDelim = '\' then
+    LDelim := '/' else
+    LDelim := '\';
+
+  if AFileName.IndexOf(LDelim)>0 then
+    AFileName := AFileName.Replace(LDelim, PathDelim);
+
+  if FFileLoader <> nil then
+    LFileName := FFileLoader.ExpandFileName(ABaseDirectory, AFileName) else
+    LFileName := ABaseDirectory + PathDelim + AFileName;
+// if AFileName is osx/xxx.inc and ADirectory is c:\Pro...\posix, then
+// the final directory is C:\Pro...\posix\osx, which is different from the
+// original directory which is c:\Pro...\posix, so we need to recalculate the
+// base directory
+
+// If ABaseDirectory is empty, we know that this is a load of a memory file,
+// so skip all the FindFirst/Next/Close
+  ABaseDirectory := ExtractFileDir(LFileName);
+  FindResult := -1; // any value other than 0, as compared to the while loop
+  if ABaseDirectory <> '' then
+    FindResult := FindFirst(LFileName, faAnyFile and not faDirectory, F);
+
   try
-    ALexTokens := ALexer.Tokens;
-    try
-      ANewTokens := Filter(AIfDefStack, ALexTokens);
+    if ABaseDirectory = '' then goto __LoadFile;
 
-      for I := 0 to ANewTokens.Count - 1 do
-        ATokens.Add(ANewTokens[I]);
+    while FindResult = 0 do
+      begin
+        LFileName := FFileLoader.ExpandFileName(ABaseDirectory, F.Name);
+__LoadFile:
+        ASource := FFileLoader.LoadFromParentDirs(LFileName);
 
-      ANewTokens.OwnsObjects := False;
-      ANewTokens.Free;
-    finally
-      ALexTokens.Free;
-    end;
+        ALexer := TLexScanner.Create(ASource, LFileName);
+        try
+          ALexTokens := ALexer.Tokens;
+          try
+            ANewTokens := Filter(AIfDefStack, ALexTokens);
+
+            for I := 0 to ANewTokens.Count - 1 do
+              ATokens.Add(ANewTokens[I]);
+
+            ANewTokens.OwnsObjects := False;
+            ANewTokens.Free;
+          finally
+            ALexTokens.Free;
+          end;
+        finally
+          ALexer.Free;
+        end;
+
+        if ABaseDirectory <>'' then
+          FindResult := FindNext(F) else
+          Break;
+
+      end;
+
   finally
-    ALexer.Free;
+    if ABaseDirectory <> '' then
+      FindClose(F);
   end;
 end;
 

@@ -30,6 +30,9 @@ requires
   rtl;
 
 contains
+  TestFramework in '..\PasParseTest\TestFramework.pas',
+  DUnitConsts,
   UTest in 'UTest.pas';
 
 end.
+

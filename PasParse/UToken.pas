@@ -9,7 +9,7 @@ uses
 type
   /// Represents a token including it's text, positions and token type
   TToken = class(TASTNode)
-  private
+  protected
     FLocation: TLocation;
     FEndLocation: TLocation;
     FParsedText: string;

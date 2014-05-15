@@ -9,11 +9,12 @@ uses
 type
   TTokenSets = class
   protected
-    class procedure Prepare;
-    class procedure CleanUp; 
-    
+    class constructor Prepare;
+    class destructor CleanUp;
+
   public
     class var TSAddOp: TTokenSet;
+    class var TSAnonymousMethodType: TTokenSet;
     class var TSBlock: TTokenSet;
     class var TSClassDisposition: TTokenSet;
     class var TSConstHeader: TTokenSet;
@@ -21,6 +22,7 @@ type
     class var TSExportsSpecifier: TTokenSet;
     class var TSExpression: TTokenSet;
     class var TSExtendedIdent: TTokenSet;
+    class var TSExternalSpecifier: TTokenSet;
     class var TSForDirection: TTokenSet;
     class var TSForwardableType: TTokenSet;
     class var TSIdent: TTokenSet;
@@ -51,43 +53,45 @@ implementation
 
 { TTokenSets }
 
-class procedure TTokenSets.CleanUp;
+class destructor TTokenSets.CleanUp;
 begin
-  TSAddOp.Free;
-  TSBlock.Free;
-  TSClassDisposition.Free;
-  TSConstHeader.Free;
-  TSDirective.Free;
-  TSExportsSpecifier.Free;
-  TSForDirection.Free;
-  TSForwardableType.Free;
-  TSInitSection.Free;
-  TSInterfaceType.Free;
-  TSKeyword.Free;
-  TSMethodType.Free;
-  TSMulOp.Free;
-  TSParameterizedPropertyDirective.Free;
-  TSParameterlessPropertyDirective.Free;
-  TSParameterModifier.Free;
-  TSPortabilityDirective.Free;
-  TSProgram.Free;
-  TSRelOp.Free;
-  TSSemikeyword.Free;
-  TSUnaryOperator.Free;
-  TSUses.Free;
-  TSVarHeader.Free;
-  TSVisibilitySingleWord.Free;
-  TSIdent.Free;
-  TSParticle.Free;
-  TSExpression.Free;
-  TSExtendedIdent.Free;
-  TSLabelId.Free;
-  TSParameter.Free;
-  TSSimpleParameterType.Free;
   TSVisibility.Free;
+  TSSimpleParameterType.Free;
+  TSParameter.Free;
+  TSLabelId.Free;
+  TSExtendedIdent.Free;
+  TSExpression.Free;
+  TSParticle.Free;
+  TSIdent.Free;
+  TSVisibilitySingleWord.Free;
+  TSVarHeader.Free;
+  TSUses.Free;
+  TSUnaryOperator.Free;
+  TSSemikeyword.Free;
+  TSRelOp.Free;
+  TSProgram.Free;
+  TSPortabilityDirective.Free;
+  TSParameterModifier.Free;
+  TSParameterlessPropertyDirective.Free;
+  TSParameterizedPropertyDirective.Free;
+  TSMulOp.Free;
+  TSMethodType.Free;
+  TSKeyword.Free;
+  TSInterfaceType.Free;
+  TSInitSection.Free;
+  TSForwardableType.Free;
+  TSForDirection.Free;
+  TSExternalSpecifier.Free;
+  TSExportsSpecifier.Free;
+  TSDirective.Free;
+  TSConstHeader.Free;
+  TSClassDisposition.Free;
+  TSBlock.Free;
+  TSAnonymousMethodType.Free;
+  TSAddOp.Free;
 end;
 
-class procedure TTokenSets.Prepare;
+class constructor TTokenSets.Prepare;
 var
   AKeyword, ASemikeyword: TTokenType;
 begin
@@ -96,6 +100,10 @@ begin
   TSAddOp.Add(TTMinusSign);
   TSAddOp.Add(TTOrKeyword);
   TSAddOp.Add(TTXorKeyword);
+
+  TSAnonymousMethodType := TTokenSet.Create('anonymous method type');
+  TSAnonymousMethodType.Add(TTProcedureKeyword);
+  TSAnonymousMethodType.Add(TTFunctionKeyword);
 
   TSBlock := TTokenSet.Create('block');
   TSBlock.Add(TTBeginKeyword);
@@ -164,10 +172,13 @@ begin
 //  TSDirective.Add(TTVirtualSemikeyword);
   // also includes PortabilityDirective, see below
 
-  TSExportsSpecifier := TTokenSet.Create('''index'' or ''name'' or ''delayed''');
+  TSExportsSpecifier := TTokenSet.Create('''index'' or ''name''');
   TSExportsSpecifier.Add(TTIndexSemikeyword);
   TSExportsSpecifier.Add(TTNameSemikeyword);
-  TSExportsSpecifier.Add(TTDelayedSemikeyword);
+
+  TSExternalSpecifier := TTokenSet.Create('''index'', ''name'', or ''delayed''');
+  TSExternalSpecifier.AddRange(TSExportsSpecifier);
+  TSExternalSpecifier.Add(TTDelayedSemikeyword);
 
   TSForDirection := TTokenSet.Create('''to'' or ''downto''');
   TSForDirection.Add(TTToKeyword);
@@ -403,6 +414,7 @@ begin
   TSIdent.AddRange(TSSemikeyword);
 
   TSDirective.AddRange(TSPortabilityDirective);
+
   TSParticle := TTokenSet.Create('expression');
   TSParticle.Add(TTFileKeyword);
   TSParticle.Add(TTNilKeyword);
@@ -412,31 +424,40 @@ begin
   TSParticle.Add(TTStringKeyword);
   TSParticle.Add(TTStringLiteral);
   TSParticle.AddRange(TSIdent);
+
   TSExpression := TTokenSet.Create('expression');
   TSExpression.AddRange(TSParticle);
+//  TSExpression.RemoveRange(TSAnonymousMethodType);
   TSExpression.AddRange(TSUnaryOperator);
+
+  TSParticle.AddRange(TSAnonymousMethodType);
+
   TSExtendedIdent := TTokenSet.Create('identifier (including keyword)');
   TSExtendedIdent.AddRange(TSIdent);
   TSExtendedIdent.AddRange(TSKeyword);
+
   TSLabelId := TTokenSet.Create('label');
   TSLabelId.Add(TTNumber);
   TSLabelId.AddRange(TSIdent);
+
   TSParameter := TTokenSet.Create('parameter');
   TSParameter.AddRange(TSIdent);
   TSParameter.AddRange(TSParameterModifier);
+
   TSSimpleParameterType := TTokenSet.Create('parameter type');
   TSSimpleParameterType.Add(TTFileKeyword);
   TSSimpleParameterType.Add(TTStringKeyword);
   TSSimpleParameterType.AddRange(TSIdent);
+
   TSVisibility := TTokenSet.Create('visibility specifier');
   TSVisibility.Add(TTStrictSemikeyword);
   TSVisibility.AddRange(TSVisibilitySingleWord);
 end;
 
-initialization
-  TTokenSets.Prepare;
-
-finalization
-  TTokenSets.CleanUp;
+//initialization
+//  TTokenSets.Prepare;
+//
+//finalization
+//  TTokenSets.CleanUp;
 
 end.
